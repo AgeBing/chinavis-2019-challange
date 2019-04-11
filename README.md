@@ -1,7 +1,7 @@
-## 0. Analysis
+## 0. analysis/
 Python 脚本
 
-## 1. Web 
+## 1. frontend/ 
 
 ### 框架
 React
@@ -12,7 +12,7 @@ cd web/
 npm start
 ```
 
-## 2. Server
+## 2. server/
 KOA 
 
 ```
