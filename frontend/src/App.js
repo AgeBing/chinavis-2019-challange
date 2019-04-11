@@ -1,29 +1,23 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
-import  Demo  from './component/demo.jsx'
+import  Sensors  from './component/Sensors'
+import  Floor  from './component/Floor'
+import  Rooms  from './component/Rooms'
+
+
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-       {/* <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>*/}
 
-        <Demo />
+        <Floor height={650} width={1200} />
+        <Sensors  floor={1}  height={650} width={1200} />
+        <Rooms height={650} width={1200} />  
+        {/*<Sensors  floor={2}  height={650} width={1200} />*/}
+
+
       </div>
     );
   }

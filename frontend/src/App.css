@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  position: relative;
 }
 
 .App-logo {
@@ -30,4 +31,29 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+
+
+
+.map-sensor{
+  margin-top: 0px;
+  font-size: 9px;
+  z-index: 6;
+}
+.map-floor{
+  position: absolute;
+  top:  0px;
+  left: calc(50% - 600px);
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 5;
+}
+.map-rooms{
+  position: absolute;
+  top:  0px;
+  left: calc(50% - 600px);
+  pointer-events: none;
+  font-size: 13px;
+  z-index: 7;
 }
