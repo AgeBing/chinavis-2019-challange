@@ -1,6 +1,9 @@
+@import '~antd/dist/antd.css';
+
 .App {
-  text-align: center;
+  /*text-align: center;*/
   position: relative;
+  padding:20px;
 }
 
 .App-logo {
@@ -33,10 +36,25 @@
   }
 }
 
-
-
+#loading-icon{
+    position: fixed;
+    left: 1110px;
+    top: 35px;
+}
+#map-container{
+  width: 1130px;
+  height: 700px;
+  float: left;
+}
+#config-container{
+  width: calc(100% - 1150px);
+  min-width: 100px;
+  height: 700px;
+  float: right;
+}
 
 .map-sensor{
+  position: absolute;
   margin-top: 0px;
   font-size: 9px;
   z-index: 6;
@@ -44,7 +62,6 @@
 .map-floor{
   position: absolute;
   top:  0px;
-  left: calc(50% - 600px);
   opacity: 0.2;
   pointer-events: none;
   z-index: 5;
@@ -52,8 +69,12 @@
 .map-rooms{
   position: absolute;
   top:  0px;
-  left: calc(50% - 600px);
   pointer-events: none;
   font-size: 13px;
   z-index: 7;
+}
+
+.traj-canvas{
+  position: absolute;
+  top:  0px;
 }

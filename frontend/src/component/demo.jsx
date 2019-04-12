@@ -11,12 +11,12 @@ export default class Demo extends Component {
 
   getUserProfile = () => {
 
-          fetch('/api/profile/')
-      .then(r => r.json())
-      .then(response => {
-        // this.setState({userData: response.user_data})
-        console.log(response)
-      })
+      fetch('/api/profile/')
+        .then(r => r.json())
+        .then(response => {
+          // this.setState({userData: response.user_data})
+          console.log(response)
+        })
   };
 
   render() {
