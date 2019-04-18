@@ -10,8 +10,10 @@ class MapController {
   	let res = await map.getGrids(2)
 	ctx.body = res ;
   }
-  async rooms_floor1(ctx) {
-  	let res = await map.getRooms(1)
+  async rooms_floor(ctx) {
+    const { floor } = ctx.request.body;
+    console.log(floor)
+  	let res = await map.getRooms(floor)
 	ctx.body = res ;
   }
 
