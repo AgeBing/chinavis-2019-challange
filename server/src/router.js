@@ -10,7 +10,7 @@ module.exports = (router) => {
     .post('/stu_overview',studentController.overview)
     .get('/grids1',MapController.grids_floor1 )
     .get('/grids2',MapController.grids_floor2 )
-    .get('/rooms1',MapController.rooms_floor1 )
+    .post('/rooms',MapController.rooms_floor )
     .post('/trajs',TrajController.trajs)
 
 };

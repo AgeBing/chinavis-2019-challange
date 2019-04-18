@@ -6,9 +6,12 @@ const initialState = {
 	showRooms:true,
 	showBricks:true,
 	showTrajs:false,
+	day:1,
+	startHour:9,
+	endHour:11
 }
 
-function appReducer( state = initialState , action) {
+function appReducer( state = initialState , action , opation) {
 
 	switch( action.type ){
 		case 'HIDE_SENSOR':
@@ -43,10 +46,26 @@ function appReducer( state = initialState , action) {
 				showTrajs : true   
 			}
 		break;
-		case 'HIDE_ROOM':
+		case 'HIDE_TRAJ':
 			return {
 				...state ,
 				showTrajs : false   
+			}
+		break;
+
+
+		case 'SWITCH_DAY':
+			return {
+				...state ,
+				day : action.day   
+			}
+		break;
+
+		case 'SWITCH_HOUR':
+			return {
+				...state ,
+				startHour : action.startHour,
+				endHour :  action.endHour,    
 			}
 		break;
 

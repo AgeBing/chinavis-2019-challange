@@ -6,12 +6,6 @@ import { Card, Icon, Avatar ,Switch,Radio,Divider,Slider} from 'antd';
 
 
 
-const marks = {
-  9  : '9:00',
-  14 : '14:00',
-};
-
-
 
 
 
@@ -19,34 +13,60 @@ class ConfigView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      dayValue : 1,
+      marks:{
+      }
     };
   }
 
+
+  componentWillMount(){
+
+    let { day,startHour,endHour } = this.props
+    
+    let newMarker = {}
+      newMarker[startHour] = `${startHour}:00`
+      newMarker[endHour] = `${endHour}:00`
+    this.setState({ 
+      dayValue:day,
+      marks:newMarker,
+      startHour,
+      endHour
+    })
+
+  }
+
   render() {
-    let { onChange ,showSensors,showBricks,showRooms,showTrajs } = this.props 
+    let { onChangeDisplay ,onChangeDay,onChangeHour,
+      showSensors,showBricks,showRooms,showTrajs } = this.props 
+    
+    let { dayValue,marks,startHour,endHour } = this.state
     return (
       <div>
           <Divider orientation="left">显示设置</Divider>
           <Switch  checkedChildren="传感器" unCheckedChildren="传感器" 
              checked={showSensors}
-             onChange={(checked)=> onChange('sensor',checked)} />
+             onChange={(checked)=> onChangeDisplay('sensor',checked)} />
           <Switch  checkedChildren="房间" unCheckedChildren="房间"  
               checked={showRooms}
-             onChange={(checked)=> onChange('room',checked)} />
+             onChange={(checked)=> onChangeDisplay('room',checked)} />
           <Switch  checkedChildren="轨迹" unCheckedChildren="轨迹"   
               checked={showTrajs}
-             onChange={(checked)=> onChange('traj',checked)} />
+             onChange={(checked)=> onChangeDisplay('traj',checked)} />
           
 
 
           <Divider orientation="left">时间选择</Divider>
-          <Radio.Group onChange={onChange} value={1}>
+          <Radio.Group onChange={onChangeDay.bind(this)} value={dayValue}>
             <Radio value={1}>Day 1</Radio>
             <Radio value={2}>Day 2</Radio>
             <Radio value={3}>Day 3</Radio>
           </Radio.Group>
-          <Slider range step={1} marks={marks} defaultValue={[9,14]} min={0} max={23} tipFormatter={(val)=>`${val}:00`} />
+
+          <Slider range step={1} marks={marks} defaultValue={[startHour,endHour]} 
+                  min={0} max={23} tipFormatter={(val)=>`${val}:00`}
+                  onChange={onChangeHour.bind(this)}
+                   />
 
           <Divider orientation="left">轨迹样式设置</Divider>
           透明度  <Slider step={0.1}  defaultValue={0.5} min={0} max={1} style={sliderStyle} />
@@ -61,16 +81,60 @@ const mapStateToProps = (state) => {
     showSensors: state.showSensors,
     showBricks: state.showBricks,
     showRooms: state.showRooms,
-    showTrajs: state.showTrajs
+    showTrajs: state.showTrajs,
+    day : state.day,
+    startHour:state.startHour,
+    endHour:state.endHour
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
+
+   var timer,
+        delay = 2000
+
   return {
-    onChange: (name , checked) => {
+    onChangeDisplay: (name , checked) => {
       let change =  checked ? 'SHOW' : 'HIDE'
       let type = change + '_' + name.toLocaleUpperCase()
       dispatch({ type, checked})
+    },
+
+    onChangeDay:function(e){
+      let value = e.target.value
+      this.setState({ dayValue: value})
+      let type = 'SWITCH_DAY'
+    
+
+      delay = 500
+      clearTimeout(timer)
+      timer = setTimeout(function () {
+
+        dispatch({ type:type , day:value})
+      
+      }, delay)
+
+    },
+
+    onChangeHour:function(v){
+      let startHour = v[0],
+          endHour   = v[1]
+      let type = 'SWITCH_HOUR'
+
+      clearTimeout(timer)
+      timer = setTimeout(function () {
+        dispatch({ type , startHour ,endHour })
+      }, delay)
+
+
+      let newMarker = {}
+      newMarker[startHour] = `${startHour}:00`
+      newMarker[endHour] = `${endHour}:00`
+
+      this.setState({
+        marks:newMarker
+      })
+
     }
   }
 }
