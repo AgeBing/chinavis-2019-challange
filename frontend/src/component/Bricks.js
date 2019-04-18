@@ -4,7 +4,7 @@ import '../css/grid.css';
 
 import Brick from './Brick'
 
-export default class Sensors extends Component {
+export default class Bricks extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,7 +25,8 @@ export default class Sensors extends Component {
       for(let j = 0;j < y_n ;j++){
           _grids.push({
             x : i,
-            y:  j
+            y:  j,
+            id: i*y_n + j
           })
       }
     }
@@ -42,7 +43,7 @@ export default class Sensors extends Component {
         width={this.props.width} height={this.props.height} >
           {
             grids.map((grid)=>(
-               <Brick  
+               <Brick  key={grid.id}
                 x = {grid.x}
                 y = {grid.y}
                             />  

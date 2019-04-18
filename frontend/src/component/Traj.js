@@ -1,26 +1,35 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 
 import '../css/grid.css';
 
-export default class Traj extends Component {
+class Traj extends Component {
   constructor(props) {
     super(props);
     this.state = {
         trajs: [],
         rectWidth:35,
         rectHeight:35,
+        timer:0,
     };
     this.canvas = React.createRef()
   }
 
   componentDidMount(){
+    this.changeMyProps()
+  }
+  componentWillUnmount(){
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.changeMyProps(nextProps)
+  }
+
+  changeMyProps(nextProps){
     let self = this
-
-    let hour = 7
-    let timeID = setInterval(()=>{
-
-       let data = { hour:hour }
-      fetch('/api/trajs',{
+    let { startHour,endHour,day } = nextProps || this.props
+    let data = { startHour , endHour ,day }
+    fetch('/api/trajs',{
           body: JSON.stringify(data), // must match 'Content-Type' header
           cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
           credentials: 'same-origin', // include, same-origin, *omit
@@ -39,16 +48,7 @@ export default class Traj extends Component {
           console.log(response)
           self.drawTrajs(response)
         })
-
-      hour++
-      if(hour == 18) clearInterval(timeID)
-      console.log(hour)
-    }  ,5000)
-     
-
   }
-
-
 
   drawTrajs(trajs){
     let { rectWidth,rectHeight } = this.state 
@@ -57,9 +57,6 @@ export default class Traj extends Component {
 
         if (canvas.getContext) {
             var ctx = canvas.getContext("2d");
-            // console.log(ctx);
-            // console.log(Object.getPrototypeOf(ctx));
-
             (function () {
                 Object.getPrototypeOf(ctx).line = function (x, y, x1, y1) {
                     this.save();
@@ -72,23 +69,27 @@ export default class Traj extends Component {
             })();
 
             ctx.clearRect(0,0,width,height)
+
             ctx.strokeStyle = "rgba(234, 111, 90, 0.1)";
             ctx.lineWidth = 4
 
             // ctx.line(90, 130, 320, 210);
             for(let i =1;i < trajs.length;i++){
-              let p1 = trajs[i-1],
-                  p2 = trajs[i]
+              let p1 = { 
+                    x: trajs[i].x1 ,
+                    y: trajs[i].y1 ,
+                  },
+                  p2 = { 
+                    x: trajs[i].x2 ,
+                    y: trajs[i].y2 ,
+                  }
 
+              for(let j=0;j < trajs[i].count;j++){
+                ctx.moveTo( (p1.x + 1.5)* rectWidth , (p1.y + 1.5)* rectHeight  )
 
-              //不是相邻的就不画 
-              if( Math.abs(p1.x - p2.x) >  1 || Math.abs(p1.y - p2.y) > 1){
-                ctx.moveTo( (p2.x + 1.5)* rectWidth , (p2.y + 1.5)* rectHeight  )
-              }else{
                 ctx.line( (p1.x + 1.5)* rectWidth , (p1.y + 1.5)* rectHeight ,
                         (p2.x + 1.5)* rectWidth , (p2.y + 1.5)* rectHeight   )
               }
-
             }
         }
 
@@ -102,3 +103,15 @@ export default class Traj extends Component {
     );
   }
 }
+
+
+const mapStateToProps = (state) => {
+  return {
+    startHour: state.startHour,
+    endHour: state.endHour,
+    day: state.day,
+  }
+}
+
+
+export default connect(mapStateToProps)(Traj)

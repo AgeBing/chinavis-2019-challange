@@ -12,14 +12,18 @@ export default class Sensors extends Component {
     };
   }
 
-  componentDidMount(){
+  componentWillMount(){
+    this.getGrids(this.props.floor)
+  }
 
-      if(this.props.floor == 1){
+  componentWillReceiveProps(nextProps){
+      this.getGrids(nextProps.floor)
+  }
+  getGrids(floor){
+      if(floor == 1){
         fetch('/api/grids1')
           .then(r => r.json())
           .then(response => {
-            // this.setState({userData: response.user_data})
-            // console.log(response)
               this.setState({
                   grids : response
               })
@@ -28,14 +32,13 @@ export default class Sensors extends Component {
           fetch('/api/grids2')
             .then(r => r.json())
             .then(response => {
-              // this.setState({userData: response.user_data})
-              console.log(response)
                 this.setState({
                     grids : response
                 })
             })
         }
   }
+
   render() {
     let { grids } = this.state 
     return (
@@ -43,7 +46,7 @@ export default class Sensors extends Component {
         width={this.props.width} height={this.props.height} >
           {
             grids.map((grid)=>(
-               <Grid  
+               <Grid  key={grid.sid}
                 x = {grid.x}
                 y = {grid.y}
                             />  

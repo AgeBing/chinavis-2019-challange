@@ -41,7 +41,7 @@ class App extends Component {
           onTabChange={(key) => { this.handleTabChange(key, 'key'); }}
           bodyStyle={bodyStyle}
         >
-            <Floor   floor={this.state.key} />
+            <Floor   floor={+this.state.key} />
         </Card>
 
         <Card title='Config View'   id='config-container' > 

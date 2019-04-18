@@ -12,7 +12,7 @@ import appReducer from './reducers'
 const store = createStore(appReducer)
 
 store.subscribe(()=>{
-  console.log('new state')
+  console.log('state change log')
   console.log(store.getState())
 })
 

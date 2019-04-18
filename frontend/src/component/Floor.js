@@ -35,7 +35,7 @@ class  Floor  extends Component{
 					(<Sensors  floor={floor}  height={Config.mapHeight} width={Config.mapWidth} />)  
 				}
 				{ showRooms && 
-					( <Rooms height={Config.mapHeight} width={Config.mapWidth} /> )  
+					( <Rooms floor={floor} height={Config.mapHeight} width={Config.mapWidth} /> )  
 				}
 				{ showTrajs && 
 					( <Traj height={Config.mapHeight} width={Config.mapWidth} /> )  
