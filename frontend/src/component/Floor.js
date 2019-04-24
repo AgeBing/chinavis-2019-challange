@@ -4,6 +4,7 @@ import  Sensors  from './Sensors'
 import  Bricks  from './Bricks'
 import  Rooms  from './Rooms'
 import  Traj   from  './Traj'
+import  Hotmap   from  './Hotmap'
 
 import * as Config from '../Config'
 
@@ -16,7 +17,8 @@ const mapStateToProps = (state) => {
     showSensors: state.showSensors,
     showBricks: state.showBricks,
     showRooms: state.showRooms,
-    showTrajs: state.showTrajs
+    showTrajs: state.showTrajs,
+    showHotmap: state.showHotmap
   }
 }
 
@@ -25,7 +27,7 @@ class  Floor  extends Component{
 		super(props)
 	}
 	render(){
-		let { floor,showBricks,showSensors,showRooms,showTrajs }  = this.props
+		let { floor,showBricks,showSensors,showRooms,showTrajs,showHotmap }  = this.props
 		return (
 			<div>
 				{ showBricks && 
@@ -39,6 +41,11 @@ class  Floor  extends Component{
 				}
 				{ showTrajs && 
 					( <Traj height={Config.mapHeight} width={Config.mapWidth} /> )  
+				}
+				{ showHotmap && 
+					( <Hotmap floor={floor} 	height={Config.mapHeight} width={Config.mapWidth} /> )  
+					}
+					}
 				}
 			</div>
 		)

@@ -6,6 +6,7 @@ const initialState = {
 	showRooms:true,
 	showBricks:true,
 	showTrajs:false,
+	showHotmap:false,
 	day:1,
 	startHour:9,
 	endHour:11
@@ -52,7 +53,18 @@ function appReducer( state = initialState , action , opation) {
 				showTrajs : false   
 			}
 		break;
-
+		case 'SHOW_HOTMAP':
+			return {
+				...state ,
+				showHotmap : true   
+			}
+		break;
+		case 'HIDE_HOTMAP':
+			return {
+				...state ,
+				showHotmap : false   
+			}
+		break;
 
 		case 'SWITCH_DAY':
 			return {

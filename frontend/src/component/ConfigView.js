@@ -38,7 +38,7 @@ class ConfigView extends Component {
 
   render() {
     let { onChangeDisplay ,onChangeDay,onChangeHour,
-      showSensors,showBricks,showRooms,showTrajs } = this.props 
+      showSensors,showBricks,showRooms,showTrajs ,showHotmap} = this.props 
     
     let { dayValue,marks,startHour,endHour } = this.state
     return (
@@ -53,6 +53,9 @@ class ConfigView extends Component {
           <Switch  checkedChildren="轨迹" unCheckedChildren="轨迹"   
               checked={showTrajs}
              onChange={(checked)=> onChangeDisplay('traj',checked)} />
+          <Switch  checkedChildren="热力图" unCheckedChildren="热力图"   
+              checked={showHotmap}
+             onChange={(checked)=> onChangeDisplay('Hotmap',checked)} />
           
 
 
@@ -82,6 +85,7 @@ const mapStateToProps = (state) => {
     showBricks: state.showBricks,
     showRooms: state.showRooms,
     showTrajs: state.showTrajs,
+    showHotmap:state.showHotmap,
     day : state.day,
     startHour:state.startHour,
     endHour:state.endHour
