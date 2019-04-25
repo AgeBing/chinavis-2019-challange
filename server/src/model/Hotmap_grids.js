@@ -7,8 +7,8 @@ class Hotmap_grids{
          day = ${day} AND   time >= ${startHour} AND time <= ${endHour} AND floor=${floor}` 
       console.log(sql)
       let dataList = await query( sql )
-      console.log(dataList)
-      console.log(dataList.length)
+      // console.log(dataList)
+      // console.log(dataList.length)
     return await dataList;
   }
 }

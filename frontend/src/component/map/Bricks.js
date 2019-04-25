@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 
-import '../css/grid.css';
-
 import Brick from './Brick'
+import * as Config from './Config'
 
 export default class Bricks extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        grids: []
+        grids: [],
+        width:0,
+        height:0
     };
   }
 
@@ -17,9 +18,13 @@ export default class Bricks extends Component {
   }
 
   generateGrids(){
+    let { rectWidth,rectHeight } = Config
+    let { floor } = this.props
     let x_n = 30,
         y_n = 16,
         _grids = []
+
+    if(floor == 2) x_n  = 12
 
     for(let i = 0;i < x_n ;i++){
       for(let j = 0;j < y_n ;j++){
@@ -30,17 +35,19 @@ export default class Bricks extends Component {
           })
       }
     }
-
+    let width = (x_n + 2) * rectWidth,
+        height = (y_n + 2) * rectHeight 
     this.setState({
-       grids : _grids
+       grids : _grids,
+       width,
+       height
     })
-
   }
   render() {
-    let { grids } = this.state 
+    let { grids,width,height } = this.state 
     return (
-      <svg  className='map-floor' 
-        width={this.props.width} height={this.props.height} >
+      <svg  className='map-bricks' 
+        width={width} height={height} >
           {
             grids.map((grid)=>(
                <Brick  key={grid.id}

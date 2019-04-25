@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 
-import '../css/grid.css';
 
 class Traj extends Component {
   constructor(props) {
@@ -27,8 +26,8 @@ class Traj extends Component {
 
   changeMyProps(nextProps){
     let self = this
-    let { startHour,endHour,day } = nextProps || this.props
-    let data = { startHour , endHour ,day }
+    let { startHour,endHour,day,floor } = nextProps || this.props
+    let data = { startHour , endHour ,day,floor }
     fetch('/api/trajs',{
           body: JSON.stringify(data), // must match 'Content-Type' header
           cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -70,8 +69,8 @@ class Traj extends Component {
 
             ctx.clearRect(0,0,width,height)
 
-            ctx.strokeStyle = "rgba(234, 111, 90, 0.1)";
-            ctx.lineWidth = 4
+            ctx.strokeStyle = "rgba(234, 111, 90, 0.6)";
+            ctx.lineWidth = 6
 
             // ctx.line(90, 130, 320, 210);
             for(let i =1;i < trajs.length;i++){

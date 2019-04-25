@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 
-import '../css/grid.css';
+
+import * as Config from './Config'
 
 
 export default class Room extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        wordOffsetX:0,
-        wordOffsetY:0,
-        rectWidth:35,
-        rectHeight:35,
+        wordOffsetX: - 5,
+        wordOffsetY: 5,
         fillColor: 'yellow'
     };
   }
@@ -26,8 +25,9 @@ export default class Room extends Component {
     })
   }
   render() {
-    let { rectWidth,rectHeight,wordOffsetX,wordOffsetY,fillColor  } = this.state 
+    let { wordOffsetX,wordOffsetY,fillColor  } = this.state 
     let { x,y ,height,width,name }  = this.props
+    let { rectWidth,rectHeight } = Config
     return (
       <g>
           <rect 

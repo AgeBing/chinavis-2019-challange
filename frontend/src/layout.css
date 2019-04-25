@@ -1,0 +1,24 @@
+@import '~antd/dist/antd.css';
+
+
+.layout-app{
+	height: 100vh;
+	background: #fff;
+	padding: 10px;
+}
+.layout-item{
+	height: 100%;
+}
+
+.layout-item-sub1{
+	height: 50%;
+	width: 100%;
+}
+.layout-item-sub2{
+	margin-top:1%;
+	height: 49%;
+	width: 100%;
+}
+.layout-view{
+	border: 1px dashed #5f5f5f;
+}

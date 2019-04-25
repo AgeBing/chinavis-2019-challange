@@ -1,0 +1,53 @@
+.tree{
+	width: 100%;
+	padding: 10px;
+	overflow: scroll;
+	height: 100%;
+}
+.layer{
+	height: 100px;
+	width: 100%;
+	margin: 20px 0;
+	display: flex;
+	justify-content: space-around;
+	border-bottom: 1px dashed gray;
+	z-index: 9
+}
+.card{
+	width: 50px;
+	height: 50px;
+	display: inline-block;
+	border:  1px dashed red;
+	position: relative;
+}
+
+.links{
+	position: absolute;
+	top: 0px;
+    left: 0px;
+	pointer-events: none;
+}
+.ant-card-bordered{
+	border-radius: 4px;
+}
+
+
+
+.card-icons{
+	position: absolute;
+	bottom: 0;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+}
+.card-icon{
+	cursor: pointer;
+	margin: 0 4px;
+	z-index: 999
+}
+
+.ant-modal{
+	position: absolute;
+	top: 100px;
+	right: 10%;
+}

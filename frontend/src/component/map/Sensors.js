@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
-import '../css/grid.css';
+
+import { API_Sensors1,API_Sensors2 } from '../../api/index'
 
 import Grid from './Grid'
 
@@ -21,16 +22,14 @@ export default class Sensors extends Component {
   }
   getGrids(floor){
       if(floor == 1){
-        fetch('/api/grids1')
-          .then(r => r.json())
+        API_Sensors1()
           .then(response => {
               this.setState({
                   grids : response
               })
           })
         }else{
-          fetch('/api/grids2')
-            .then(r => r.json())
+          API_Sensors2()
             .then(response => {
                 this.setState({
                     grids : response

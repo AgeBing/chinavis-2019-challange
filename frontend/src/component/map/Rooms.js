@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import Room from './Room'
 
+import { API_Rooms } from '../../api/index'
+
 export default class Rooms extends Component {
   constructor(props) {
     super(props);
@@ -19,26 +21,13 @@ export default class Rooms extends Component {
   }
   getRooms(floor){
       let data = { floor}
-       fetch('/api/rooms',{
-        body: JSON.stringify(data),
-        cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-          credentials: 'same-origin', // include, same-origin, *omit
-          headers: {
-            'user-agent': 'Mozilla/4.0 MDN Example',
-            'content-type': 'application/json'
-          },
-          method: 'POST', // *GET, POST, PUT, DELETE, etc.
-          mode: 'cors', // no-cors, cors, *same-origin
-          redirect: 'follow', // manual, *follow, error
-          referrer: 'no-referrer', // *client, no-referrer
-       })
-        .then(r => r.json())
-        .then(response => {
-          // console.log(response)
-            this.setState({
+      
+      API_Rooms(data).then((response)=>{
+         this.setState({
                 rooms : response
-            })
-        })
+          })
+      })
+    
   }
 
   render() {

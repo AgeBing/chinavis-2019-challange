@@ -1,37 +1,43 @@
 import React, { Component } from 'react';
 
-import '../css/grid.css';
+
+import './grid.css';
 
 
-export default class Brick extends Component {
+
+export default class hotmap_grid extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        wordOffsetX:3,
-        wordOffsetY:20,
+        wordOffsetX:0,
+        wordOffsetY:0,
         rectWidth:35,
         rectHeight:35,
-        fillColor: 'gray'
+        fillColor: 'yellow'
     };
   }
 
+  enterHandle(e){
+    this.setState({
+      // fillColor: 'green'
+    })
+  }
+  leaveHandle(e){
+    this.setState({
+      // fillColor: 'gray'
+    })
+  }
   render() {
     let { rectWidth,rectHeight,wordOffsetX,wordOffsetY,fillColor  } = this.state 
-    let { x,y }  = this.props
+    let { x,y ,color}  = this.props
     return (
       <g>
           <rect 
             x={ (x+1)*rectWidth }  
             y={ (y+1)*rectHeight}
             width={rectWidth} height={rectHeight}
-            fill={fillColor}
+            fill={color}
             ></rect>
-
-{/*          <text 
-            x={ (x + 1)*rectWidth + wordOffsetX}  
-            y={ (y + 1)*rectHeight+ wordOffsetY}
-            fill="red" > {x} | {y}  </text>*/}
-            
       </g>
     );
   }

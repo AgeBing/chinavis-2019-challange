@@ -1,7 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import App from "./App";
+// import App from "./App";
+import Layout  from "./Layout";
+
 import * as serviceWorker from "./serviceWorker";
 
 import { Provider } from "react-redux";
@@ -18,7 +20,7 @@ store.subscribe(() => {
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <Layout />
   </Provider>,
   document.getElementById("root")
 );
