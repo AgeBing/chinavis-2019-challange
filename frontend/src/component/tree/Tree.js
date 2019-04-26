@@ -4,8 +4,9 @@ import './tree.css'
 import Layer from './Layer.js'
 import Links from './Links.js'
 
+import Condition from './Condition.js'
 
-import { Modal, Button,Icon,InputNumber } from 'antd';
+import { Modal, Button,Icon,InputNumber, Menu, Dropdown,Divider } from 'antd';
 const ButtonGroup = Button.Group
 
 let nodes_location = {}
@@ -36,6 +37,13 @@ function  treeToLayer( tree ){
   return _layers
 }
 
+function mins2str(mins_arr ){
+
+  let s = mins_arr[0] , e = mins_arr[1]
+  return  `${Math.floor(s/60)}:${s%60} - ${Math.floor(e/60)}:${e%60}`
+}
+
+
 
 export default class Tree extends Component {
   constructor(props) {
@@ -50,84 +58,88 @@ export default class Tree extends Component {
       },
       nodes_number: 1,
       modal_visible : false,
-      add_node_num:3
     };
   }
   componentWillMount(){
-    // let tree = {
-    //   name: 'root',
-    //   childNum:3,
-    //   path: [0],
-    //   children:[
-    //     {
-    //       name: '会场',
-    //       childNum:3,
-    //       path:[0,0],
-    //       children:[
-    //         {
-    //           name: '上午',
-    //           childNum: 0,
-    //           path:[0,0,0],              
-    //         },
-    //         {
-    //           name: '中午',
-    //           childNum: 0,
-    //           path:[0,0,1],              
-    //         },
-    //         {
-    //           name: '下午',
-    //           childNum: 0,
-    //           path:[0,0,2],             
-    //         },
-    //       ]
-    //     },
-    //     {
-    //       name: '功能区',
-    //       childNum:0,
-    //       path:[0,1],
-    //     },
-    //     {
-    //       name: '楼梯',
-    //       childNum:3,
-    //       path:[0,2],
-    //       children:[
-    //         {
-    //           name: '上午',
-    //           childNum: 2,
-    //           path:[0,2,0],
-    //           children:[
-    //             {
-    //               name: '男',
-    //               childNum: 0,
-    //               path:[0,2,0,0],              
-    //             },
-    //             {
-    //               name: '女',
-    //               childNum: 0,
-    //               path:[0,2,0,1],              
-    //             }
-    //           ]              
-    //         },
-    //         {
-    //           name: '中午',
-    //           childNum: 0,
-    //           path:[0,2,1],              
-    //         },
-    //         {
-    //           name: '下午',
-    //           childNum: 0,
-    //           path:[0,2,2],             
-    //         },
-    //       ]
-    //     },
-    //   ]
-    // }
-
+    /*
     let tree = {
       name: 'root',
+      childNum:3,
+      path: [0],
+      children:[
+        {
+          name: '会场',
+          childNum:3,
+          path:[0,0],
+          children:[
+            {
+              name: '上午',
+              childNum: 0,
+              path:[0,0,0],              
+            },
+            {
+              name: '中午',
+              childNum: 0,
+              path:[0,0,1],              
+            },
+            {
+              name: '下午',
+              childNum: 0,
+              path:[0,0,2],             
+            },
+          ]
+        },
+        {
+          name: '功能区',
+          childNum:0,
+          path:[0,1],
+        },
+        {
+          name: '楼梯',
+          childNum:3,
+          path:[0,2],
+          children:[
+            {
+              name: '上午',
+              childNum: 2,
+              path:[0,2,0],
+              children:[
+                {
+                  name: '男',
+                  childNum: 0,
+                  path:[0,2,0,0],              
+                },
+                {
+                  name: '女',
+                  childNum: 0,
+                  path:[0,2,0,1],              
+                }
+              ]              
+            },
+            {
+              name: '中午',
+              childNum: 0,
+              path:[0,2,1],              
+            },
+            {
+              name: '下午',
+              childNum: 0,
+              path:[0,2,2],             
+            },
+          ]
+        },
+      ]
+    }
+    */
+
+    let tree = {
+      name: 'Root Node',
       childNum:0,
       path: [0],
-      isSelected:true
+      isSelected:true,
+      condition:{
+        time:[420,1080]    // 以 分 为单位 , 表示 [7:00-18:00]
+      }
     }
     let layers = treeToLayer( tree )
 
@@ -207,13 +219,14 @@ export default class Tree extends Component {
     }
   }
 
-  addNodesInTree(){
-      let { tree,nodes_number,add_node_num,currentAddPath  } = this.state
+  addNodesInTree(conditions){
+      let { tree,nodes_number,currentAddPath  } = this.state
       let self = this
       let nodes = tree['children'],
           node,
           i,
-          path = currentAddPath
+          path = currentAddPath,
+          add_node_num = conditions.length
       for(i = 1; i < path.length-1;i++){
           nodes = nodes[path[i]]['children']
       }
@@ -224,10 +237,11 @@ export default class Tree extends Component {
          node['children'] = []
           for(let j =0; j < add_node_num;j++){
                node['children'].push({
-                  name: 'xxx',
+                  name: mins2str(conditions[j]['time']),
                   childNum: 0,
                   path: path.concat(j),
-                  isSelected:false
+                  isSelected:false,
+                  condition: conditions[j]
                })
           }
           node['childNum'] = add_node_num
@@ -302,35 +316,49 @@ export default class Tree extends Component {
 
   }
   openModal(path){
+    let { tree  } = this.state
+
+    let current_add_condition = {},
+        node
+
+    current_add_condition = tree.condition
+
+    if(path.length > 1){
+       node = tree 
+       for(let i = 1;i < path.length;i++){
+         node = node['children'][path[i]]
+         for(let cond in node.condition){
+             current_add_condition[cond] = node.condition[cond]  
+             // 子节点的条件将父节点的条件覆盖了
+             // 子节点没有的条件继承自父节点
+         }
+       }
+    }
+
+    console.log('current node condition', current_add_condition)
      this.setState({
         currentAddPath: path,
-        modal_visible: true
+        modal_visible: true,
+        current_add_condition
      })
-
   }
-
-
-  onChangeNodeNum =(value)=> {
-    this.setState({
-       add_node_num : value
-    })
-  }
-  handleOk=()=>{
-
-
-    this.addNodesInTree()
+  handleOk =(time_intervals)=>{
+    let conditions = []
+    for(let i = 0;i < time_intervals.length;i++){
+      conditions.push({
+        time : time_intervals[i]
+      })
+    }
+    this.addNodesInTree(conditions)
+    // console.log(conditions)
     this.setState({
       modal_visible: false,
-      add_node_num : 3
     })
-
   }
   handleCancel = ()=>{
     this.setState({
       modal_visible: false,
-      add_node_num : 3
     })
-
   }
 
   render() {
@@ -357,19 +385,15 @@ export default class Tree extends Component {
             ))
           }
 
-          <Modal
-            title="添加子节点"
-            visible={this.state.modal_visible}
-            mask={false}
-            width={width-200}
-            onOk={this.handleOk}
-            onCancel={this.handleCancel}
-          >
-
-            节点个数  <InputNumber min={1} max={4} defaultValue={3} onChange={this.onChangeNodeNum} value={this.state.add_node_num}/>
-
-
-          </Modal>
+          {
+            this.state.modal_visible && 
+            (<Condition 
+              modal_visible={this.state.modal_visible}
+              current_add_condition={this.state.current_add_condition}
+              handleOk={this.handleOk}
+              handleCancel={this.handleCancel}
+            />)
+          }
 
       </div>
     );

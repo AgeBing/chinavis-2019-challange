@@ -85,7 +85,9 @@ export default class Node extends Component {
     return (
       <div className='card' ref={dom => {this.nodeDOM = dom}} onClick={this.changeSelectState.bind(this)} style={{ backgroundColor: bgColor }} >
           
-
+          <div className='card-content'>
+            {name}
+          </div>
           <div className='card-icons'>
           {  !hasChild && 
               ( <Icon type="plus-circle" onClick={this.hanldeAdd.bind(this)}  className='card-icon card-icon-add' /> )
