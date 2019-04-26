@@ -26,7 +26,8 @@ export default class Links extends Component {
           target:{
             x: link.target.x - x,
             y: link.target.y - y
-          }
+          },
+          id: link.id
         })
     })
     this.setState({

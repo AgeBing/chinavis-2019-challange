@@ -24,9 +24,9 @@ export default class Link extends Component {
 
 
 const svgStyle = {
-  stroke : 'red',
+  stroke : 'gray',
   strokeWidth:1,
   r: 2,
-  fill:'red'
+  fill: 'gray'
 }
 

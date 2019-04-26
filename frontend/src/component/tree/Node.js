@@ -59,8 +59,15 @@ export default class Node extends Component {
     addNodesInTree(path)
 
   }
+  changeSelectState(){
+    let { path,stateChangeInTree } = this.props 
+    stateChangeInTree(path)
+  }
 
-  hanldeAdd(){
+
+  hanldeAdd(e){
+     // console.log('click on icon')
+     e.stopPropagation();  // 避免 事件 向下传递
     let { path,addNodesInTree } = this.props 
     addNodesInTree(path)
   }
@@ -71,10 +78,12 @@ export default class Node extends Component {
   }
 
   render() {
-    let { name,path,hasChild,hasEndChild }  = this.props
+    let { name,path,hasChild,hasEndChild,isSelected }  = this.props
+
+    let bgColor = ( isSelected == true ? '#40a9ff' : null)
 
     return (
-      <div className='card' ref={dom => {this.nodeDOM = dom}} onMouseEnter={this.addNodes.bind(this)}>
+      <div className='card' ref={dom => {this.nodeDOM = dom}} onClick={this.changeSelectState.bind(this)} style={{ backgroundColor: bgColor }} >
           
 
           <div className='card-icons'>

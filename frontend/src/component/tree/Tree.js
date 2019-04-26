@@ -48,81 +48,87 @@ export default class Tree extends Component {
         width:0,
         height:0
       },
-      nodes_number: 12,
+      nodes_number: 1,
       modal_visible : false,
       add_node_num:3
     };
   }
   componentWillMount(){
+    // let tree = {
+    //   name: 'root',
+    //   childNum:3,
+    //   path: [0],
+    //   children:[
+    //     {
+    //       name: '会场',
+    //       childNum:3,
+    //       path:[0,0],
+    //       children:[
+    //         {
+    //           name: '上午',
+    //           childNum: 0,
+    //           path:[0,0,0],              
+    //         },
+    //         {
+    //           name: '中午',
+    //           childNum: 0,
+    //           path:[0,0,1],              
+    //         },
+    //         {
+    //           name: '下午',
+    //           childNum: 0,
+    //           path:[0,0,2],             
+    //         },
+    //       ]
+    //     },
+    //     {
+    //       name: '功能区',
+    //       childNum:0,
+    //       path:[0,1],
+    //     },
+    //     {
+    //       name: '楼梯',
+    //       childNum:3,
+    //       path:[0,2],
+    //       children:[
+    //         {
+    //           name: '上午',
+    //           childNum: 2,
+    //           path:[0,2,0],
+    //           children:[
+    //             {
+    //               name: '男',
+    //               childNum: 0,
+    //               path:[0,2,0,0],              
+    //             },
+    //             {
+    //               name: '女',
+    //               childNum: 0,
+    //               path:[0,2,0,1],              
+    //             }
+    //           ]              
+    //         },
+    //         {
+    //           name: '中午',
+    //           childNum: 0,
+    //           path:[0,2,1],              
+    //         },
+    //         {
+    //           name: '下午',
+    //           childNum: 0,
+    //           path:[0,2,2],             
+    //         },
+    //       ]
+    //     },
+    //   ]
+    // }
+
     let tree = {
       name: 'root',
-      childNum:3,
+      childNum:0,
       path: [0],
-      children:[
-        {
-          name: '会场',
-          childNum:3,
-          path:[0,0],
-          children:[
-            {
-              name: '上午',
-              childNum: 0,
-              path:[0,0,0],              
-            },
-            {
-              name: '中午',
-              childNum: 0,
-              path:[0,0,1],              
-            },
-            {
-              name: '下午',
-              childNum: 0,
-              path:[0,0,2],             
-            },
-          ]
-        },
-        {
-          name: '功能区',
-          childNum:0,
-          path:[0,1],
-        },
-        {
-          name: '楼梯',
-          childNum:3,
-          path:[0,2],
-          children:[
-            {
-              name: '上午',
-              childNum: 2,
-              path:[0,2,0],
-              children:[
-                {
-                  name: '男',
-                  childNum: 0,
-                  path:[0,2,0,0],              
-                },
-                {
-                  name: '女',
-                  childNum: 0,
-                  path:[0,2,0,1],              
-                }
-              ]              
-            },
-            {
-              name: '中午',
-              childNum: 0,
-              path:[0,2,1],              
-            },
-            {
-              name: '下午',
-              childNum: 0,
-              path:[0,2,2],             
-            },
-          ]
-        },
-      ]
+      isSelected:true
     }
-
     let layers = treeToLayer( tree )
 
     this.setState({
@@ -178,7 +184,7 @@ export default class Tree extends Component {
         processQueue();
       }
       processQueue()
-      console.log("render links ",tree,_links)
+      // console.log("render links ",tree,_links)
       this.setState({
         links:_links
       })
@@ -193,8 +199,8 @@ export default class Tree extends Component {
   updateNodeLocation(path,location){
     let { nodes_number } = this.state 
     nodes_location[ path.join('*') ]  = location
-    console.log( path.join('*') )
-    console.log( Object.keys(nodes_location).length ,nodes_number )
+    // console.log( path.join('*') )
+    // console.log( Object.keys(nodes_location).length ,nodes_number )
     // 等到节点数目 达标 
     if( Object.keys(nodes_location).length  == nodes_number){
         this.renderLinks()
@@ -205,22 +211,25 @@ export default class Tree extends Component {
       let { tree,nodes_number,add_node_num,currentAddPath  } = this.state
       let self = this
       let nodes = tree['children'],
-          node,i,
+          node,
+          i,
           path = currentAddPath
       for(i = 1; i < path.length-1;i++){
           nodes = nodes[path[i]]['children']
       }
-      node = nodes[path[i]]
+
+      node =  ( nodes !== undefined ? nodes[path[i]] : tree) // 右边表示 root 情况
+
       if(node.childNum == 0){
          node['children'] = []
           for(let j =0; j < add_node_num;j++){
                node['children'].push({
                   name: 'xxx',
                   childNum: 0,
-                  path: path.concat(j)
+                  path: path.concat(j),
+                  isSelected:false
                })
           }
-
           node['childNum'] = add_node_num
           nodes_number+= add_node_num
       }
@@ -240,7 +249,9 @@ export default class Tree extends Component {
       for(i = 1; i < path.length-1;i++){
           nodes = nodes[path[i]]['children']
       }
-      node = nodes[path[i]]
+
+      node =  ( path.length != 1  ? nodes[path[i]] : tree) // 右边表示 root 情况
+
       
       for(let i = 0;i < node.childNum;i++){
           let child_path = node['children'][i].path.join('*')
@@ -255,6 +266,40 @@ export default class Tree extends Component {
       this.setState({
           tree,layers,nodes_number
       })
+  }
+  stateChangeInTree(path){
+     let { tree } = this.state
+
+     let queue = [],
+         _links = []
+
+      queue[0] = tree
+      // 广度优先遍历
+      function processQueue() {
+        var i, childCount, node,level;
+        if (queue.length === 0) {
+          return;
+        }
+        node = queue.shift();
+
+        if(node.path.join('*') == path.join('*')){
+          node.isSelected = true
+        }else{
+          node.isSelected = false
+        }
+
+        for (i = 0, childCount = node.childNum; i < childCount; i++) {
+          queue.push(node.children[i]);
+        } 
+        processQueue();
+      }
+      processQueue()
+
+      let layers = treeToLayer( tree )
+      this.setState({
+          tree,layers
+      })
+
   }
   openModal(path){
      this.setState({
@@ -307,7 +352,8 @@ export default class Tree extends Component {
                 <Layer updateNodeLocation={self.updateNodeLocation.bind(this)}  
                     addNodesInTree={self.openModal.bind(this)}
                     delNodesInTree={self.delNodesInTree.bind(this)}
-                    data={layer} key={i} /> 
+                    stateChangeInTree= {self.stateChangeInTree.bind(this)}
+                    data={layer} key={i}  /> 
             ))
           }
 
