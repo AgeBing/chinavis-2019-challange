@@ -26,7 +26,6 @@
       "no-restricted-globals": "off",
       "no-unused-vars": "off"
     }
-
   },
   "browserslist": [
     ">0.2%",
