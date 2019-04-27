@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import './tree.css'
-import TimeSelect from './TimeSelect.js'
+import TimeSelect from './ConditionTime.js'
 import { Modal, Button,Icon,InputNumber, Menu, Dropdown,Divider,Select } from 'antd';
 
 const Option = Select.Option;
