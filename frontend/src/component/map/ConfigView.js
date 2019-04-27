@@ -35,7 +35,7 @@ class ConfigView extends Component {
       showBricks,
       showRooms,
       showTrajs,
-      showHotmap
+      showHeatmap
     } = this.props;
 
     let { dayValue, marks, startHour, endHour } = this.state;
@@ -63,8 +63,8 @@ class ConfigView extends Component {
         <Switch
           checkedChildren="热力图"
           unCheckedChildren="热力图"
-          checked={showHotmap}
-          onChange={checked => onChangeDisplay("Hotmap", checked)}
+          checked={showHeatmap}
+          onChange={checked => onChangeDisplay("Heatmap", checked)}
         />
         <Divider orientation="left">时间选择</Divider>
         <Radio.Group onChange={onChangeDay.bind(this)} value={dayValue}>
@@ -102,7 +102,7 @@ const mapStateToProps = state => {
     showBricks: state.showBricks,
     showRooms: state.showRooms,
     showTrajs: state.showTrajs,
-    showHotmap: state.showHotmap,
+    showHeatmap: state.showHeatmap,
     day: state.day,
     startHour: state.startHour,
     endHour: state.endHour

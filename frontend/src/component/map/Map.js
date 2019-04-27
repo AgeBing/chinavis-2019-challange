@@ -4,7 +4,7 @@ import  Sensors  from './Sensors'
 import  Bricks  from './Bricks'
 import  Rooms  from './Rooms'
 import  Traj   from  './Traj'
-import  Hotmap   from  './Hotmap'
+import  Heatmap   from  './Heatmap'
 
 import * as Config from './Config'
 
