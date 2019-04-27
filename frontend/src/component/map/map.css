@@ -53,3 +53,10 @@
 .map-rooms{
   font-size: 11px;
 }
+
+.map-views{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
