@@ -18,7 +18,7 @@ connection = pymysql.connect(host='115.159.202.238',
 
 def insertOneRecord(id, x1, y1, x2, y2, time1, time2, floor1, floor2):
     with connection.cursor() as cursor:
-        sql = "INSERT INTO  base_trajectory_day3 VALUES (%s, %s, %s, %s, %s, %s,%s,%s,%s) " % \
+        sql = "INSERT INTO  base_trajectory_day2 VALUES (%s, %s, %s, %s, %s, %s,%s,%s,%s) " % \
             (id, x1, y1, x2, y2, time1, time2, floor1, floor2)
         cursor.execute(sql)
         connection.commit()
@@ -81,7 +81,7 @@ def getBaseT():
 
 
 def process():
-    day1 = pd.read_csv('./data/day3.csv', decimal=',')
+    day1 = pd.read_csv('./data/day2.csv', decimal=',')
     # old_columns = day1.columns
     # locations of sensors
     s_loaction = pd.read_csv('./data/传感器布置表.csv', delimiter=',')
@@ -113,7 +113,7 @@ def process():
                 insertOneRecord(start.id, start.x, start.y, row.x,
                                 row.y, start.time, row.time, start.floor, row.floor)
             start = row
-    print(arr[0:10])
+    # print(arr[0:10])
 
 
 if __name__ == "__main__":
