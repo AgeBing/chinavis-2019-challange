@@ -7,6 +7,12 @@ import Links from './Links.js'
 import Condition from './Condition.js'
 
 import { Modal, Button,Icon,InputNumber, Menu, Dropdown,Divider } from 'antd';
+
+import { findConditions }  from './util.js'
+
+import { connect } from "react-redux";
+
+
 const ButtonGroup = Button.Group
 
 let nodes_location = {}
@@ -45,7 +51,7 @@ function mins2str(mins_arr ){
 
 
 
-export default class Tree extends Component {
+class Tree extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -61,77 +67,6 @@ export default class Tree extends Component {
     };
   }
   componentWillMount(){
-    /*
-    let tree = {
-      name: 'root',
-      childNum:3,
-      path: [0],
-      children:[
-        {
-          name: '会场',
-          childNum:3,
-          path:[0,0],
-          children:[
-            {
-              name: '上午',
-              childNum: 0,
-              path:[0,0,0],              
-            },
-            {
-              name: '中午',
-              childNum: 0,
-              path:[0,0,1],              
-            },
-            {
-              name: '下午',
-              childNum: 0,
-              path:[0,0,2],             
-            },
-          ]
-        },
-        {
-          name: '功能区',
-          childNum:0,
-          path:[0,1],
-        },
-        {
-          name: '楼梯',
-          childNum:3,
-          path:[0,2],
-          children:[
-            {
-              name: '上午',
-              childNum: 2,
-              path:[0,2,0],
-              children:[
-                {
-                  name: '男',
-                  childNum: 0,
-                  path:[0,2,0,0],              
-                },
-                {
-                  name: '女',
-                  childNum: 0,
-                  path:[0,2,0,1],              
-                }
-              ]              
-            },
-            {
-              name: '中午',
-              childNum: 0,
-              path:[0,2,1],              
-            },
-            {
-              name: '下午',
-              childNum: 0,
-              path:[0,2,2],             
-            },
-          ]
-        },
-      ]
-    }
-    */
-
     let tree = {
       name: 'Root Node',
       childNum:0,
@@ -283,6 +218,7 @@ export default class Tree extends Component {
   }
   stateChangeInTree(path){
      let { tree } = this.state
+     let { changeQueryTime } = this.props
 
      let queue = [],
          _links = []
@@ -314,6 +250,10 @@ export default class Tree extends Component {
           tree,layers
       })
 
+      
+      let final_conditions  =  findConditions(tree)
+      changeQueryTime( final_conditions['time'] )
+
   }
   openModal(path){
     let { tree  } = this.state
@@ -323,17 +263,17 @@ export default class Tree extends Component {
 
     current_add_condition = tree.condition
 
-    if(path.length > 1){
-       node = tree 
-       for(let i = 1;i < path.length;i++){
-         node = node['children'][path[i]]
-         for(let cond in node.condition){
-             current_add_condition[cond] = node.condition[cond]  
-             // 子节点的条件将父节点的条件覆盖了
-             // 子节点没有的条件继承自父节点
-         }
-       }
-    }
+    // if(path.length > 1){
+    //    node = tree 
+    //    for(let i = 1;i < path.length;i++){
+    //      node = node['children'][path[i]]
+    //      for(let cond in node.condition){
+    //          current_add_condition[cond] = node.condition[cond]  
+    //          // 子节点的条件将父节点的条件覆盖了
+    //          // 子节点没有的条件继承自父节点
+    //      }
+    //    }
+    // }
 
     console.log('current node condition', current_add_condition)
      this.setState({
@@ -342,19 +282,14 @@ export default class Tree extends Component {
         current_add_condition
      })
   }
-  handleOk =(time_intervals)=>{
-    let conditions = []
-    for(let i = 0;i < time_intervals.length;i++){
-      conditions.push({
-        time : time_intervals[i]
-      })
-    }
+
+  handleOk =(conditions)=>{
     this.addNodesInTree(conditions)
-    // console.log(conditions)
     this.setState({
       modal_visible: false,
     })
   }
+
   handleCancel = ()=>{
     this.setState({
       modal_visible: false,
@@ -400,3 +335,26 @@ export default class Tree extends Component {
   }
 }
 
+const mapStateToProps = state => {
+  return {
+  };
+};
+
+
+const mapDispatchToProps = dispatch => {
+  return {
+    changeQueryTime: (time) => {
+      let type = 'CHANGE_TIME'
+      dispatch({ type, time });
+    },
+  }
+}
+
+
+
+
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Tree)

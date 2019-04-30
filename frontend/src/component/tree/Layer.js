@@ -14,10 +14,6 @@ export default class Layer extends Component {
     let { data,updateNodeLocation,addNodesInTree,delNodesInTree,stateChangeInTree }  = this.props
     return (
       <div className='layer'>
-            {/*<Node  addLinks={this.props.addLinks} layerId={this.props.layerId} nodeId={0}/>
-            <Node  addLinks={this.props.addLinks} layerId={this.props.layerId} nodeId={1}/>
-            <Node  addLinks={this.props.addLinks} layerId={this.props.layerId} nodeId={2}/>*/}
-
             {
               data.map((node,i)=>{
                 let hasEndChild = false //指拥有叶子节点 的父节点
@@ -30,7 +26,7 @@ export default class Layer extends Component {
                   if(sign) hasEndChild = true
                 }
 
-                return (
+            return (
                 <Node name={node.name} path={node.path}
                   isSelected={node.isSelected} 
                   hasChild={node.childNum > 0 ? true : false}

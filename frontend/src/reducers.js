@@ -6,7 +6,8 @@ const initialState = {
   showHotmap: false,
   day: 1,
   startHour: 9,
-  endHour: 11
+  endHour: 11,
+  heatmap_time:[420,1080]      //热力图的时间, 单位为分  [开始时间，结束时间]
 };
 
 function appReducer(state = initialState, action, opation) {
@@ -89,6 +90,15 @@ function appReducer(state = initialState, action, opation) {
         ...state,
         startHour: action.startHour,
         endHour: action.endHour
+      };
+      break;
+
+
+
+    case "CHANGE_TIME":
+      return{
+        ...state,
+        heatmap_time: action.time
       };
       break;
   }

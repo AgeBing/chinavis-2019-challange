@@ -38,7 +38,15 @@ export default class Condition extends Component {
       add_node_num : 3
     })
 
-    this.props.handleOk( time_intervals )
+    let conditions = []
+
+    time_intervals.forEach((interval)=>{
+      conditions.push({
+         time : interval
+      })
+    })
+
+    this.props.handleOk( conditions )
   }
   handleCancel = ()=>{
     this.setState({

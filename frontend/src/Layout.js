@@ -6,6 +6,8 @@ import { Row, Col } from 'antd';
 import MyMap from './component/map/Map.js' 
 import Tree from './component/tree/Tree.js'
 
+// import { findConditions }  from './component/tree/util.js'
+
 class App extends Component {
 
 	render(){
