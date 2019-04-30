@@ -3,7 +3,7 @@ const initialState = {
   showRooms: true,
   showBricks: true,
   showTrajs: false,
-  showHotmap: false,
+  showHeatmap: false,
   day: 1,
   startHour: 9,
   endHour: 11,
@@ -50,16 +50,16 @@ function appReducer(state = initialState, action, opation) {
         showTrajs: false
       };
       break;
-    case "SHOW_HOTMAP":
+    case "SHOW_HEATMAP":
       return {
         ...state,
-        showHotmap: true
+        showHeatmap: true
       };
       break;
-    case "HIDE_HOTMAP":
+    case "HIDE_HEATMAP":
       return {
         ...state,
-        showHotmap: false
+        showHeatmap: false
       };
       break;
 

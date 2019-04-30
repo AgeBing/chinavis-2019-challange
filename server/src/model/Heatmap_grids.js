@@ -1,7 +1,7 @@
 const query      = require('./db.js')
 
-class Hotmap_grids{
-  async getHotmap_grids(startHour,endHour,day,floor) {
+class Heatmap_grids{
+  async getHeatmap_grids(startHour,endHour,day,floor) {
       let tableName  = 'sensor_count_byhour'
       let sql = `SELECT *  FROM ${tableName} WHERE 
          day = ${day} AND   time >= ${startHour} AND time <= ${endHour} AND floor=${floor}` 
@@ -13,4 +13,4 @@ class Hotmap_grids{
   }
 }
 
-module.exports = new Hotmap_grids();
+module.exports = new Heatmap_grids();

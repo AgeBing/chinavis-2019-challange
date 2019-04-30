@@ -5,7 +5,7 @@ import './grid.css';
 
 
 
-export default class hotmap_grid extends Component {
+export default class heatmap_grid extends Component {
   constructor(props) {
     super(props);
     this.state = {
