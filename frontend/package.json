@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@antv/data-set": "^0.10.2",
+    "@antv/g2": "^3.5.3",
+    "@antv/g2-brush": "0.0.2",
     "antd": "^3.16.2",
     "axios": "^0.18.0",
     "bizcharts": "^3.5.2",
