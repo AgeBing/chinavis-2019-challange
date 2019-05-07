@@ -5,9 +5,22 @@ import {
   Axis,
   Tooltip,
   Label,
+  Legend,
 } from 'bizcharts';
 
 import { API_Heatmap_Grids } from '../../api/index'
+
+
+import { connect } from 'react-redux'
+
+
+
+const mapStateToProps = (state) => {
+  return {
+    heatmap_time: state.heatmap_time,
+  }
+}
+
 
 let Config = {
   1 : {
@@ -24,7 +37,7 @@ let Config = {
   }
 }
 
-export default class Heatmap extends React.Component {
+class Heatmap extends React.Component {
     constructor(props) {
     super(props);
     this.state = {
@@ -34,23 +47,32 @@ export default class Heatmap extends React.Component {
   }
   componentWillMount(){
 
-    // 可通过传入  startHour ,endHour,day 进行控制
-    // 同时需要调整相应的 后台
+    let { floor } = this.props
 
-    let { floor } = this.props 
     let config = Config[floor]
     this.setState({ 
       config
     })
 
+
+
+    let { heatmap_time } = this.props
+    let startHour = Math.floor(heatmap_time[0] / 60) ,
+        endHour = Math.floor(heatmap_time[1] / 60)
+    console.log(startHour,endHour ) 
     let data  = { 
-      startHour:8,
-      endHour:16,
+      startHour ,
+      endHour ,
       day:1,
       floor:floor
     }
+    this.requestData(data)
 
+  }
+
+  requestData(data){
     let self = this
+
     API_Heatmap_Grids(data).then((res)=>{
       // console.log(res)
       for(let i =0; i < res.length;i++){
@@ -61,9 +83,25 @@ export default class Heatmap extends React.Component {
         data : res
       })
     })
-
-
   }
+  componentWillReceiveProps(nextProps){
+    console.log(nextProps)
+    let { heatmap_time,floor } = nextProps
+    let startHour = Math.floor(heatmap_time[0] / 60) ,
+        endHour = Math.floor(heatmap_time[1] / 60)
+
+    let data  = { 
+      startHour ,
+      endHour ,
+      day:1,
+      floor:floor
+    }
+
+    console.log(startHour,endHour ) 
+
+    this.requestData(data)
+  }
+
 
   render() {
     let { config } = this.state
@@ -96,10 +134,10 @@ export default class Heatmap extends React.Component {
       <div style={{ 'display':'inline-block', 'width':config.width , 'height':config.height  }}>
         <Chart
           width={config.width}
-          height={config.height - 9}
+          height={config.height - 9 + 70}
           data={this.state.data}
           scale={cols}
-          padding={[ 20, 20, 20, 20]}
+          padding={[ 20, 20, 90, 20]}
         >
           <Axis
             name="x"
@@ -126,6 +164,7 @@ export default class Heatmap extends React.Component {
             }}
           />
           <Tooltip title="位置:人数"/>
+          <Legend name='count' sizeType="circle" offsetY={-15}/>
           <Geom
             type="polygon"
             position="x*y_reverse"
@@ -151,3 +190,4 @@ export default class Heatmap extends React.Component {
   }
 }
 
+export default connect(mapStateToProps)(Heatmap)

@@ -24,7 +24,6 @@ export default async function request(option) {
 
     fetchItem
       .then(r => {
-        console.log(r);
         return r.json();
       })
       .then(resData => {

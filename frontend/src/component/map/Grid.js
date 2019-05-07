@@ -37,13 +37,7 @@ export default class Grid extends Component {
             onMouseEnter={this.enterHandle.bind(this)}
             onMouseLeave={this.leaveHandle.bind(this)}
             fill={fillColor}
-            ></rect>
-
-{/*          <text 
-            x={ (x + 1)*rectWidth + wordOffsetX}  
-            y={ (y + 1)*rectHeight+ wordOffsetY}
-            fill="red" > {x} | {y}  </text>*/}
-            
+            ></rect>       
       </g>
     );
   }

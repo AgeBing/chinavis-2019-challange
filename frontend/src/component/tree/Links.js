@@ -1,54 +1,43 @@
-import React, { Component } from 'react';
+import React from 'react'
 
-import Link from './Link.js'
+import { panelWidth,panelHeight,
+      nodeRectWidth,nodeRectHeight } from './Config'
 
-export default class Links extends Component {
-  constructor(props) {
-    super(props);
+
+class Links extends React.Component{
+  constructor() {
+    super(...arguments)
     this.state = {
-        links : []
-    };
-  }
-  componentDidMount(){
+    }
   }
 
-  componentWillReceiveProps(nextProps){
-    let { links } = nextProps
-    let { x,y,width,height } = this.treedom.getBoundingClientRect()
 
-    let _links = []
-    links.forEach((link)=>{
-        _links.push({
-          source:{
-            x: link.source.x - x,
-            y: link.source.y - y
-          },
-          target:{
-            x: link.target.x - x,
-            y: link.target.y - y
-          },
-          id: link.id
-        })
-    })
-    this.setState({
-      links:_links
-    })
-  }
 
-  render() {
-    let { links } = this.state
-
+  render(){
+    let { links } = this.props
+    
     return (
-      <svg className='links'
-        width={this.props.width} height={this.props.height} 
-        ref={dom => {this.treedom = dom}} >
-        {
-          links.map((link)=>(
-            <Link source={link.source}  target={link.target} key={link.id}/>
-          ))
+     <svg className='panel-links' 
+          width={panelWidth} 
+          height={panelHeight}  >
+         {
+            links.map( (link,i)=>(
+                <line   
+                  key={i}
+                  x1={link.source.x + nodeRectWidth / 2} 
+                  y1={link.source.y + nodeRectHeight}
 
+                  x2={link.target.x  + nodeRectWidth / 2} 
+                  y2={link.target.y}>
+                </line> 
+          ))
         }
       </svg>
-    );
+    )
   }
 }
+
+
+export default Links
+
+
