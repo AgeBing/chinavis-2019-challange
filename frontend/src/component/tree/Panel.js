@@ -5,6 +5,7 @@ import Node from './Node'
 import Links from './Links'
 import CondiPanel from './CondiPanel'
 import update from 'immutability-helper'
+import { connect } from 'react-redux'
 
 import { panelWidth,panelHeight,
 		initalNodeX,initalNodeY,
@@ -12,6 +13,9 @@ import { panelWidth,panelHeight,
 
 
 import './Panel.css'
+
+import { _M2T,_T2M }  from './Config'
+
 
 const panelStyle = {
   width: panelWidth,
@@ -44,22 +48,26 @@ class Panel extends React.Component {
     	deleteAble: false,
     }
 
+    let { timeInterval } = this.props
     let defaultConditions = {
-      times:{
-        1 : {
-          startTime: '8:2',
-          endTime:   '12:00'
-        },
-        2 : {
-          startTime: '8:2',
-          endTime:   '22:00'
-        }
-      },
-      rooms:['会场', '休息区']
+      times : {},
+      rooms:[],
+      'choosen' : true
+    }
+    let startMinites = timeInterval.minites[0],
+        endMinites   = timeInterval.minites[1],
+        startTime    = '8:00',
+        endTime      = '12:00'
+
+
+    defaultConditions.times[timeInterval.day] = {
+      startMinites,
+      endMinites,
+      startTime,
+      endTime
     }
     nodes[rootId].condition = defaultConditions
     this.setState({ nodes })
-    this.chooseNode(rootId)
   }
 
   render() {
@@ -197,10 +205,12 @@ class Panel extends React.Component {
       if(id == sourceId){
         nodes[id]['choosen'] = true
         console.log('Current Condition:',nodes[id]['condition']  )
+        this.props.changeState(nodes[id]['condition'] , sourceId)
       }else{
         nodes[id]['choosen'] = false
       }
     })
+
 
     this.setState({nodes})
   }
@@ -270,5 +280,49 @@ function collect( connect , monitor ){
   }
 } 
 
-export default DropTarget(type , targetSpec , collect )(Panel)
+
+// redux
+const mapStateToProps = (state) => {
+  return {
+    timeInterval: state.timeInterval,
+    stateNodeId : state.stateNodeId
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  var timer,
+    delay = 2000;
+
+  return {
+    changeState: (condition,id) => {
+      // let change = checked ? "SHOW" : "HIDE";
+      // let type = change + "_" + name.toLocaleUpperCase();
+
+      let days = Object.keys(condition['times']),
+          day , minites ,times
+      if(!condition['times']){
+          day = 1
+          minites  = [0,0]
+          times = ['0:00','0:00']
+      }else{
+         day = +days[0]
+         minites = [
+          condition['times'][day]['startMinites'],
+          condition['times'][day]['endMinites']
+         ]
+         times = [
+          condition['times'][day]['startTime'],
+          condition['times'][day]['endTime']
+         ]
+      }
+      let timeInterval = { day ,minites,times }
+      let stateNodeId  = id
+      let type = 'CHANGE_STATE'
+
+      dispatch({ type, timeInterval,stateNodeId });
+    },
+  }
+}
+let HOC = DropTarget(type , targetSpec , collect )(Panel)
+export default connect(mapStateToProps,mapDispatchToProps)(HOC)
 

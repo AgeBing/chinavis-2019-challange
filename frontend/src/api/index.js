@@ -11,3 +11,8 @@ export let API_Heatmap_Grids = (data,url = '/api/Heatmap_grids' ,method = 'POST'
 
 
 export let API_Track = () => request({ url:'/api/track'})
+
+
+export let API_Traj = (data,url = '/api/trajs_test' ,method = 'POST') =>  request({ url , data ,method})
+
+

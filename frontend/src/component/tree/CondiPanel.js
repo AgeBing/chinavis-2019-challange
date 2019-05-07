@@ -9,6 +9,7 @@ import { Modal,
 		TimePicker } from 'antd'
 
 import moment from 'moment';
+import { _M2T,_T2M }  from './Config'
 
 const Option = Select.Option;
 const CheckboxGroup = Checkbox.Group;
@@ -22,19 +23,6 @@ const dayOptions = [
 ];
 
 const roomOptions = [ '会场', '休息区', '普通房间' ]
-
-function _M2T(mins) {
-  let h = Math.floor(mins/60)
-  let m = mins % 60
-  return  `${h}:${m}`
-}
-
-function _T2M(T) {
-	let ts = T.split(':'),
-		h = +ts[0] || 0,
-		m = +ts[1] || 0
-	return h * 60 + m
-}
 
 export default class CondiPanel extends Component {
   constructor(props) {
@@ -63,11 +51,12 @@ export default class CondiPanel extends Component {
 
   	Object.keys(times).forEach((day)=>{
   		checkedDays.push(+day)
-  		times[day]['startMinites'] = _T2M(times[day]['startTime'])
-  		times[day]['endMinites'] = _T2M(times[day]['endTime'])
+  		// times[day]['startMinites'] = _T2M(times[day]['startTime'])
+  		// times[day]['endMinites'] = _T2M(times[day]['endTime'])
   	})
 
-  	let stateTime = Object.assign({}, times)   //deep copy 
+  	// let stateTime = Object.assign({}, times)   //deep copy 
+    let stateTime = JSON.parse(JSON.stringify(times))  // real deep copy
   	let stateRooms = [].concat(rooms)
 
   	this.setState({

@@ -23,7 +23,7 @@ class App extends Component {
 						<MyMap />
 					</div>
 					<div className='layout-item-sub2 layout-view'>
-						<Track />
+						{/*<Track />*/}
 					</div>
 			      </Col>
 

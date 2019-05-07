@@ -31,3 +31,17 @@ export function getNewPosition(x,y){
 		y : y + nodeRectHeight +  20
 	}
 }
+
+
+export function _M2T(mins) {
+  let h = Math.floor(mins/60)
+  let m = mins % 60
+  return  `${h}:${m}`
+}
+
+export function _T2M(T) {
+	let ts = T.split(':'),
+		h = +ts[0] || 0,
+		m = +ts[1] || 0
+	return h * 60 + m
+}
