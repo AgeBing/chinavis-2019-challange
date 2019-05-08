@@ -11,6 +11,18 @@ class Traj{
       console.log(dataList.length)
     return await dataList;
   }
+
+  async getTrajsTest(startMiniter,endHMiniter,floor,day) {
+      let tableName  = 'base_trajectory_day'+day
+      let sql = `SELECT *  FROM ${tableName} WHERE 
+         time1 >= ${startMiniter} AND time2 <= ${endHMiniter}
+         AND floor2 =${floor} LIMIT 0,100000 `  //LIMIT 0,10000
+
+      let dataList = await query( sql )
+      console.log(dataList.length)
+    return await dataList;
+  }
+
 }
 
 module.exports = new Traj();

@@ -27,7 +27,6 @@ export default class Rooms extends Component {
                 rooms : response
           })
       })
-    
   }
 
   render() {

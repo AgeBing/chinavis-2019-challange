@@ -1,79 +1,94 @@
-.tree{
-	width: 100%;
-	padding: 10px;
+@import '~antd/dist/antd.css';
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+
+
+
+.node-rect{
+  position: absolute;
+  border: 1px solid #d9d9d9;
+  background-color: white;
+  padding: 2px;
+  cursor: move;
+}
+.node-rect:hover{
+  background-color: #f5f5f5;
+}
+
+.node-rect-choosen{
+  background-color: #8c8c8c
+}
+.node-rect-choosen:hover{
+  background-color: #8c8c8c
+}
+
+
+.node-rect .conditions-contain{
+  width: 110px;
+  height: 100%;
+  float: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /*border: 1px dashed gray;*/
+}
+.node-rect .cond-line{
+  margin: 2px;
+  font-size: 9px;
+}
+
+
+.node-rect .config-contain{
+	width: 30px;
 	height: 100%;
+	display: inline-block;
+	float: right;
 }
-.layer{
-	height: 100px;
+.node-rect .config-box{
 	width: 100%;
-	margin: 20px 0;
-	display: flex;
-	justify-content: space-around;
-	border-bottom: 1px dashed gray;
-	z-index: 9
-}
-.card{
-	width: 80px;
-	height: 50px;
 	display: inline-block;
-	border:  1px dashed gray;
-	position: relative;
-	cursor: pointer;
+	height: 30%;
+	margin: 1.5px 0;
 }
-.card:hover{
-	background-color: #e6f7ff;
-}
-.links{
-	position: absolute;
-	top: 0px;
-    left: 0px;
-	pointer-events: none;
-	z-index: 999      /*显示位置最高*/
-}
-.ant-card-bordered{
-	border-radius: 4px;
+.config-box button{
+	width: 100%;
+    height: 100%;
+    padding: 0 !important;
 }
 
-.card-content{
-	text-align: center;
-	font-size: 11px;
+.condition-line{
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;
+  margin: 8px 0;
+  height: 30px;
+}
+.condition-line-half{
+  display: inline-block;
+  height: 100%;
+}
+.words{
+  display: inline-block;
+  margin: 0 5px;
+  font-size: 11px;
+  line-height: 35px
+}
+.condis{
+  width: 90px;
 }
 
-
-.card-icons{
-	position: absolute;
-	bottom: 0;
-    display: flex;
-    width: 100%;
-    justify-content: center;
-}
-.card-icon{
-	cursor: pointer;
-	margin: 0 4px;
-	z-index: 999
-}
-
-.ant-modal{
-	position: absolute;
-	top: 100px;
-	right: 5%;
-}
-
-
-
-
-.cond-container{
-	margin: 30px 0;
-}
-.cond-time-line{
-	margin: 10px 0;
-}
-.cond-time-line-half{
-	width: 150px;
-	display: inline-block;
-	margin: 0 10px;
-}
-.cond-item{
-	margin-left: 5px;
-	width: 80px;
-}

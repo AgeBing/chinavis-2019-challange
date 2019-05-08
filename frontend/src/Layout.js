@@ -5,6 +5,10 @@ import { Row, Col } from 'antd';
 
 import MyMap from './component/map/Map.js' 
 import Tree from './component/tree/Tree.js'
+import Track from './component/track/Track.js'
+
+
+// import { findConditions }  from './component/tree/util.js'
 
 class App extends Component {
 
@@ -19,7 +23,7 @@ class App extends Component {
 						<MyMap />
 					</div>
 					<div className='layout-item-sub2 layout-view'>
-						
+						{/*<Track />*/}
 					</div>
 			      </Col>
 

@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import * as Config from './Config'
+
+import { API_Traj }  from '../../api/index'
+
 
 
 class Traj extends Component {
@@ -7,11 +11,13 @@ class Traj extends Component {
     super(props);
     this.state = {
         trajs: [],
-        rectWidth:35,
-        rectHeight:35,
         timer:0,
     };
     this.canvas = React.createRef()
+  }
+
+  componentWillMount(){
+
   }
 
   componentDidMount(){
@@ -25,72 +31,93 @@ class Traj extends Component {
   }
 
   changeMyProps(nextProps){
-    let self = this
-    let { startHour,endHour,day,floor } = nextProps || this.props
-    let data = { startHour , endHour ,day,floor }
-    fetch('/api/trajs',{
-          body: JSON.stringify(data), // must match 'Content-Type' header
-          cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-          credentials: 'same-origin', // include, same-origin, *omit
-          headers: {
-            'user-agent': 'Mozilla/4.0 MDN Example',
-            'content-type': 'application/json'
-          },
-          method: 'POST', // *GET, POST, PUT, DELETE, etc.
-          mode: 'cors', // no-cors, cors, *same-origin
-          redirect: 'follow', // manual, *follow, error
-          referrer: 'no-referrer', // *client, no-referrer
+    let { width ,height }  = this.props
+    const canvas = this.canvas.current
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0,0,width,height)
+
+   let { timeInterval,stateNodeId,floor } = nextProps || this.props
+   let startMiniter = timeInterval.minites[0],
+        endMiniter = timeInterval.minites[1],
+        day = timeInterval.day ,
+        self = this
+
+  console.log(day, timeInterval.times )
+    // let trajs = this.getStotage(stateNodeId)
+
+    // if(trajs){
+    //     trajs.forEach((traj)=>{
+    //       self.drawTraj(traj)
+    //     })
+    // }else{
+      API_Traj({ startMiniter,endMiniter,floor,day}).then((res)=>{
+        // this.saveToStorage(res,stateNodeId)
+        res.forEach((traj)=>{
+          self.drawTraj(traj)
         })
-        .then(r => r.json())
-        .then(response => {
-          // this.setState({userData: response.user_data})
-          console.log(response)
-          self.drawTrajs(response)
-        })
+      })
+    // }
   }
 
-  drawTrajs(trajs){
-    let { rectWidth,rectHeight } = this.state 
+  getStotage(stateNodeId){
+    let { floor } = this.props
+    let storage=window.localStorage
+    let data = localStorage.getItem(stateNodeId+';'+floor)
+    if(!data)  return JSON.parse(data)
+    return null
+  }
+
+  saveToStorage(data,stateNodeId){
+    let { floor } = this.props
+    let storage=window.localStorage
+    let dataStr = JSON.stringify(data)
+    let maxSize = 5 * 1024 * 1024  // 最大 5M
+    if(dataStr.length > maxSize ) console.log('超出存储限制')
+    storage.setItem(stateNodeId + ';' +floor , dataStr);
+
+  }
+
+  drawTraj(points){
+    let { rectWidth,rectHeight } = Config
     let { width ,height }  = this.props
-        const canvas = this.canvas.current
-
-        if (canvas.getContext) {
-            var ctx = canvas.getContext("2d");
-            (function () {
-                Object.getPrototypeOf(ctx).line = function (x, y, x1, y1) {
-                    this.save();
-                    this.beginPath();
-                    this.moveTo(x, y);
-                    this.lineTo(x1, y1);
-                    this.stroke();
-                    this.restore();
-                }
-            })();
-
-            ctx.clearRect(0,0,width,height)
-
-            ctx.strokeStyle = "rgba(234, 111, 90, 0.6)";
-            ctx.lineWidth = 6
-
-            // ctx.line(90, 130, 320, 210);
-            for(let i =1;i < trajs.length;i++){
-              let p1 = { 
-                    x: trajs[i].x1 ,
-                    y: trajs[i].y1 ,
-                  },
-                  p2 = { 
-                    x: trajs[i].x2 ,
-                    y: trajs[i].y2 ,
-                  }
-
-              for(let j=0;j < trajs[i].count;j++){
-                ctx.moveTo( (p1.x + 1.5)* rectWidth , (p1.y + 1.5)* rectHeight  )
-
-                ctx.line( (p1.x + 1.5)* rectWidth , (p1.y + 1.5)* rectHeight ,
-                        (p2.x + 1.5)* rectWidth , (p2.y + 1.5)* rectHeight   )
-              }
+    const canvas = this.canvas.current
+    if (canvas.getContext) {
+        var ctx = canvas.getContext("2d");
+       
+        (function () {
+            Object.getPrototypeOf(ctx).line = function (x, y, x1, y1) {
+                this.save();
+                this.beginPath();
+                this.moveTo(x, y);
+                this.lineTo(x1, y1);
+                this.stroke();
+                this.restore();
             }
+        })();
+
+        // ctx.clearRect(0,0,width,height)
+
+        ctx.strokeStyle = "rgba(234, 111, 90, 0.2)";
+        ctx.lineWidth = 1
+
+        for(let i =1;i < points.length;i++){
+          let p1 = { 
+                x: points[i].x1 ,
+                y: points[i].y1 ,
+              },
+              p2 = { 
+                x: points[i].x2 ,
+                y: points[i].y2 ,
+              }
+
+            let { p1_offset,p2_offset} =  Config.getRandOffset(p1,p2)
+
+            ctx.moveTo( p1_offset.x , p1_offset.y  )
+
+            ctx.line( p1_offset.x , p1_offset.y ,
+                    p2_offset.x , p2_offset.y  )
         }
+    }
 
   }
   render() {
@@ -106,9 +133,8 @@ class Traj extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    startHour: state.startHour,
-    endHour: state.endHour,
-    day: state.day,
+    timeInterval: state.timeInterval,
+    stateNodeId : state.stateNodeId
   }
 }
 

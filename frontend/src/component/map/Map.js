@@ -4,7 +4,7 @@ import  Sensors  from './Sensors'
 import  Bricks  from './Bricks'
 import  Rooms  from './Rooms'
 import  Traj   from  './Traj'
-import HeatMap from './HeatMap'
+import  HeatMap from './HeatMap'
 
 import * as Config from './Config'
 
@@ -18,6 +18,9 @@ class  MyMap  extends Component{
 		super(props)
 	}
 	componentWillMount(){
+
+    	let storage=window.localStorage
+    	storage.clear()
 	}
 
 	render(){
@@ -39,8 +42,11 @@ class  MyMap  extends Component{
 				</div>
 
 				<div className='map-views'>
-					<HeatMap  floor={1} />
-					<HeatMap  floor={2} />
+					{/*<HeatMap  floor={1} />*/}
+					<Traj floor={1}  height={Config.mapHeight} width={Config.mapWidth} />
+					<Traj floor={2} height={Config.mapHeight} width={Config.mapWidthHalf} />
+
+					{/*<HeatMap  floor={2} />*/}
 				</div>
 
 			</div>

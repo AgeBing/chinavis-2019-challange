@@ -1,0 +1,13 @@
+.panel{
+  position: relative;
+}
+
+.panel-links{
+	position: relative;
+	pointer-events: none;
+}
+
+.panel-links line{
+	stroke: gray;
+	stroke-width:1;
+}
