@@ -32,8 +32,18 @@ class  MyMap  extends Component{
 				</div> 
 
 				<div className='map-floors'>
-					<Sensors  floor={1}  height={Config.mapHeight} width={Config.mapWidth} />
-					<Sensors  floor={2}  height={Config.mapHeight} width={Config.mapWidthHalf} />
+{/*					<Sensors  floor={1}  height={Config.mapHeight} width={Config.mapWidth} />
+					<Sensors  floor={2}  height={Config.mapHeight} width={Config.mapWidthHalf} />*/}
+				</div>
+
+				<div className='map-views'>
+					{/*<HeatMap  floor={1} />*/}
+		
+
+					<Traj floor={1}  height={Config.mapHeight} width={Config.mapWidth} />
+					<Traj floor={2} height={Config.mapHeight} width={Config.mapWidthHalf} />
+
+					{/*<HeatMap  floor={2} />*/}
 				</div>
 
 				<div className='map-floors'>
@@ -41,13 +51,6 @@ class  MyMap  extends Component{
 					<Rooms  floor={2}  height={Config.mapHeight} width={Config.mapWidthHalf} />
 				</div>
 
-				<div className='map-views'>
-					{/*<HeatMap  floor={1} />*/}
-					<Traj floor={1}  height={Config.mapHeight} width={Config.mapWidth} />
-					<Traj floor={2} height={Config.mapHeight} width={Config.mapWidthHalf} />
-
-					{/*<HeatMap  floor={2} />*/}
-				</div>
 
 			</div>
 		)

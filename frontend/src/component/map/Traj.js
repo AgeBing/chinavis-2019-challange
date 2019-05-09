@@ -27,7 +27,7 @@ class Traj extends Component {
   }
 
   componentWillReceiveProps(nextProps){
-    this.changeMyProps(nextProps)
+      this.changeMyProps(nextProps)
   }
 
   changeMyProps(nextProps){
@@ -36,13 +36,12 @@ class Traj extends Component {
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0,0,width,height)
 
-   let { timeInterval,stateNodeId,floor } = nextProps || this.props
+   let { timeInterval,stateNodeId,floor,rooms } = nextProps || this.props
    let startMiniter = timeInterval.minites[0],
         endMiniter = timeInterval.minites[1],
         day = timeInterval.day ,
         self = this
 
-  console.log(day, timeInterval.times )
     // let trajs = this.getStotage(stateNodeId)
 
     // if(trajs){
@@ -50,13 +49,20 @@ class Traj extends Component {
     //       self.drawTraj(traj)
     //     })
     // }else{
-      API_Traj({ startMiniter,endMiniter,floor,day}).then((res)=>{
+      // API_Traj({ startMiniter,endMiniter,floor,day}).then((res)=>{
         // this.saveToStorage(res,stateNodeId)
+        // res.forEach((traj)=>{
+          // self.drawTraj(traj)
+        // })
+      // })
+    // }
+
+    API_Traj({ startMiniter,endMiniter,floor,day,rids:rooms}).then((res)=>{
+        console.log('轨迹条数',res.length)
         res.forEach((traj)=>{
           self.drawTraj(traj)
         })
-      })
-    // }
+    })
   }
 
   getStotage(stateNodeId){
@@ -97,7 +103,7 @@ class Traj extends Component {
 
         // ctx.clearRect(0,0,width,height)
 
-        ctx.strokeStyle = "rgba(234, 111, 90, 0.2)";
+        ctx.strokeStyle = "rgba(234, 111, 90, 0.1)";
         ctx.lineWidth = 1
 
         for(let i =1;i < points.length;i++){
@@ -134,7 +140,8 @@ class Traj extends Component {
 const mapStateToProps = (state) => {
   return {
     timeInterval: state.timeInterval,
-    stateNodeId : state.stateNodeId
+    stateNodeId : state.stateNodeId,
+    rooms:state.rooms
   }
 }
 

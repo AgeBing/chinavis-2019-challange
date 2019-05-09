@@ -6,7 +6,8 @@ import { Modal,
 		Icon,
 		Divider,
 		Checkbox,
-		TimePicker } from 'antd'
+		TimePicker,
+    Row, Col  } from 'antd'
 
 import moment from 'moment';
 import { _M2T,_T2M }  from './Config'
@@ -22,7 +23,7 @@ const dayOptions = [
   { label: 'Day 3', value: 3 },
 ];
 
-const roomOptions = [ '会场', '休息区', '普通房间' ]
+const roomOptions = [ "展厅", "主会场", "分会场 A", "签到处,", "分会场 B,", "分会场 C,", "分会场 D,", "海报区,", "厕所1,", "room1,", "room2,", "服务台,", "room3,", "room4,", "厕所2,", "餐厅,", "room5,", "休闲区,", "厕所3,", "room6,", "扶梯,", "扶梯,", "扶梯,", "扶梯,"]
 
 export default class CondiPanel extends Component {
   constructor(props) {
@@ -112,15 +113,22 @@ export default class CondiPanel extends Component {
   	})
   }
   handleRoomChange = (checkedRooms)=>{
+
   	this.setState({
   		rooms:checkedRooms
   	})
   }
 
   hanleOK =()=>{
-  	let { hanldeAddCondition }  = this.props
+  	let { hanldeAddCondition,roomsMap }  = this.props
   	let { times,rooms } = this.state
-  	hanldeAddCondition({ times ,rooms })
+    let roomsName = rooms.map((id)=>roomsMap[id])
+
+  	hanldeAddCondition({ 
+      times ,
+      rooms:roomsName,
+      roomsId:rooms
+    })
   }
   hanleCancel = ()=>{
   	let { hanldeCancel } = this.props
@@ -128,7 +136,7 @@ export default class CondiPanel extends Component {
   }
 
   render(){
-  	let { defaultCondiions } = this.props
+  	let { defaultConditions,roomsMap } = this.props
 
   	let { checkedDays,times,rooms }  = this.state
 
@@ -193,9 +201,21 @@ export default class CondiPanel extends Component {
 
 
         <Divider  orientation="left"> 地点 </Divider>
-         <CheckboxGroup className='condition-line'
-         	options={ roomOptions } defaultValue={rooms}
-         		onChange={this.handleRoomChange}/>
+         <Checkbox.Group className='condition-checkbox'
+         defaultValue={defaultConditions['roomsId']}
+         		onChange={this.handleRoomChange} >
+               <Row>
+                  {Object.keys(roomsMap).map((key)=>{
+                     let id = +key,
+                        name = roomsMap[id]
+                     return( 
+                      <Col span={8} key={id}>
+                          <Checkbox value={id}>{name}</Checkbox>
+                      </Col>
+                  )})}
+              </Row>
+          </Checkbox.Group>
+
          </Modal>
   	)
 	}
