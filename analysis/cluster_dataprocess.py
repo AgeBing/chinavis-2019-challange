@@ -178,9 +178,21 @@ def Get_similarity(id1,id2,vectors1,vectors2):#vec,earliset,latest
 			vec1_l=time.strptime(str(vec1[2]), '%H:%M:%S')#(cur_time.tm_hour)+":"+str(cur_time.tm_min)+":00","%H:%M:%S")
 			vec2_e= time.strptime(str(vec2[1]), '%H:%M:%S')
 			vec2_l=time.strptime(str(vec2[2]), '%H:%M:%S')
+			len1=(vec1_l.tm_hour-vec1_e.tm_hour)*60+vec1_l.tm_min-vec1_e.tm_min
+			if len1+1<len(vec1[0]):
+				print(len1,len(vec1[0]),id1)
+			len2=(vec2_l.tm_hour-vec2_e.tm_hour)*60+vec2_l.tm_min-vec2_e.tm_min
+			if len2+1<len(vec2[0]):
+				print(len2,len(vec2[0]),id2)
+			if vec1_e>vec2_l:#1的起始时间比2的终止时间晚：
+				distance=distance+(vec1_l.tm_hour-vec2_e.tm_hour)*60+vec1_l.tm_min-vec2_e.tm_min
+				continue
+			if vec2_e>vec1_l:#2的起始时间比1的终止时间晚：
+				distance=distance+(vec1_e.tm_hour-vec2_l.tm_hour)*60+vec1_e.tm_min-vec2_l.tm_min
+				continue
 			vec1_str=vec1[0]
 			vec2_str=vec2[0]
-			# print('before',len(vec1_str),distance,len(vec2_str),str(vec1[1]),str(vec2[1]))
+			# print('before',len(vec1_str),len(vec2_str),str(vec1[1]),str(vec2[1]),distance)
 			if vec1_e>vec2_e:
 				earliset=vec2_e
 				count=(vec1_e.tm_hour-vec2_e.tm_hour)*60+vec1_e.tm_min-vec2_e.tm_min
@@ -191,7 +203,7 @@ def Get_similarity(id1,id2,vectors1,vectors2):#vec,earliset,latest
 				count=(vec2_e.tm_hour-vec1_e.tm_hour)*60+vec2_e.tm_min-vec1_e.tm_min
 				distance=distance+count
 				vec1_str=vec1_str[count:]
-			# print('before-after',len(vec1_str),distance,len(vec2_str),str(vec1[2]),str(vec2[2]))
+			# print('before-after',len(vec1_str),len(vec2_str),str(vec1[2]),str(vec2[2]),distance)
 			if vec1_l>vec2_l:#1的终止时间晚，1需要删除
 				latest=vec1_l
 				count=(vec1_l.tm_hour-vec2_l.tm_hour)*60+vec1_l.tm_min-vec2_l.tm_min
@@ -202,11 +214,18 @@ def Get_similarity(id1,id2,vectors1,vectors2):#vec,earliset,latest
 				count=(vec2_l.tm_hour-vec1_l.tm_hour)*60+vec2_l.tm_min-vec1_l.tm_min
 				distance=distance+count
 				vec2_str=vec2_str[:len(vec2_str)-count]
-			if vec1_str!="" and vec2_str!="":
-				# print('after',len(vec1_str),distance,len(vec2_str))
-				for i in range(len(vec1_str)):
-					if vec1_str[i]!=vec2_str:
-						distance=distance+1
+			# print('after',len(vec1_str),len(vec2_str),str(vec1[2]),str(vec2[2]),distance)
+			# if len(vec1_str)!=len(vec2_str):
+			# 	print(vec1_e.tm_hour,vec1_e.tm_min,vec1_l.tm_hour,vec1_l.tm_min,vec2_e.tm_hour,vec2_e.tm_min,vec2_l.tm_hour,vec2_l.tm_min)
+			# 	print(len(vec1_str),len(vec2_str))
+			# else:
+			# 	print('else',vec1_e.tm_hour,vec1_e.tm_min,vec1_l.tm_hour,vec1_l.tm_min,vec2_e.tm_hour,vec2_e.tm_min,vec2_l.tm_hour,vec2_l.tm_min)
+			# 	print(len(vec1_str),len(vec2_str))
+			# if vec1_str!="" and vec2_str!="":
+			# 	for i in range(len(vec1_str)):
+			# 		# print  (len(vec1_str),len(vec2_str))
+			# 		if vec1_str[i]!=vec2_str[i]:
+			# 			distance=distance+1
 				# distance=distance+Levenshtein.distance(vec1_str, vec2_str)
 		return distance
 def save_data(days):
@@ -247,7 +266,13 @@ def Get_vectors():
 				for i in range(row[3]):
 					cur_vec=cur_vec+chr(ord('A')+int(row[2]))
 				before_earliest_time=row[1]
-				before_latest_time=row[1]
+				temp_time=row[1].split(':')
+				temp_time[1]=int(temp_time[1])+int(row[3])
+				if temp_time[1]>=60:
+					temp_time[0]=str(int(temp_time[0])+int(temp_time[1]/60))
+					temp_time[1]=int(temp_time[1]%60)
+				temp_time[1]=str(temp_time[1])
+				before_latest_time=":".join(temp_time)
 			if before_id!=row[0]:
 				vectors[day][str(before_id)]=[cur_vec,str(before_earliest_time),str(before_latest_time)]
 				cur_vec=""
@@ -258,7 +283,13 @@ def Get_vectors():
 			else:
 				for i in range(row[3]):
 					cur_vec=cur_vec+chr(ord('A')+int(row[2]))
-				before_latest_time=row[1]
+				temp_time=row[1].split(':')
+				temp_time[1]=int(temp_time[1])+int(row[3])
+				if temp_time[1]>=60:
+					temp_time[0]=str(int(temp_time[0])+int(temp_time[1]/60))
+					temp_time[1]=int(temp_time[1]%60)
+				temp_time[1]=str(temp_time[1])
+				before_latest_time=":".join(temp_time)
 		csvFile.close()
 		with open("vectors_order.csv","w") as csvfile: 
 		    writer = csv.writer(csvfile)
@@ -352,10 +383,10 @@ def cluster_days_ByCSV(n_clusters,method='kmeans'):
 	cur = conn.cursor()
 	cur.execute(sql_create)
 	conn.commit()
-	with open("cluster_result"+str(n_clusters)+".csv","w") as csvfile: 
-		writer = csv.writer(csvfile)
-		writer.writerows([vectors_order,label_pred])#写入多行用writerows
-	print('write over')
+	# with open("cluster_result"+str(n_clusters)+".csv","w") as csvfile: 
+	# 	writer = csv.writer(csvfile)
+	# 	writer.writerows([vectors_order,label_pred])#写入多行用writerows
+	# print('write over')
 	count=0
 	for i in range(len(label_pred)):
 		sql_insert="insert into cluster_By"+str(n_clusters)+" values ('"+vectors_order[i]+"','"+str(label_pred[i])+"')"
@@ -373,4 +404,6 @@ def cluster_days_ByCSV(n_clusters,method='kmeans'):
 # save_data([1,2,3])
 # Get_vectors()
 # Get_sim()
-cluster_days_ByCSV(4)
+for i in range(6,11):
+	cluster_days_ByCSV(i)
+	print('over',i)
