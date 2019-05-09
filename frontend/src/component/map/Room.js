@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 
+import { connect } from 'react-redux'
 
 import * as Config from './Config'
+import { Switch } from 'antd';
 
 
 export default class Room extends Component {
@@ -24,23 +26,43 @@ export default class Room extends Component {
       fillColor: 'gray'
     })
   }
+
+  handdleChooseRoom = (event)=>{
+    let ifChecked = event.target.checked
+    this.setState({
+      choosen : ifChecked
+    })
+  }
   render() {
-    let { wordOffsetX,wordOffsetY,fillColor  } = this.state 
-    let { x,y ,height,width,name }  = this.props
+    let { choosen,  wordOffsetX,wordOffsetY,fillColor  } = this.state 
+    let { x,y ,height,width,name,choose }  = this.props
     let { rectWidth,rectHeight } = Config
+
+    let style = {
+      left : (x+1)*rectWidth ,
+      top :  (y+1)*rectHeight ,
+      width : width * rectWidth ,
+      height : height * rectHeight
+
+    }
     return (
-      <g>
-          <rect 
-            x={ (x+1)*rectWidth }  
-            y={ (y+1)*rectHeight}
-            width={ width*rectWidth} height={ height* rectHeight}
-            fill={fillColor}
-            ></rect>  
-          <text 
-            x={ (x + 0.5 + width/2  )*rectWidth + wordOffsetX}  
-            y={ (y + 1 + height/2 )*rectHeight+ wordOffsetY}
-            fill="black" > {name}  </text>
-      </g>
+
+          // <text 
+          //   x={ (x + 0.5 + width/2  )*rectWidth + wordOffsetX}  
+          //   y={ (y + 1 + height/2 )*rectHeight+ wordOffsetY}
+          //   fill="black" > {name}  </text>
+
+      <div className={ choose ? 'map-room map-room-choose': 'map-room'}
+          style = { style }
+        >
+          <div className='room-color'>
+            <div className='check-box'>
+              <input type='checkbox' onClick={this.handdleChooseRoom} checked={choose} disabled />
+            </div>
+          </div>
+          <div className='room-name'  style={{ lineHeight : height * rectHeight+'px' }}>{name}</div>
+      </div>
+
     );
   }
 }

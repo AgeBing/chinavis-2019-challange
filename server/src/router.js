@@ -14,5 +14,7 @@ module.exports = router => {
     .post("/rooms", MapController.rooms_floor)
     .post("/Heatmap_grids", Heatmap_gridsController.Heatmap_grids)
     .post("/trajs", TrajController.trajs)
+    .post("/trajs_test", TrajController.trajsTest)
+    .post("/trajs_uid", TrajController.trajUids)
     .get("/track", TrackController.getTrack);
 };

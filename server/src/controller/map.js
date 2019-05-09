@@ -1,4 +1,4 @@
-const map = require('../model/map');
+  const map = require('../model/map');
 
 
 class MapController {

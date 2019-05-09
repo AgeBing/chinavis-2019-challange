@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 
 import Room from './Room'
 
 import { API_Rooms } from '../../api/index'
 
-export default class Rooms extends Component {
+class Rooms extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -16,25 +17,30 @@ export default class Rooms extends Component {
     this.getRooms(this.props.floor)
   }
 
-  componentWillReceiveProps(nextProps){
-      this.getRooms(nextProps.floor)
-  }
+  // componentWillReceiveProps(nextProps){
+  //     this.getRooms(nextProps.floor)
+  // }
   getRooms(floor){
       let data = { floor}
       
+      let { changeRoomsMap,roomsMap }  = this.props
+
       API_Rooms(data).then((response)=>{
          this.setState({
                 rooms : response
           })
       })
-    
   }
 
   render() {
     let { rooms } = this.state 
+    let { chooseRooms } = this.props
+    let style = {
+      width: this.props.width,
+      height : this.props.height
+    }
     return (
-      <svg  className='map-rooms' 
-        width={this.props.width} height={this.props.height} >
+      <div className='map-rooms' style={style}>
           {
             rooms.map((room)=>(
                <Room  key={room.id}
@@ -43,10 +49,29 @@ export default class Rooms extends Component {
                 width = {room.width}
                 height = {room.height}
                 name   = {room.name}
+                choose = { chooseRooms.indexOf(room.id)!=-1 }
                             />  
             ))
           }
-      </svg>
+      </div>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    chooseRooms: state.rooms,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+
+  return {
+    changeRoomsMap: (roomsMap) => {
+      let type = 'CHANGE_ROOMMAP'
+
+      dispatch({ type, roomsMap });
+    },
+  }
+}
+export default connect(mapStateToProps,mapDispatchToProps)(Rooms)

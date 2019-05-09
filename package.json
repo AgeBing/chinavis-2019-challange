@@ -1,5 +1,13 @@
 {
-  "dependencies": {
-    "d3-collection": "^1.0.7"
+  "name": "chinavis2019Challenge",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "clientInstall": "cd frontend && npm install --no-package-lock",
+    "serverIntall": "cd server && npm install --no-package-lock",
+    "install": "npm run clientInstall && npm run serverIntall",
+    "clientStart": "cd frontend && npm start",
+    "serverStart": "cd server && npm run server",
+    "start": "npm run clientStart & npm run serverStart"
   }
 }
