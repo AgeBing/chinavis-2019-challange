@@ -16,12 +16,14 @@ import './Panel.css'
 
 import { _M2T,_T2M }  from './Config'
 
+import { API_SYNC_Rooms } from '../../api/index'
+
+const roomsMap = {}   // id => name
 
 const panelStyle = {
   width: panelWidth,
   height: panelHeight,
 }
-
 
 class Panel extends React.Component {
   constructor() {
@@ -36,8 +38,9 @@ class Panel extends React.Component {
     }
   }
 
-  componentWillMount(){
+  async componentWillMount(){
     let { nodes }  = this.state 
+
 
     // 初始 Node
     let rootId = getRandId()
@@ -46,29 +49,50 @@ class Panel extends React.Component {
     	x : initalNodeX,
     	y : initalNodeY,
     	deleteAble: false,
+      condition : {},
+      choosen: true
     }
 
-    let { timeInterval } = this.props
+
     let defaultConditions = {
       times : {},
-      rooms:[],
-      'choosen' : true
+      rooms: [],
+      roomsId:[]
     }
+     // 初始 time
+    let { timeInterval } = this.props
     let startMinites = timeInterval.minites[0],
         endMinites   = timeInterval.minites[1],
         startTime    = '8:00',
         endTime      = '12:00'
 
 
-    defaultConditions.times[timeInterval.day] = {
+    defaultConditions['times'][timeInterval.day] = {
       startMinites,
       endMinites,
       startTime,
       endTime
     }
-    nodes[rootId].condition = defaultConditions
+
+    // 初始 Rooms
+    await this.getRooms()
+    let { rooms }  = this.props
+    rooms.forEach((roomId)=>{
+      defaultConditions.roomsId.push(
+          roomId
+      )
+      defaultConditions.rooms.push(
+          roomsMap[roomId]
+      )
+    })
+
+
+
+    nodes[rootId]['condition'] = defaultConditions
     this.setState({ nodes })
   }
+
+
 
   render() {
     const { connectDropTarget } = this.props
@@ -80,6 +104,7 @@ class Panel extends React.Component {
         
         {Object.keys(nodes).map((key) => {
         	let node = nodes[key]
+          
 	          return (
 	            <Node
 	              key={node.id}
@@ -105,6 +130,7 @@ class Panel extends React.Component {
            hanldeAddCondition={this.addNode}
            hanldeCancel={this.hideCondiPanel}
            defaultConditions={this.state.defaultConditions}
+           roomsMap={roomsMap}
         />
       )}
 
@@ -242,6 +268,19 @@ class Panel extends React.Component {
 
     this.showCondiPanel()
   }
+
+    // 初始化房间和名称 采用同步写法
+  async getRooms(){
+      let floors = [1,2]
+      for(let i = 0;i < floors.length;i++){
+        let floor = floors[i]
+        let rooms = await API_SYNC_Rooms({ floor })
+        rooms.forEach((room)=>{
+           roomsMap[room.id] = room.name 
+         })
+      }
+  }
+
 }
 
 
@@ -285,7 +324,8 @@ function collect( connect , monitor ){
 const mapStateToProps = (state) => {
   return {
     timeInterval: state.timeInterval,
-    stateNodeId : state.stateNodeId
+    stateNodeId : state.stateNodeId,
+    rooms: state.rooms
   }
 }
 
@@ -316,10 +356,11 @@ const mapDispatchToProps = dispatch => {
          ]
       }
       let timeInterval = { day ,minites,times }
+      let rooms = condition['roomsId']
       let stateNodeId  = id
       let type = 'CHANGE_STATE'
 
-      dispatch({ type, timeInterval,stateNodeId });
+      dispatch({ type, timeInterval,stateNodeId,rooms });
     },
   }
 }

@@ -91,4 +91,8 @@ code {
 .condis{
   width: 90px;
 }
-
+.condition-checkbox{
+  display: flex;
+  padding: 0 4px;
+  margin: 8px 0;
+}

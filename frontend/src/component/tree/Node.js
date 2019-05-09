@@ -34,8 +34,9 @@ class Node extends React.Component{
 
   showConditions(){
     let { condition } = this.props
-
     let show = []
+
+    if(!condition.hasOwnProperty('times')) return
 
     if( condition['times'] ){
         let days = Object.keys(condition['times'])
@@ -48,10 +49,23 @@ class Node extends React.Component{
           )
         })
     }
+
+    // 展示分割
+    let roomsStr = ' ',
+        maxSL = 9
+    condition['rooms'].forEach((room,i)=>{
+       roomsStr += (room + ' ')
+    })
+    if(roomsStr.length > maxSL){
+      roomsStr = roomsStr.slice(0,maxSL)
+      roomsStr += '...'
+    }
+
     if( condition['rooms'] && condition['rooms'].length > 0){
           show.push(
               <Tag className='cond-line' key={'rooms'}>
-                    <Icon type="home" />  {condition['rooms'].map((room)=> room+' ')}
+                    <Icon type="home" />  
+                    {roomsStr}
               </Tag>
           )
     }
