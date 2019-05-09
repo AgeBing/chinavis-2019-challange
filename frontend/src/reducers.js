@@ -5,10 +5,9 @@ const initialState = {
 		times:[],
 	},
 	stateNodeId: 0,
-  // rooms:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
-  rooms:[1,2,4]
-
-
+  // rooms:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],
+  rooms:[1,2,4] ,
+  opacity: 0.50
 };
 
 function appReducer(state = initialState, action, opation) {
@@ -30,6 +29,12 @@ function appReducer(state = initialState, action, opation) {
       };
       break;
 
+    case "CHANGE_OPACITY":
+      return {
+        ...state,
+        opacity:action.opacity
+      };
+      break;
 
 
   }

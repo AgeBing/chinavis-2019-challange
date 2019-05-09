@@ -21,11 +21,13 @@ class App extends Component {
 			      <Col span={16} className='layout-item '>
 					<div className='layout-item-sub1 layout-view'>
 						<MyMap />
+						
 					</div>
 					<div className='layout-item-sub2 layout-view'>
 						{/*<Track />*/}
 					</div>
 			      </Col>
+
 
 
 			      <Col span={8} className='layout-item layout-view'>
