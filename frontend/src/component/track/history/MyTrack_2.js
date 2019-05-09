@@ -5,11 +5,13 @@ import DataSet from '@antv/data-set';
 import Brush from "@antv/g2-brush";
 
 import { connect } from 'react-redux';
-import { API_Track } from '../../api/index'
+import { API_Track } from '../../../api/index'
 
-// 主函数
 function getMyGraph() {
-    // 把组件的chart绑定到这个变量上,实现 brush操作 的功能
+    // 框选完成后，需要得到data的范围
+
+
+    // 把组件的chart绑定到这个变量上,实现brush操作的功能
     let chart; 
 
     class MyGraph extends Component {
@@ -18,13 +20,10 @@ function getMyGraph() {
             this.state = {
                 // 人员分类的颜色显示
                 labelColor: ['red', 'blue', 'green'],
-                // 导入的整体数据
-                wholeData: [],
-                // brush的数据
-                brushData: [],
+                // 导入的数据
+                data: [],
                 // 图表高度,BizChart的宽度是自适应屏幕的
-                chartHeight: 640,
-                chartHeight2: 320
+                chartHeight: 640
             };
         }
 
@@ -35,25 +34,23 @@ function getMyGraph() {
 
         // 挂载后设置 brush
         componentDidMount() {
+            console.log(chart);
+
             new Brush({
                 canvas: chart.get('canvas'),
-                chart: chart,
+                chart,
                 type: 'X',  //固定X轴
-                dragable: true,  // 可以移动brush框
-
-                onBrushmove(ev) {
-                    const { data } = ev;
-                    this.setState({
-                        brushData: data
-                    }) 
+                onBrushstart() {
+                    chart.hideTooltip();
                 },
-
-                onDragmove(ev) {
-                    const { data } = ev;
-                    this.setState({
-                        brushData: data
-                    }) 
-                }
+                onBrushmove() {
+                    chart.hideTooltip();
+                },
+            });
+            // 触发事件后,重新绘制图像
+            chart.on('plotdblclick', () => {
+                chart.get('options').filters = {};
+                chart.repaint();
             });
         }
 
@@ -62,7 +59,7 @@ function getMyGraph() {
             console.log('data download...');
             API_Track().then(response => {
                 this.setState({
-                    wholeData: response
+                    data: response
                 })
             })
             console.log('finish...');
@@ -124,22 +121,16 @@ function getMyGraph() {
 
         render() {
             // 初始数据
-            const wholeData = this.state.wholeData;
-            console.log(wholeData);
+            const data = this.state.data;
 
             // 处理数据 （在数据库里存储字符串下载快？还是在前端处理函数快？还是在后端处理完了再给前端快？）
-            const dataTrans = wholeData.map(i => {
+            const dataTrans = data.map(i => {
                 return {
                     ...i,
                     place: this.getPlaceText(i.place),
                     time: this.getClockToTime(i.time)
                 }
             });
-
-            // // 未brush的时候存储全部数据
-            // this.setState({
-            //     brushData: dataTrans
-            // })
 
             // 数据尺度配置
             const scale = {
@@ -161,11 +152,6 @@ function getMyGraph() {
                     formatter: (value) => { return this.getTimeToClock(value, false) }
                     // tickInterval: 3600
                 },
-                // time: {
-                //     type: 'time',
-                //     range: [0, 1],
-                //     mask: 'hh:mm:ss'
-                // },
                 // 分类
                 // label: {
                 //     type: 'cat'
@@ -181,12 +167,12 @@ function getMyGraph() {
             return (
                 <div>
                     <Chart 
-                        height={this.state.chartHeight} data={this.state.brushData} scale={scale} 
+                        height={this.state.chartHeight} data={dataTrans} scale={scale} 
                         padding={{ top: 60, right: 20, bottom: 20, left: 60 }}
-                        // onGetG2Instance={g2Chart => {
-                        //     g2Chart.animate(false); 
-                        //     chart = g2Chart; //关闭动画，绑定到全局变量chart
-                        // }}
+                        onGetG2Instance={g2Chart => {
+                            g2Chart.animate(false); 
+                            chart = g2Chart; //关闭动画，绑定到全局变量chart
+                        }}
                         forceFit
                     >
                         <Coord type='rect' reflect='y' />
@@ -213,25 +199,6 @@ function getMyGraph() {
                                     value: place
                                 };
                             }]}
-                        />
-                    </Chart>
-
-                    <Chart
-                        height={this.state.chartHeight2} data={dataTrans} scale={scale} 
-                        padding={{ top: 60, right: 20, bottom: 20, left: 60 }}
-                        onGetG2Instance={g2Chart => {
-                            chart = g2Chart; //绑定到全局变量chart
-                        }}
-                        forceFit
-                    >
-                        <Coord type='rect' reflect='y' />
-                        <Axis name='time' />
-                        <Axis name='place' />
-                        <Legend position='top' />
-                        <Geom
-                            type='line' position='time*place' size={2} opacity={1} shape={'hv'}
-                            // color={['label', this.state.labelColor]} 
-                            color='id'
                         />
                     </Chart>
                 </div>

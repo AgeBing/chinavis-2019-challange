@@ -64,6 +64,7 @@ function getComponent(data) {
     }
 
     render() {
+      console.log(dv)
       return (
         <div>
           <Chart
