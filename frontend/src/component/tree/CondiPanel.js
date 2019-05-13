@@ -36,7 +36,7 @@ export default class CondiPanel extends Component {
     			endTime:     '12:00',
     		}
     	},
-    	rooms:['会场', '休息区']
+    	rooms:[]
     };
   }
 
@@ -46,7 +46,7 @@ export default class CondiPanel extends Component {
   }
 
   componentWillMount(){
-  	let { times,rooms } = this.props.defaultConditions
+  	let { times,roomsId } = this.props.defaultConditions
 
   	let checkedDays = []
 
@@ -58,7 +58,7 @@ export default class CondiPanel extends Component {
 
   	// let stateTime = Object.assign({}, times)   //deep copy 
     let stateTime = JSON.parse(JSON.stringify(times))  // real deep copy
-  	let stateRooms = [].concat(rooms)
+  	let stateRooms = [].concat(roomsId)
 
   	this.setState({
   		checkedDays,
@@ -138,7 +138,7 @@ export default class CondiPanel extends Component {
   render(){
   	let { defaultConditions,roomsMap } = this.props
 
-  	let { checkedDays,times,rooms }  = this.state
+  	let { checkedDays,times }  = this.state
 
   	return(
   		<Modal

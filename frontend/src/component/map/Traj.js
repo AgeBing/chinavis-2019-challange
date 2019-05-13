@@ -21,22 +21,27 @@ class Traj extends Component {
   }
 
   componentDidMount(){
-    this.changeMyProps()
+    this.requestNewTrajs()
   }
   componentWillUnmount(){
   }
 
   componentWillReceiveProps(nextProps){
-      this.changeMyProps(nextProps)
+      if(this.props.stateNodeId != nextProps.stateNodeId){
+        this.requestNewTrajs(nextProps)
+      }
+      if(this.props.opacity != nextProps.opacity){
+        this.reDrawCurrentTrajs(nextProps)
+      }
   }
 
-  changeMyProps(nextProps){
+  requestNewTrajs(nextProps){
     let { width ,height }  = this.props
     const canvas = this.canvas.current
     var ctx = canvas.getContext("2d");
     ctx.clearRect(0,0,width,height)
 
-   let { timeInterval,stateNodeId,floor,rooms } = nextProps || this.props
+   let { timeInterval,stateNodeId,floor,rooms,opacity } = nextProps || this.props
    let startMiniter = timeInterval.minites[0],
         endMiniter = timeInterval.minites[1],
         day = timeInterval.day ,
@@ -60,11 +65,26 @@ class Traj extends Component {
     API_Traj({ startMiniter,endMiniter,floor,day,rids:rooms}).then((res)=>{
         console.log('轨迹条数',res.length)
         res.forEach((traj)=>{
-          self.drawTraj(traj)
+          self.drawTraj(traj,opacity)
         })
+        self.setState({ trajs:res })
     })
   }
+  reDrawCurrentTrajs(nextProps){
+   let { opacity } = nextProps || this.props
+   let { trajs } = this.state
+   let self = this
+    let { width ,height }  = this.props
+    const canvas = this.canvas.current
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0,0,width,height)
 
+   console.log(opacity)
+   trajs.forEach((traj)=>{
+    self.drawTraj(traj,opacity)
+   })
+
+  }
   getStotage(stateNodeId){
     let { floor } = this.props
     let storage=window.localStorage
@@ -83,13 +103,13 @@ class Traj extends Component {
 
   }
 
-  drawTraj(points){
+  drawTraj(points,opacity){
     let { rectWidth,rectHeight } = Config
     let { width ,height }  = this.props
     const canvas = this.canvas.current
     if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
-       
+        ctx.globalAlpha = opacity;
         (function () {
             Object.getPrototypeOf(ctx).line = function (x, y, x1, y1) {
                 this.save();
@@ -103,7 +123,7 @@ class Traj extends Component {
 
         // ctx.clearRect(0,0,width,height)
 
-        ctx.strokeStyle = "rgba(234, 111, 90, 0.1)";
+        ctx.strokeStyle = "rgba(234, 111, 90, 0.15)";
         ctx.lineWidth = 1
 
         for(let i =1;i < points.length;i++){
@@ -127,7 +147,6 @@ class Traj extends Component {
 
   }
   render() {
-    let { trajs } = this.state 
     return (
       <canvas  className='traj-canvas' ref={this.canvas}
         width={this.props.width} height={this.props.height} >
@@ -141,7 +160,8 @@ const mapStateToProps = (state) => {
   return {
     timeInterval: state.timeInterval,
     stateNodeId : state.stateNodeId,
-    rooms:state.rooms
+    rooms:state.rooms,
+    opacity:state.opacity
   }
 }
 

@@ -10,6 +10,7 @@ import * as Config from './Config'
 
 import { connect } from 'react-redux'
 
+import { Slider } from 'antd';
 
 import './map.css'
 
@@ -21,10 +22,20 @@ class  MyMap  extends Component{
 
     	let storage=window.localStorage
     	storage.clear()
+
+    	this.setState({ 
+    		opacity : this.props.opacity
+    	})
 	}
 
+	  onOpacityChange = (value) => {
+	    this.props.changeOpacity(value)
+	  }
+
 	render(){
+		let { opacity } = this.state
 		return (
+		<div>
 			<div className='map-container'>
 				<div className='map-floors'>
 					<Bricks  floor={1}/>
@@ -53,8 +64,43 @@ class  MyMap  extends Component{
 
 
 			</div>
+
+			<div className='map-config'> 
+				<div className='config-name'> 轨迹透明度 </div>
+				<Slider className='config-wiget' 
+					min={0.01}
+            		max={1} 
+            		step={0.01}
+            defaultValue={opacity} onChange={this.onOpacityChange} />
+			</div>
+		</div>
 		)
 	}
 }
 
-export default MyMap
+
+
+const mapStateToProps = (state) => {
+  return {
+    opacity: state.opacity,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  var timer,
+    delay = 2000;
+
+  return {
+    changeOpacity: (opacity) => {
+      let type = 'CHANGE_OPACITY'
+
+      delay = 500;
+      clearTimeout(timer);
+      timer = setTimeout(function() {
+        dispatch({ type, opacity });
+      }, delay);
+    },
+  }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(MyMap)
