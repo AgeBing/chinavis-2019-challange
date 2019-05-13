@@ -1,11 +1,17 @@
 const query = require('./db.js')
 
 class Track{
-    async getTrack(traj, cluster) {
-        traj = traj || '1';
+    async getTrack(day, cluster, limit) {
+        day = day || '1';
         cluster = cluster || '3';
-        let sql = `SELECT * FROM track_day${traj}_cluster${cluster}
-                    LIMIT 0,10000;`
+        let sql = ``;
+        if (limit === 'all'){
+            sql = `SELECT * FROM track_day${day}_cluster${cluster};`
+        }
+        else {
+            sql = `SELECT * FROM track_day${day}_cluster${cluster} LIMIT 0, ${limit};`
+        }
+        console.log('Track - sql - ', sql);
         let dataList = await query( sql );
         return await dataList;
     }

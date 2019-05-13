@@ -2,9 +2,9 @@ const track = require('../model/track');
 
 class TrackController {
     async getTrack(ctx) {
-        let res = await track.getTrack();
-        // console.log('233');
-        // console.log(res);
+        const {day, cluster, limit} = ctx.request.body;
+        console.log('Track - paramara - ', day, cluster, limit);
+        let res = await track.getTrack(day, cluster, limit);
         ctx.body = res;
     }
 }

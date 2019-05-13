@@ -1,11 +1,44 @@
+// 配置文件
+
+// 数据库查询
+const day = '1'
+const cluster = '4'
+const limit = '10000'
+export const postData = {day:day, cluster:cluster, limit:limit};
+
 // 人员分类的颜色显示
-export let labelColor = ['#d7191c','#fdae61','#2c7bb6']
+let labelColor = {
+    '3' : ['#d7191c','#fdae61','#abd9e9'],
+    '4' : ['#d7191c','#fdae61','#abd9e9','#2c7bb6'],
+    '5' : ['#d7191c','#fdae61','#ffffbf','#abd9e9','#2c7bb6'],
+    '6' : ['#d73027','#fc8d59','#fee090','#e0f3f8','#91bfdb','#4575b4'],
+    '7' : ['#d73027','#fc8d59','#fee090','#ffffbf','#e0f3f8','#91bfdb','#4575b4'],
+}
+let labelColorArray = labelColor[cluster];
+
 // 图表高度,BizChart的宽度是自适应屏幕的
 export let chartHeightShow = 360
 export let chartHeightBrush = 200
 // 地点轴的显示情况
-export let placeArray = ['主会场', '分会场A', '分会场B', '分会场C', '分会场D', '海报区', '展厅', '签到处', '走廊/墙',
-'扶梯', '厕所', '餐厅', '休闲区', 'room1', 'room2', 'room3', 'room4', 'room5', 'room6', '错误']
+export let placeArray = ['主会场', '分会场A', '分会场B', '分会场C', '分会场D', '海报区', '展厅', '签到处','走廊/墙',
+'扶梯', '厕所', '餐厅', '休闲区']
+
+// , 'room1', 'room2', 'room3', 'room4', 'room5', 'room6'
+// , 
+
+// 改变数据格式
+export function getDataTrans(Data) {
+    const dataTrans = Data.map(i => {
+        return {
+            ...i,
+            place: getPlaceText(i.place),
+            time: getClockToTime(i.time),
+            // label: Number(i.label)
+        }
+    });
+    console.log('处理后的全部数据', dataTrans);
+    return dataTrans;
+}
 
 // 数据尺度配置
 export const scale = {
@@ -33,6 +66,10 @@ export const scale = {
     }
 }
 
+// 颜色映射
+export function getLabelColor(label) {
+    return labelColorArray[label];                                   
+}
 
 // 时钟转换为time
 export function getClockToTime(clock) {
