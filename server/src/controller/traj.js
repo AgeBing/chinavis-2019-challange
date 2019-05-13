@@ -1,4 +1,6 @@
 const traj = require('../model/traj');
+const people = require('../model/people');
+
 
 
 class TrajController {
@@ -60,9 +62,49 @@ class TrajController {
 		console.log('len:',trajs.length)
 
 		ctx.body = trajs;
+	}
+	async trajInfo(ctx){
+		const { startMiniter,endMiniter,day,rids } = ctx.request.body;
+		
+		// 符合地理结果的人员
+		let uidsObj = await traj.getUids(startMiniter,endMiniter,day,rids.join(','))
+
+		let uids = uidsObj.map((obj)=>obj.id)
+
+		let info = {}
+		console.log('user length ',uids.length)
+		
+		// 人员统计  饼图
+		// 按照 聚类结果 统计人员比例
+		let groups = [] , groupsCount = []
+		let peopleGroups  = await people.getGroups( uids.join(',') )
+		
+		peopleGroups.forEach((p)=>{
+			let i = p.cluster
+			if(!groupsCount[i])  groupsCount[i] = 1
+			else groupsCount[i]++ 
+		})
+
+		groupsCount.forEach((v,i)=>{
+			groups.push({
+				cluster : "聚类"+i,
+				count : v
+			})
+		})
+
+		info['length'] = uids.length
+		info['user'] = groups
+		
+		ctx.body = info;
+
+		// 时间统计  每五分钟的活跃人数
+
+
+		// 地点统计  高峰时段的人数
 
 
 	}
+
 	
 }
 

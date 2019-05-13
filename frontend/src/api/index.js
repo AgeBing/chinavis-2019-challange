@@ -15,6 +15,7 @@ export let API_Heatmap_Grids = (data,url = '/api/Heatmap_grids' ,method = 'POST'
 
 export let API_Traj = (data,url = '/api/trajs_uid' ,method = 'POST') =>  request({ url , data ,method})
 
+export let API_Traj_Info = (data,url = '/api/trajs_info' ,method = 'POST') =>  request({ url , data ,method})
 
 export let API_SYNC_Rooms = (data,url = '/api/rooms' ,method = 'POST') =>  requestSync({ url , data ,method})
 
