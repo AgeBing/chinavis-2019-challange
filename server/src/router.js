@@ -16,8 +16,6 @@ module.exports = router => {
     .post("/trajs", TrajController.trajs)
     .post("/trajs_test", TrajController.trajsTest)
     .post("/trajs_uid", TrajController.trajUids)
-    .post("/track", TrackController.getTrack);
-    .post("/trajs_info", TrajController.trajInfo)
-    .get("/track", TrackController.getTrack);
-
+    .post("/track", TrackController.getTrack)
+    .post("/trajs_info", TrajController.trajInfo);
 };
