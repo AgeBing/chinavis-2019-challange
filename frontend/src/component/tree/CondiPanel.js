@@ -7,7 +7,8 @@ import { Modal,
 		Divider,
 		Checkbox,
 		TimePicker,
-    Row, Col  } from 'antd'
+    Row, Col,
+    message  } from 'antd'
 
 import moment from 'moment';
 import { _M2T,_T2M }  from './Config'
@@ -36,7 +37,9 @@ export default class CondiPanel extends Component {
     			endTime:     '12:00',
     		}
     	},
-    	rooms:[]
+    	rooms:[],
+      roomCheckAll:false,
+      indeterminate:false
     };
   }
 
@@ -47,6 +50,9 @@ export default class CondiPanel extends Component {
 
   componentWillMount(){
   	let { times,roomsId } = this.props.defaultConditions
+
+    let { roomsMap } = this.props
+    let allRooms = Object.keys(roomsMap).map((key)=>+key)
 
   	let checkedDays = []
 
@@ -63,7 +69,9 @@ export default class CondiPanel extends Component {
   	this.setState({
   		checkedDays,
   		times: stateTime,
-  		rooms: stateRooms
+  		rooms: stateRooms,
+      indeterminate: ( stateRooms.length > 0 &&  stateRooms.length < allRooms.length ) ,
+      roomCheckAll: (stateRooms.length == allRooms.length)
   	})
   }
 
@@ -113,16 +121,39 @@ export default class CondiPanel extends Component {
   	})
   }
   handleRoomChange = (checkedRooms)=>{
+   let { roomsMap } = this.props
 
   	this.setState({
-  		rooms:checkedRooms
+  		rooms:checkedRooms,
+      roomCheckAll:  Object.keys(roomsMap).length === checkedRooms.length,
+      indeterminate: !!checkedRooms.length && Object.keys(roomsMap).length > checkedRooms.length
   	})
   }
+
+ handleRoomChangeAll =( event)=>{
+   let { roomsMap } = this.props
+   let checked = event.target.checked
+
+   let allRooms = Object.keys(roomsMap).map((key)=>+key)
+
+    this.setState({
+        rooms: checked ? allRooms : [],
+        indeterminate : false,
+        roomCheckAll: checked
+    })
+
+ }
 
   hanleOK =()=>{
   	let { hanldeAddCondition,roomsMap }  = this.props
   	let { times,rooms } = this.state
     let roomsName = rooms.map((id)=>roomsMap[id])
+
+
+    if(rooms.length == 0){
+       message.error('请选择至少一个房间!')
+      return
+    }
 
   	hanldeAddCondition({ 
       times ,
@@ -201,9 +232,21 @@ export default class CondiPanel extends Component {
 
 
         <Divider  orientation="left"> 地点 </Divider>
+        
+         <div className='condition-line' >
+            <Checkbox value={'all'} style={{margin: '0 auto'}}
+             onChange={this.handleRoomChangeAll}
+             indeterminate={this.state.indeterminate}
+             checked={this.state.roomCheckAll}>
+              全部
+            </Checkbox>
+         </div>
+
          <Checkbox.Group className='condition-checkbox'
          defaultValue={defaultConditions['roomsId']}
-         		onChange={this.handleRoomChange} >
+         		onChange={this.handleRoomChange}
+            value={this.state.rooms}
+            >
                <Row>
                   {Object.keys(roomsMap).map((key)=>{
                      let id = +key,

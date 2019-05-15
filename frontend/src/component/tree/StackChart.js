@@ -34,7 +34,7 @@ class StackChart extends React.Component {
           height={style.height}
           width={style.width}
          data={rooms} scale={cols}
-          padding={[20, 65, 45, 40]}
+          padding={[20, 95, 45, 40]}
          >
           <Axis name="time" />
           <Axis name="count" />
