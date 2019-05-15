@@ -16,7 +16,11 @@ code {
 }
 
 
-
+.ant-modal{
+  position: absolute;
+  left: 200px;
+  top:100px;
+}
 
 .node-rect{
   position: absolute;

@@ -2,6 +2,7 @@ import MySQLdb
 import time
 import Levenshtein
 from sklearn.cluster import KMeans
+from sklearn import metrics
 import csv
 import json
 def Connect_MYSQL():
@@ -61,7 +62,7 @@ def merge_time(day):
 				Is_start=1
 	conn.commit()
 	cur.close()
-
+#对数据进行分段，按1分钟分段
 def dataprocessing_len(day):#1,2,3
 	conn = Connect_MYSQL()
 	sql_select = "select *  from traj_MergeTime_day"+str(day)#+" LIMIT 100"# id,time,floor,rid
@@ -151,7 +152,7 @@ def dataprocessing_len(day):#1,2,3
 	conn.commit()
 	cur.close()
 
-
+#获取用户相似度
 def Get_similarity(id1,id2,vectors1,vectors2):#vec,earliset,latest
 	if id1==id2:
 		return 0
@@ -373,23 +374,17 @@ def cluster_days_ByCSV(n_clusters,method='kmeans'):
 	last_sim.append(0)
 	similarities.append(last_sim)
 	cluster_model = KMeans(n_clusters=n_clusters)#构造聚类器
-	cluster_model.fit(similarities)#聚类
-	label_pred = cluster_model.labels_ #获取聚类标签
-	centroids = cluster_model.cluster_centers_ #获取聚类中心
-	inertia = cluster_model.inertia_ # 获取聚类准则的总和
-	print('cluster over')
+	labels=cluster_model.fit_predict(similarities)
+	silhouette = metrics.silhouette_score(similarities, labels, metric = 'euclidean')
 	conn = Connect_MYSQL()
 	sql_create='create table cluster_By'+str(n_clusters)+' (id char(5),cluster char(2))'
 	cur = conn.cursor()
 	cur.execute(sql_create)
 	conn.commit()
-	# with open("cluster_result"+str(n_clusters)+".csv","w") as csvfile: 
-	# 	writer = csv.writer(csvfile)
-	# 	writer.writerows([vectors_order,label_pred])#写入多行用writerows
-	# print('write over')
+
 	count=0
-	for i in range(len(label_pred)):
-		sql_insert="insert into cluster_By"+str(n_clusters)+" values ('"+vectors_order[i]+"','"+str(label_pred[i])+"')"
+	for i in range(len(labels)):
+		sql_insert="insert into cluster_By"+str(n_clusters)+" values ('"+vectors_order[i]+"','"+str(labels[i])+"')"
 		cur.execute(sql_insert)
 		count=count+1
 		if count>1000:
@@ -398,12 +393,21 @@ def cluster_days_ByCSV(n_clusters,method='kmeans'):
 			count=0
 	conn.commit()
 	cur.close()
+	return silhouette
+def Get_best_cluster_num(start_num,end_num):
+	knum=[]
+	for k in range(start_num,end_num+1): 
+		silhouette=cluster_days_ByCSV(k)
+		knum.append([k,silhouette]) # 记录每个k的聚类指标
+		print('finish num :',k)
+	with open("clusters_silhouette.csv","w") as csvfile: 
+		writer = csv.writer(csvfile)
+		writer.writerows(knum)
 # dataprocessing_len(3)
 # merge_time(1)
 # results=cluster_days(6)
 # save_data([1,2,3])
 # Get_vectors()
 # Get_sim()
-for i in range(6,11):
-	cluster_days_ByCSV(i)
-	print('over',i)
+
+# Get_best_cluster_num(2,10)

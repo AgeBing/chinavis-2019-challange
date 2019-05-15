@@ -2,53 +2,80 @@ import React from 'react'
 import { DragSource } from 'react-dnd'
 import ItemType from './ItemType'
 
-import { Button,Icon,Tag } from 'antd';
+import { Button,Icon,Tag,Popover } from 'antd';
 
 import { nodeRectWidth,nodeRectHeight } from './Config'
+
+import PieChart from './PieChart'
+import StackChart from './StackChart'
+
+
+import { API_Traj_Info }  from '../../api/index'
 
 const style = {
   width: nodeRectWidth,
   height: nodeRectHeight
 }
 
+// const popStyle ={
+//   height : 120,
+//   width  : 160
+// }
+
+const popStyle ={
+  height : 220,
+  width  : 360
+}
+
+let  pieContent = (
+  <div style={popStyle}>
+  </div>
+);
+
+
+
 class Node extends React.Component{
   constructor() {
     super(...arguments)
     this.state = {
+        currentVisItem : 'none' ,
+        summary:{},
+        popContent:pieContent,
+        userLength:0 ,
+        sendingFLag:false
     }
   }
 
-  onHandleAdd(){
-      let { handleNodeAdd,id }  = this.props
-      handleNodeAdd(id)
+  componentWillMount(){
   }
-
-  onHandleDel(){
-      let { handleNodeDel,id }  = this.props
-      handleNodeDel(id)
-  }
-  onHandleChangeState(){
-      let { handleStateChage,id }  = this.props
-      handleStateChage(id)
-  }
-
   showConditions(){
     let { condition } = this.props
     let show = []
 
     if(!condition.hasOwnProperty('times')) return
 
+    this.getSummaryInfo()
+
+    show.push( 
+      <Tag className='cond-line' key={'users'}
+          onClick={this.onHandleShowOrHidePop.bind(this,'users')}>
+        <Icon type="user" /> 
+        {this.state.userLength}
+      </Tag>
+    )
+
     if( condition['times'] ){
         let days = Object.keys(condition['times'])
         days.forEach((day)=>{
           show.push(
-              <Tag className='cond-line' key={'time'+day}>
+              <Tag className='cond-line' key={'time'+day} >
                 <Icon type="clock-circle" /> 
                 {' '}D{day}|{condition['times'][+day]['startTime']}~{condition['times'][+day]['endTime']}
               </Tag>
           )
         })
     }
+
 
     // 展示分割
     let roomsStr = ' ',
@@ -63,7 +90,8 @@ class Node extends React.Component{
 
     if( condition['rooms'] && condition['rooms'].length > 0){
           show.push(
-              <Tag className='cond-line' key={'rooms'}>
+              <Tag className='cond-line' key={'rooms'}
+              onClick={this.onHandleShowOrHidePop.bind(this,'rooms')}  >
                     <Icon type="home" />  
                     {roomsStr}
               </Tag>
@@ -75,6 +103,42 @@ class Node extends React.Component{
           )
     }
     return show
+  }
+
+  getSummaryInfo(){
+    
+    // 避免重复发送
+    if(Object.keys(this.state.summary).length != 0)  return
+    if(this.state.sendingFLag) return
+    this.setState({
+      sendingFLag : true
+    })
+
+    let { condition } = this.props
+   
+    // 时间暂时则么写
+    let startMiniter,endMiniter,day
+    Object.keys(condition['times']).forEach((_day)=>{
+      day = +_day
+      startMiniter = condition['times'][day]['startMinites']
+      endMiniter = condition['times'][day]['endMinites']
+    })
+
+    let rids = condition['roomsId']
+
+    API_Traj_Info({
+      startMiniter,endMiniter,day,rids
+    }).then((res)=>{
+
+       console.log(res)
+        this.setState({
+          summary : res,
+          userLength:res['length']
+        })
+    })
+
+
+
   }
   render(){
     const {
@@ -91,14 +155,24 @@ class Node extends React.Component{
       condition
     } = this.props
 
+  
     if (isDragging && hideSourceOnDrag) {
       return null  // 不显示 否则会有拖影
     }
     return connectDragSource(
+
+
+
       <div 
         className={ifChoosen?'node-rect node-rect-choosen':'node-rect'}
         style={Object.assign({}, style, { 'left':x, 'top':y })}>
 
+      <Popover
+        content={this.state.popContent}
+        visible={this.state.currentVisItem != 'none' }
+        onVisibleChange={this.handleVisibleChange}
+        placement="right"
+      >
         <div className='conditions-contain'>
               {this.showConditions()}
         </div>
@@ -119,9 +193,65 @@ class Node extends React.Component{
                disabled={ifChoosen} />
           </div>
         </div>
+      </Popover>
+
       </div>
+
     )
   }
+  onHandleAdd(){
+      let { handleNodeAdd,id }  = this.props
+      handleNodeAdd(id)
+  }
+
+  onHandleDel(){
+      let { handleNodeDel,id }  = this.props
+      handleNodeDel(id)
+  }
+  onHandleChangeState(){
+      let { handleStateChage,id }  = this.props
+      handleStateChage(id)
+  }
+
+  onHandleShowOrHidePop(type){
+    let { summary,currentVisItem } = this.state
+
+    let newPopContent ,newVisItem
+
+    if(Object.keys(this.state.summary).length == 0)  return
+
+    if( type == currentVisItem ){
+      newVisItem = 'none'
+    }else{
+      newVisItem = type
+    }
+  
+
+    switch(type){
+      case "rooms":
+        newPopContent =  (
+          <div style={popStyle}>
+              <StackChart  rooms={summary.rooms} style={popStyle}/>
+          </div>
+        );
+        break;
+      
+      case "users":
+        newPopContent =  (
+          <div style={popStyle}>
+              <PieChart  counts={summary.user} style={popStyle}/>
+          </div>
+        );
+        break;
+    }
+
+    this.setState({
+      popContent:newPopContent,
+      currentVisItem:newVisItem
+    })
+  }
+
+
 }
 
 

@@ -37,11 +37,33 @@ class Traj{
       let tableName  = 'base_trajectory_day'+day
       let sql = `SELECT *  FROM ${tableName} WHERE id IN (${uids})  AND 
          time1 >= ${startMiniter} AND time2 <= ${endHMiniter}
-         AND floor2=${floor} LIMIT 0,800000 `
+         AND floor2=${floor} LIMIT 0,8000000`
 
 
       let dataList = await query( sql )
     return await dataList;
+  }
+
+  // 获取某一时间段内 某个房间的访问人数
+  async getTrajsCountByTimeIntervalAndRoom(startMiniter,endHMiniter,day,rid) {
+      let tableName  = 'traj_MergeTime_day'+day
+      let sql = `SELECT DISTINCT id  FROM ${tableName} WHERE 
+        (HOUR(time)*60 + MINUTE(time))  >= ${startMiniter}  AND 
+        (HOUR(time)*60 + MINUTE(time))  <= ${endHMiniter}  AND
+        rid = ${rid} `
+
+    let dataList = await query( sql )
+
+    return await dataList.length;
+  }
+
+
+  async getRoomName(rid) {
+    let tableName  = 'room'
+    let sql = `SELECT name FROM ${tableName} WHERE id = ${rid}`
+    let dataList = await query( sql )
+
+    return await dataList[0];
   }
 
 }
