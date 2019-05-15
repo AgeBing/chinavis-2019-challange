@@ -9,12 +9,12 @@ const poolRemote = mysql.createPool({
 const poolLocal = mysql.createPool({   //本地
   host     : '127.0.0.1',  
   user     : 'root',    
-  password : 'root' ,  // 数据库密码 改成自己的密码
+  password : 'qweasd9095' ,  // 数据库密码 改成自己的密码
   database : 'chinavis2019'  // 选中数据库
 })
 
-let pool = poolRemote
-// let pool = poolLocal
+// let pool = poolRemote
+let pool = poolLocal
 
 let query = function( sql, values ) {
   return new Promise(( resolve, reject ) => {

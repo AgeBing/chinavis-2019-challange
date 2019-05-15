@@ -4,9 +4,9 @@ export  async function request(option) {
   return new Promise((resolve, reject) => {
     let fetchItem;
 
-    if (method == "GET") {
+    if (method === "GET") {
       fetchItem = fetch(url);
-    } else if (method == "POST") {
+    } else if (method === "POST") {
       fetchItem = fetch(url, {
         body: JSON.stringify(data),
         cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -41,9 +41,9 @@ export async function requestSync(option) {
 
     let fetchItem;
 
-    if (method == "GET") {
+    if (method === "GET") {
       fetchItem = await fetch(url);
-    } else if (method == "POST") {
+    } else if (method === "POST") {
       fetchItem = await fetch(url, {
         body: JSON.stringify(data),
         cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
