@@ -2,6 +2,15 @@ const traj = require('../model/traj');
 const people = require('../model/people');
 
 
+function m_t(min) {
+	let h = Math.floor(min / 60),
+		m = min - h * 60
+
+	h =  h < 10 ? '0'+ h : ''+h
+	m =  m < 10 ? '0'+ m : ''+m 
+
+	return h + ':' +m
+}
 
 class TrajController {
   async trajs(ctx) {
@@ -95,12 +104,45 @@ class TrajController {
 		info['length'] = uids.length
 		info['user'] = groups
 		
-		ctx.body = info;
 
 		// 时间统计  每五分钟的活跃人数
 
 
-		// 地点统计  高峰时段的人数
+		// 地点统计  统计每个时间段各个放假内的人数
+		let rooms = []
+		let timeIntervalCount = 15  // 将起始时间和结束时间分词20段 
+		let intervals = []
+		let interval_length = Math.floor( ( endMiniter  - startMiniter ) / timeIntervalCount)
+		if(interval_length <= 0){
+			intervals = []
+		}else if(interval_length == 1){
+			intervals = [startMiniter,endMiniter]
+		}else{
+			for(let i = 0;i <= timeIntervalCount;i++){
+				intervals.push( startMiniter + i * interval_length )
+			}
+
+		}
+		for(let r = 0;r < rids.length; r++){
+				let rid = rids[r]
+				let roomName = await traj.getRoomName(rid)
+				for(let t = 1;t < intervals.length-1; t++){
+					let s = intervals[t - 1],
+						m = intervals[t],
+						e = intervals[t + 1]
+
+					let c = await  traj.getTrajsCountByTimeIntervalAndRoom(s,e,day,rid)
+					rooms.push({
+						time : m_t(m),         // 时间段表示的是前后的两个时间节点 这段时间的人数
+						name  : roomName['name'],
+						count: c
+					})
+				}
+		}
+		info['rooms'] = rooms
+
+
+		ctx.body = info;
 
 
 	}

@@ -107,7 +107,7 @@ class Traj extends Component {
     let { rectWidth,rectHeight } = Config
     let { width ,height }  = this.props
     const canvas = this.canvas.current
-    if (canvas.getContext) {
+    if (canvas && canvas.getContext) {
         var ctx = canvas.getContext("2d");
         ctx.globalAlpha = opacity;
         (function () {

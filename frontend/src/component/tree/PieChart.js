@@ -19,7 +19,7 @@ import DataSet from "@antv/data-set";
 class PieChart extends React.Component {
   render() {
     const { DataView } = DataSet;
-    let { counts } = this.props
+    let { counts,style } = this.props
 
 
     const dv = new DataView();
@@ -40,11 +40,12 @@ class PieChart extends React.Component {
     return (
       <div>
         <Chart
-          height={140}
-          width={160}
+          height={style.height}
+          width={style.width}
           data={dv}
           scale={cols}
           padding={[2, 60, 5, 5]}
+
         >
           <Coord type="theta" radius={0.75} />
           <Axis name="percent" />
@@ -73,6 +74,7 @@ class PieChart extends React.Component {
               stroke: "#fff"
             }}
           >
+            <Label content="count" />
           </Geom>
         </Chart>
       </div>
