@@ -96,7 +96,7 @@ class TrajController {
 
 		groupsCount.forEach((v,i)=>{
 			groups.push({
-				cluster : "聚类"+i,
+				cluster : "聚类"+(i + 1),     // 手动加一  从 1 开始数  
 				count : v
 			})
 		})

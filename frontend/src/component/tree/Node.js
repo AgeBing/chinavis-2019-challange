@@ -225,26 +225,29 @@ class Node extends React.Component{
     }else{
       newVisItem = type
     }
-  
 
-    switch(type){
-      case "rooms":
-        newPopContent =  (
-          <div style={popStyle}>
-              <StackChart  rooms={summary.rooms} style={popStyle}/>
-          </div>
-        );
-        break;
-      
-      case "users":
-        newPopContent =  (
-          <div style={popStyle}>
-              <PieChart  counts={summary.user} style={popStyle}/>
-          </div>
-        );
-        break;
+    
+    if(newVisItem == 'none'){
+      newPopContent = ( <div></div> )
+    }else{
+      switch(type){
+        case "rooms":
+          newPopContent =  (
+            <div style={popStyle}>
+                <StackChart  rooms={summary.rooms} style={popStyle}/>
+            </div>
+          );
+          break;
+        
+        case "users":
+          newPopContent =  (
+            <div style={popStyle}>
+                <PieChart  counts={summary.user} style={popStyle}/>
+            </div>
+          );
+          break;
+      }
     }
-
     this.setState({
       popContent:newPopContent,
       currentVisItem:newVisItem

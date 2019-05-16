@@ -1,14 +1,16 @@
 const initialState = {
     timeInterval: {
         day: 1,
-        minites: [480, 720],
+        minites: [480, 1080],
         times: [],
     },
     stateNodeId: 0,
     // rooms:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],
     rooms: [1, 2, 4],
     opacity: 0.50,
-    cluster: 4
+    cluster: 4,
+
+    clusterNum : 0   //视图联动 用户选择某一各聚类的人员  0表示全部
 };
 
 function appReducer(state = initialState, action, opation) {
@@ -35,6 +37,13 @@ function appReducer(state = initialState, action, opation) {
                 opacity: action.opacity
             };
             break;
+
+        case "CHANGE_CLUSTERNUM":
+            return {
+                ...state,
+                clusterNum:action.clusterNum
+            }
+
 
         default:
             return state;
