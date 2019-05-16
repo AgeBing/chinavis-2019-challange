@@ -3,7 +3,7 @@ const query = require('./db.js')
 class Track{
     async getTrack(day, cluster, timeStart, timeEnd, limit) {
         let sql;
-        if (limit === '0'){ //全部
+        if (limit === 0){ //全部
             sql = `SELECT id, time, place, label FROM track_day${day}_cluster${cluster} 
             WHERE time >= ${timeStart} AND time <= ${timeEnd}
             AND place!=0 AND place!=21 AND place!=22 AND place!=23 AND place!=24;`

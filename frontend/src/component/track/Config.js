@@ -3,20 +3,20 @@
 // 非常重要！！！ 
 // true使用自己设定的参数查询数据库 
 // false使用系统的redux共享状态联动
-const useMyOwn = true
+const useMyOwn = false
 
 // 数据库查询 & 颜色配置
 // limit 查询多少条 0代表所有行数据
 export function getPostData(timeInterval, rooms, cluster) {
     if(useMyOwn === true) {
         labelColorArray = labelColor[3];
-        return {day:3, cluster:3, timeStart:0, timeEnd:86400, limit:1000};
+        return {day:1, cluster:3, timeStart:0, timeEnd:86400, limit:1000};
     }
     const timeStart = timeInterval.minites[0] * 60;
     const timeEnd = timeInterval.minites[1] * 60;
     const day = timeInterval.day;
     labelColorArray = labelColor[cluster];
-    return {day:day, cluster:cluster, timeStart:timeStart, timeEnd:timeEnd, limit:1000};
+    return {day:day, cluster:cluster, timeStart:timeStart, timeEnd:timeEnd, limit:0};
 }
 
 // 人员分类的颜色显示
@@ -36,8 +36,8 @@ export let chartHeightShow = 360
 export let chartHeightBrush = 200
 
 // 地点轴的显示情况
-export let placeArray = ['分会场D', '分会场C', '分会场B', '分会场A', '海报区', '展厅', '主会场', '签到处',
-'走廊/扶梯', '厕所', 'room', '休闲区','餐厅']
+export let placeArray = ['分会场D', '分会场C', '分会场B', '分会场A', '主会场', '海报区', '展厅', '签到处',
+'厕所', '休闲区','餐厅']
 
 // 地名映射
 export function getPlaceText(place) {
@@ -74,13 +74,14 @@ export function getPlaceText(place) {
 
 // 改变数据格式
 export function getDataTrans(Data) {
+    console.log('数据行数: ', Data.length);
     const dataTrans = Data.map(i => {
         return {
             ...i,
             place: getPlaceText(i.place),
         }
     });
-    // console.log('处理后的全部数据', dataTrans);
+    console.log('处理后的数据示例： ', dataTrans[0]);
     return dataTrans;
 }
 

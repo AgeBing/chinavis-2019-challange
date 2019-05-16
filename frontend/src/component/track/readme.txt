@@ -6,9 +6,10 @@
     day 2 cluster 3
     day 3 cluster 3
 
-当前版本默认 直接删除 过道 0 /扶梯 21 22 23 24
-    参看 server\src\model\track.js 的sql语句
-
+当前版本默认 
+    直接删除 过道 0 /扶梯 21 22 23 24 
+        参看 server\src\model\track.js 的sql语句
+    前端不显示 room
 
 
 远程拉数据库到本地：
