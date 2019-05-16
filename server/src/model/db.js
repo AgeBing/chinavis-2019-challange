@@ -13,8 +13,8 @@ const poolLocal = mysql.createPool({   //本地
   database : 'chinavis2019'  // 选中数据库
 })
 
-// let pool = poolRemote
-let pool = poolLocal
+let pool = poolRemote
+// let pool = poolLocal
 
 let query = function( sql, values ) {
   return new Promise(( resolve, reject ) => {

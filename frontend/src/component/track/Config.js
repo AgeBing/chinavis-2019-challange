@@ -24,7 +24,7 @@ let labelColorArray = []
 
 const labelColor = {
     2 : ['#d7191c','#fdae61'],
-    3 : ['#d7191c','#fdae61','#abd9e9'],
+    3 : ['#d7191c','#FFD700','#abd9e9'],
     4 : ['#d7191c','#fdae61','#abd9e9','#2c7bb6'],
     5 : ['#d7191c','#fdae61','#ffffbf','#abd9e9','#2c7bb6'],
     6 : ['#d73027','#fc8d59','#fee090','#e0f3f8','#91bfdb','#4575b4'],
@@ -36,8 +36,8 @@ export let chartHeightShow = 360
 export let chartHeightBrush = 200
 
 // 地点轴的显示情况
-export let placeArray = ['分会场D', '分会场C', '分会场B', '分会场A', '主会场', '海报区', '展厅', '签到处',
-'厕所', '休闲区','餐厅']
+export let placeArray = ['分会场D', '分会场C', '分会场B', '分会场A', '主会场', '海报区', '展厅', '签到处','服务台',
+'厕所', 'room','休闲区','餐厅']
 
 // 地名映射
 export function getPlaceText(place) {

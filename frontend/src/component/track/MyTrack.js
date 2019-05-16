@@ -104,7 +104,7 @@ function getMyGraph(Data) {
                         <Axis name='place' visible={false} />
                         <Legend name="label" position="top" dx={20} />
                         <Geom
-                            type='line' position='time*place' size={1} opacity={1} shape={'hv'}
+                            type='line' position='time*place' size={1} opacity={1}  shape={['id', ['hv']]}
                             color={['label', Config.getLabelColor]} 
                             active={false}
                         />
@@ -120,12 +120,20 @@ function getMyGraph(Data) {
                         <Legend name="label" position="top" dx={20} />
                         <Tooltip crosshairs={{ type: 'y' }} />
                         <Geom
-                            type='line' position='time*place' size={1} opacity={1} shape={'hv'}
+                            type='line' position='time*place' size={1} opacity={1} shape={['id', ['hv']]}
                             active={[true, {
-                                highlight: true, // 开启时没有激活的变灰
-                                style: { // 查找 html convas 属性
-                                    lineWidth: 2
+                                highlight: false, // 开启时没有激活的变灰
+                                style: { 
+                                    lineWidth: 5,
                                 },
+                            }]}
+                            select={[true, {
+                                mode: 'multiple', // 选中模式 'single',
+                                style: { 
+                                    lineWidth: 5,
+                                }, 
+                                cancelable: true, // 选中之后是否允许取消选中，默认允许取消选中
+                                animate: true // 选中是否执行动画，默认执行动画
                             }]}
                             color={['label', Config.getLabelColor]} 
                             tooltip={['time*place*id*label', (time, place, id, label) => {
