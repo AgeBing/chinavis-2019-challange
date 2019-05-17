@@ -64,7 +64,16 @@
   left: 0;
   width: 100%;
 }
-
+.traj-container{
+  position: relative;
+  display: inline-block;
+}
+.traj-canvas{
+  position: absolute;
+}
+.traj-canvas-highlight{
+  position: absolute;
+}
 
 .map-room{
   position: absolute;
@@ -131,4 +140,9 @@
   display: inline-block;
   width: 200px;
   float: right;
+}
+
+
+.traj-canvas-hide{
+  opacity: 0.1
 }

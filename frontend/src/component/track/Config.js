@@ -1,42 +1,87 @@
 // 配置文件
 
-// 数据库查询
-const day = '1'
-const cluster = '4'
-const limit = '10000'
-export const postData = {day:day, cluster:cluster, limit:limit};
+// 非常重要！！！ 
+// true使用自己设定的参数查询数据库 
+// false使用系统的redux共享状态联动
+const useMyOwn = false
+
+// 数据库查询 & 颜色配置
+// limit 查询多少条 0代表所有行数据
+export function getPostData(timeInterval, rooms, cluster) {
+    if(useMyOwn === true) {
+        labelColorArray = labelColor[3];
+        return {day:1, cluster:3, timeStart:0, timeEnd:86400, limit:1000};
+    }
+    const timeStart = timeInterval.minites[0] * 60;
+    const timeEnd = timeInterval.minites[1] * 60;
+    const day = timeInterval.day;
+    labelColorArray = labelColor[cluster];
+    return {day:day, cluster:cluster, timeStart:timeStart, timeEnd:timeEnd, limit:0};
+}
 
 // 人员分类的颜色显示
-let labelColor = {
-    '3' : ['#d7191c','#fdae61','#abd9e9'],
-    '4' : ['#d7191c','#fdae61','#abd9e9','#2c7bb6'],
-    '5' : ['#d7191c','#fdae61','#ffffbf','#abd9e9','#2c7bb6'],
-    '6' : ['#d73027','#fc8d59','#fee090','#e0f3f8','#91bfdb','#4575b4'],
-    '7' : ['#d73027','#fc8d59','#fee090','#ffffbf','#e0f3f8','#91bfdb','#4575b4'],
+let labelColorArray = []
+
+const labelColor = {
+    2 : ['#d7191c','#fdae61'],
+    3 : ['#d7191c','#FFD700','#abd9e9'],
+    4 : ['#d7191c','#fdae61','#abd9e9','#2c7bb6'],
+    5 : ['#d7191c','#fdae61','#ffffbf','#abd9e9','#2c7bb6'],
+    6 : ['#d73027','#fc8d59','#fee090','#e0f3f8','#91bfdb','#4575b4'],
+    7 : ['#d73027','#fc8d59','#fee090','#ffffbf','#e0f3f8','#91bfdb','#4575b4'],
 }
-let labelColorArray = labelColor[cluster];
 
 // 图表高度,BizChart的宽度是自适应屏幕的
 export let chartHeightShow = 360
 export let chartHeightBrush = 200
-// 地点轴的显示情况
-export let placeArray = ['主会场', '分会场A', '分会场B', '分会场C', '分会场D', '海报区', '展厅', '签到处','走廊/墙',
-'扶梯', '厕所', '餐厅', '休闲区']
 
-// , 'room1', 'room2', 'room3', 'room4', 'room5', 'room6'
-// , 
+// 地点轴的显示情况
+export let placeArray = ['分会场D', '分会场C', '分会场B', '分会场A', '主会场', '海报区', '展厅', '签到处','服务台',
+'厕所', 'room','休闲区','餐厅']
+
+// 地名映射
+export function getPlaceText(place) {
+    const p = Number(place);
+    switch (p) {
+        case 0: return '走廊/扶梯';
+        case 1: return '展厅';
+        case 2: return '主会场';
+        case 3: return '分会场A';
+        case 4: return '签到处';
+        case 5: return '分会场B';
+        case 6: return '分会场C';
+        case 7: return '分会场D';
+        case 8: return '海报区';
+        case 9:
+        case 15:
+        case 19: return '厕所';
+        case 10: 
+        case 11: 
+        case 13: 
+        case 14: 
+        case 17: 
+        case 20: return 'room';
+        case 12: return '服务台';
+        case 16: return '餐厅';
+        case 18: return '休闲区';
+        case 21:
+        case 22:
+        case 23:
+        case 24: return '走廊/扶梯';
+        default: return '错误';
+    }
+}
 
 // 改变数据格式
 export function getDataTrans(Data) {
+    console.log('数据行数: ', Data.length);
     const dataTrans = Data.map(i => {
         return {
             ...i,
             place: getPlaceText(i.place),
-            time: getClockToTime(i.time),
-            // label: Number(i.label)
         }
     });
-    console.log('处理后的全部数据', dataTrans);
+    console.log('处理后的数据示例： ', dataTrans[0]);
     return dataTrans;
 }
 
@@ -54,7 +99,6 @@ export const scale = {
         range: [0, 1],
         formatter: (value) => { return getTimeToClock(value) },
         // tickInterval: 3600
-
     },
     label: {
         type: 'cat',
@@ -92,35 +136,3 @@ export function getTimeToClock(second) {
     return str;
 }
 
-// 地名映射
-export function getPlaceText(place) {
-    const p = Number(place);
-    switch (p) {
-        case 0: return '走廊/墙';
-        case 1: return '展厅';
-        case 2: return '主会场';
-        case 3: return '分会场A';
-        case 4: return '签到处';
-        case 5: return '分会场B';
-        case 6: return '分会场C';
-        case 7: return '分会场D';
-        case 8: return '海报区';
-        case 9:
-        case 15:
-        case 19: return '厕所';
-        case 10: return 'room1';
-        case 11: return 'room2';
-        case 13: return 'room3';
-        case 14: return 'room4';
-        case 17: return 'room5';
-        case 20: return 'room6';
-        case 12: return '服务台';
-        case 16: return '餐厅';
-        case 18: return '休闲区';
-        case 21:
-        case 22:
-        case 23:
-        case 24: return '扶梯';
-        default: return '错误';
-    }
-}

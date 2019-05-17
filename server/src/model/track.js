@@ -1,15 +1,18 @@
 const query = require('./db.js')
 
 class Track{
-    async getTrack(day, cluster, limit) {
-        day = day || '1';
-        cluster = cluster || '3';
-        let sql = ``;
-        if (limit === 'all'){
-            sql = `SELECT * FROM track_day${day}_cluster${cluster};`
+    async getTrack(day, cluster, timeStart, timeEnd, limit) {
+        let sql;
+        if (limit === 0){ //全部
+            sql = `SELECT id, time, place, label FROM track_day${day}_cluster${cluster} 
+            WHERE time >= ${timeStart} AND time <= ${timeEnd}
+            AND place!=0 AND place!=21 AND place!=22 AND place!=23 AND place!=24;`
         }
         else {
-            sql = `SELECT * FROM track_day${day}_cluster${cluster} LIMIT 0, ${limit};`
+            sql = `SELECT id, time, place, label FROM track_day${day}_cluster${cluster} 
+            WHERE time >= ${timeStart} AND time <= ${timeEnd} 
+            AND place!=0 AND place!=21 AND place!=22 AND place!=23 AND place!=24
+            LIMIT ${limit};`
         }
         console.log('Track - sql - ', sql);
         let dataList = await query( sql );
@@ -19,7 +22,7 @@ class Track{
 
 module.exports = new Track();
 
-// LIMIT 0,1000
+// SELECT * FROM chinavis2019.trajectory_MergeTime_day1 where time2 >= 50000 and time2 <= 60000 limit 10;
 
 // let sql = `SELECT id AS id,time AS time,rid AS place 
 // FROM ${tableName} LIMIT 0,1000`

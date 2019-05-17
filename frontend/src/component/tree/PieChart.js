@@ -15,12 +15,38 @@ import {
   Util
 } from "bizcharts";
 import DataSet from "@antv/data-set";
+import { connect } from 'react-redux'
+
 
 class PieChart extends React.Component {
+   constructor() {
+    super(...arguments)
+    this.state = {
+    }
+  }
+  onHandleClusterSelect = (data)=>{
+    let { clusterNum }  = this.props
+
+    console.log('select',data)    // 聚类2
+    let currentNum = +data.slice(-1)
+    if(clusterNum !=  currentNum){
+      this.props.changeSelectCluster(currentNum)
+    }
+  }
+  componentWillUnmount(){
+    let { clusterNum }  = this.props
+    if( clusterNum != 0){
+      // 是选择失效，返回全部数据
+      this.props.changeSelectCluster(0)
+    }
+
+  }
   render() {
     const { DataView } = DataSet;
     let { counts,style } = this.props
 
+    let chartIns,
+       self = this
 
     const dv = new DataView();
     dv.source(counts).transform({
@@ -45,6 +71,17 @@ class PieChart extends React.Component {
           data={dv}
           scale={cols}
           padding={[2, 60, 5, 5]}
+
+          onGetG2Instance={g2Chart => {chartIns = g2Chart;}}
+          onPlotClick={ev => {
+            var point = {
+              x: ev.x,
+              y: ev.y
+            };
+            let selectItem = ev.data._origin.cluster
+            self.onHandleClusterSelect(selectItem)
+          }}
+
 
         >
           <Coord type="theta" radius={0.75} />
@@ -82,4 +119,22 @@ class PieChart extends React.Component {
   }
 }
 
-export default PieChart
+
+
+const mapStateToProps = (state) => {
+  return {
+    clusterNum : state.clusterNum
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    changeSelectCluster: (clusterNum) => {
+      let type = 'CHANGE_CLUSTERNUM'
+      dispatch({ type, clusterNum });
+    },
+  }
+}
+
+
+export default connect(mapStateToProps,mapDispatchToProps)(PieChart);

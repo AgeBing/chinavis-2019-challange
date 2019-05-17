@@ -7,7 +7,6 @@ import Brush from "@antv/g2-brush";
 import { connect } from 'react-redux';
 import * as Config from './Config'
 import './MyTrack.css'
-
 import { API_Track } from '../../api/index'
 
 // 父组件，获取初始数据
@@ -19,8 +18,10 @@ class MyTrack extends Component {
         }
     }
     componentWillMount() {
-        // 参数 day='1', cluster='3' 第一个是第几天，第二个是聚类个数
-        API_Track(Config.postData).then(response => {
+        // 接受 共享数据
+        const postData = Config.getPostData(this.props.timeInterval, this.props.rooms, this.props.cluster);
+        console.log('所查询的数据:', postData);
+        API_Track(postData).then(response => {
             this.setState({
                 data: response
             })
@@ -42,7 +43,8 @@ function getMyGraph(Data) {
     // 建立dataset
     const ds = new DataSet({
         state: {
-            brushTime: null //缩略图时间选择
+            timeStart: null, //时间筛选 格式是秒数
+            timeEnd:  null
         }
     });
     // 建立dataview 每次状态量变更后，会自动刷新数据
@@ -50,16 +52,16 @@ function getMyGraph(Data) {
     // 绑定数据筛选关系
     dv.source(dataTrans).transform({
         type: 'filter',
-        callback: obj => {
-            if (ds.state.brushTime) {  //当brushdata存储了数值的时候
-                return ds.state.brushTime.indexOf(obj.time) > -1;  //为每一行数据遍历brushdata，在其中则返回true
+        callback: obj => {  
+            const time = obj.time;
+            if (ds.state.timeStart && ds.state.timeEnd) {  
+                return time >= ds.state.timeStart && time <= ds.state.timeEnd;
             }
             return obj;
         }
     });
     // 把组件的chart绑定到这个变量上,实现 brush操作 的功能
     let chart2;
-
     // 画图组件
     class MyGraph extends Component {
         // 挂载后设置 brush
@@ -71,11 +73,17 @@ function getMyGraph(Data) {
                 dragable: true,  // 可以移动brush框
                 onBrushmove(ev) {
                     const { time } = ev;    // 选中的数据里面，选择time作为过滤条件
-                    ds.setState('brushTime', time);
+                    const max = Math.max.apply(null, time);
+                    const min = Math.min.apply(null, time);
+                    ds.setState('timeStart', min);
+                    ds.setState('timeEnd', max);
                 },
                 onDragmove(ev) {
                     const { time } = ev;
-                    ds.setState('brushTime', time);
+                    const max = Math.max.apply(null, time);
+                    const min = Math.min.apply(null, time);
+                    ds.setState('timeStart', min);
+                    ds.setState('timeEnd', max);
                 }
             });
         }
@@ -96,7 +104,7 @@ function getMyGraph(Data) {
                         <Axis name='place' visible={false} />
                         <Legend name="label" position="top" dx={20} />
                         <Geom
-                            type='line' position='time*place' size={1} opacity={1} shape={'hv'}
+                            type='line' position='time*place' size={1} opacity={1}  shape={['id', ['hv']]}
                             color={['label', Config.getLabelColor]} 
                             active={false}
                         />
@@ -112,12 +120,20 @@ function getMyGraph(Data) {
                         <Legend name="label" position="top" dx={20} />
                         <Tooltip crosshairs={{ type: 'y' }} />
                         <Geom
-                            type='line' position='time*place' size={1} opacity={1} shape={'hv'}
+                            type='line' position='time*place' size={1} opacity={1} shape={['id', ['hv']]}
                             active={[true, {
-                                highlight: true, // 开启时没有激活的变灰
-                                style: { // 查找 html convas 属性
-                                    lineWidth: 2
+                                highlight: false, // 开启时没有激活的变灰
+                                style: { 
+                                    lineWidth: 5,
                                 },
+                            }]}
+                            select={[true, {
+                                mode: 'multiple', // 选中模式 'single',
+                                style: { 
+                                    lineWidth: 5,
+                                }, 
+                                cancelable: true, // 选中之后是否允许取消选中，默认允许取消选中
+                                animate: true // 选中是否执行动画，默认执行动画
                             }]}
                             color={['label', Config.getLabelColor]} 
                             tooltip={['time*place*id*label', (time, place, id, label) => {
@@ -137,7 +153,15 @@ function getMyGraph(Data) {
     return MyGraph;
 }
 
-export default MyTrack;
+// redux 时间段,room
+const mapStateToProps = (state) => {
+    return {
+        timeInterval: state.timeInterval,
+        rooms: state.rooms,
+        cluster: state.cluster, 
+    }
+}
 
-// mysqldump --column-statistics=0  --host=115.159.202.238 -uchinavis -pchinavis2019 --databases chinavis2019 --tables cluster_By5 cluster_By6  cluster_By7 cluster_By8 cluster_By9 cluster_By10>  C:\Users\14403\Documents\dumps\day3.sql
+export default connect(mapStateToProps)(MyTrack);
+
 
