@@ -4,6 +4,7 @@ const TrajController = require("./controller/traj");
 const Heatmap_gridsController = require("./controller/Heatmap_grids");
 const TrackController = require('./controller/track');
 const PeopleController = require('./controller/people')
+const SankeyController=require('./controller/sankey')
 
 module.exports = router => {
   router.prefix("/api");
@@ -20,4 +21,5 @@ module.exports = router => {
     .post("/track", TrackController.getTrack)
     .post("/trajs_info", TrajController.trajInfo)
     .post('/userid_byclurster',PeopleController.getUids)
+    .post('/sankey',SankeyController.getTrack)
 };

@@ -19,3 +19,6 @@ export let API_Uid_ByCluster = (data,url = '/api/userid_byclurster' ,method = 'P
 export let API_SYNC_Rooms = (data,url = '/api/rooms' ,method = 'POST') =>  requestSync({ url , data ,method})
 
 
+export let API_Sankey = (data, url = '/api/sankey' , method= 'POST') => request({ url, data, method})
+
+
