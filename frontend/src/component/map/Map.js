@@ -9,13 +9,17 @@ import * as Config from './Config'
 
 import { connect } from 'react-redux'
 
-import { Slider } from 'antd';
+import { Slider,Drawer,Button,List } from 'antd';
 
 import './map.css'
 
 class  MyMap  extends Component{
 	constructor(props){
 		super(props)
+		this.state = {
+			visible: false,
+			showIds:[]
+		}
 	}
 	componentWillMount(){
 
@@ -31,8 +35,25 @@ class  MyMap  extends Component{
 	    this.props.changeOpacity(value)
 	  }
 
+	componentWillReceiveProps(nextProps){
+    //参数变化  
+      if(this.props.selectIdsGlobal != nextProps.selectIdsGlobal){
+        this.updateShowIds(nextProps)
+      }
+  	}
+  	updateShowIds(nextProps){
+  		this.setState({
+  			showIds : nextProps.selectIdsGlobal
+  		})
+  	}
 	render(){
-		let { opacity } = this.state
+		let { opacity,showIds } = this.state
+
+
+		let data = ['123','21213','324','123']
+		for(let o = 0;o < 400;o++){
+			data.push(o)
+		}
 		return (
 		<div>
 			<div className='map-container'>
@@ -70,11 +91,51 @@ class  MyMap  extends Component{
 					min={0.01}
             		max={1} 
             		step={0.01}
-            defaultValue={opacity} onChange={this.onOpacityChange} />
+            	defaultValue={opacity} onChange={this.onOpacityChange} />
+				
+				<br/>
+				<Button type="primary" onClick={this.showDrawer}>
+          			Open
+        		</Button>
 			</div>
+
+
+
+			 <Drawer
+		          title={"当前选中人数"+showIds.length}
+		          placement="right"
+		          closable={true}
+		          onClose={this.onClose}
+		          visible={this.state.visible}
+		          mask={false}
+		        >
+						 <List
+						    itemLayout="horizontal"
+						    dataSource={showIds}
+						    renderItem={item => (
+						      <List.Item>
+						       	{+item}
+						      </List.Item>
+						    )}
+						  />
+		        </Drawer>
+
 		</div>
 		)
 	}
+
+	 showDrawer = () => {
+	    this.setState({
+	      visible: true,
+	    });
+	  };
+
+	  onClose = () => {
+	    this.setState({
+	      visible: false,
+	    });
+	  };
+
 }
 
 
@@ -82,6 +143,7 @@ class  MyMap  extends Component{
 const mapStateToProps = (state) => {
   return {
     opacity: state.opacity,
+    selectIdsGlobal : state.selectIdsGlobal
   }
 }
 

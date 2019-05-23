@@ -68,7 +68,7 @@ function nodePosition({depth , height, name}){
 // 第二步 计算各边位置
 // 从两个结点中找位置
 function linkPosition(_nodes , link){
-	let { source,target,value,ids } = link
+	let { source,target,value,ids,index } = link
 
 	let lineHeight  = value * nodeConfig.heightPerCount
 
@@ -96,7 +96,7 @@ function linkPosition(_nodes , link){
 	let x = [ x0,x1,x2,x3 ],
 		y = [ y0,y1,y2,y3 ] 
 
-	return { x,y,ids,source:sourceNode['height'],target:targetNode['height'],width:lineHeight,value }
+	return { x,y,ids,index,source:sourceNode['height'],target:targetNode['height'],width:lineHeight,value }
 }
 
 

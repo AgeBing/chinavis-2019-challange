@@ -1,5 +1,7 @@
 import { API_Sankey }  from '../../api/index'
 import React from "react";
+import { connect } from 'react-redux'
+
 import {
   G2,
   Chart,
@@ -24,7 +26,9 @@ class Sankey extends React.Component {
   constructor() {
     super(...arguments)
     this.state = {
-      data : null
+      data : null,
+      selectIds : [],
+      selectItemId:-1
     }
   }
 
@@ -39,7 +43,7 @@ class Sankey extends React.Component {
       day, cluster, timeStart, timeEnd, limit
     }).then((res)=>{
       let sankeyData = sankeyLayout(res)
-      console.log(sankeyData)
+
       this.setState({
         data: sankeyData
       })
@@ -50,7 +54,8 @@ class Sankey extends React.Component {
 
 
   render() {
-    let { data }  = this.state
+    let { data,selectIds,selectItemId }  = this.state
+    let { changeSelectTrajIds } = this.props
     if( data == null) return (
       <div></div>
     )
@@ -64,7 +69,10 @@ class Sankey extends React.Component {
       }
     };
 
-    
+    let chartIns,
+        self = this
+
+
     return (
       <div>
         <Chart
@@ -73,6 +81,31 @@ class Sankey extends React.Component {
           height={1000}
           scale={scale}
           padding={[40, 80]}
+
+          //https://bizcharts.net/products/bizCharts/api/chart#%E5%9B%BE%E8%A1%A8%E4%BA%8B%E4%BB%B6
+          onGetG2Instance={g2Chart => {chartIns = g2Chart;}}
+          
+          onEdgeClick={ev => {
+            var point = {
+              x: ev.x,
+              y: ev.y
+            };
+
+            let selectIds = ev.data._origin.ids
+            let _selectItemId = ev.data._origin.index
+
+            if(selectItemId == _selectItemId){ // 取消
+                selectIds = []
+                _selectItemId = -1
+            }
+
+            changeSelectTrajIds(selectIds)
+            self.setState({
+              selectIds,
+              selectItemId:_selectItemId
+            })
+          }}
+
         >
           <Tooltip showTitle={false} />
           <View data={data.links}>
@@ -80,8 +113,27 @@ class Sankey extends React.Component {
               type="edge"
               position="x*y"
               shape="arc"
-              color="#bbb"
+
+              color={['ids*index', (ids,index)=>{
+                  if(index == selectItemId){
+                    return 'red';
+                  }
+                  let flag  = false
+                  for(let i=0;i<selectIds.length;i++){
+                    if(ids.indexOf(selectIds[i]) != -1){
+                      flag = true
+                      break
+                    }
+                  }
+                  if(flag)
+                    return '#00ff00';
+                  else
+                    return '#bbb';
+                }]}
+              
               opacity={0.6}
+              highlight={true}
+              
               tooltip={[
                 "target*source*value",
                 (target, source, value) => {
@@ -91,6 +143,8 @@ class Sankey extends React.Component {
                   };
                 }
               ]}
+
+
             />
           </View>
           <View data={data.nodes}>
@@ -121,7 +175,27 @@ class Sankey extends React.Component {
   }
 }
 
-export default Sankey
+
+
+
+
+const mapStateToProps = (state) => {
+  return {
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+
+  return {
+    changeSelectTrajIds: (ids) => {
+      let type = 'CHANGE_SELECT_TRAJ_IDS'
+      dispatch({ type, ids });
+    },
+  }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Sankey)
+
 
 
 

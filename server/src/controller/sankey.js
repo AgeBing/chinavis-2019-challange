@@ -141,10 +141,13 @@ class SankeyController {
     		return rooms.indexOf(rid) * intervalCounts + timeIndex
     	}
 
+        let linkCount = 0
     	Object.keys(linksMap).forEach((startName)=>{
     		let targets = linksMap[startName]
     		Object.keys(targets).forEach((targetName)=>{
+                linkCount+=1
     			links.push({
+                    index: linkCount,
     				source : getIndex(startName),
     				target : getIndex(targetName),
     				value  : linksMap[startName][targetName]['count'],
