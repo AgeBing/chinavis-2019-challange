@@ -9,9 +9,10 @@ import { connect } from 'react-redux'
 
 import { panelWidth,panelHeight,
 		initalNodeX,initalNodeY,
-		getRandId,getNewPosition } from './Config'
+		getRandId,getNewPosition,
+    nodeRectWidth,nodeRectHeight } from './Config'
 
-
+import { Icon,  } from 'antd';
 import './Panel.css'
 
 import { _M2T,_T2M }  from './Config'
@@ -25,40 +26,39 @@ const panelStyle = {
   height: panelHeight,
 }
 
+
+
 class Panel extends React.Component {
   constructor() {
     super(...arguments)
     this.state = {
       nodes: {},
       links: [],
-
       showCondiPanel:false,
       defaultConditions:{},
       currentSourceID:0
     }
   }
 
+
+
   async componentWillMount(){
     let { nodes }  = this.state 
 
-
     // 初始 Node
     let rootId = getRandId()
-    nodes[rootId] = {
-    	id : rootId,
-    	x : initalNodeX,
-    	y : initalNodeY,
-    	deleteAble: false,
-      condition : {},
-      choosen: true
-    }
+    // nodes[rootId] = {
+    // 	id : rootId,
+    // 	x : initalNodeX,
+    // 	y : initalNodeY,
+    // 	deleteAble: false,
+    //   condition : {},
+    //   choosen: true
+    // }
 
 
-    let defaultConditions = {
-      times : {},
-      rooms: [],
-      roomsId:[]
-    }
+    let defaultConditions = {}
+
      // 初始 time
     let { timeInterval } = this.props
     let startMinites = timeInterval.minites[0],
@@ -67,14 +67,20 @@ class Panel extends React.Component {
         endTime      = '12:00'
 
 
-    defaultConditions['times'][timeInterval.day] = {
-      startMinites,
-      endMinites,
-      startTime,
-      endTime
+    defaultConditions = {
+      time:{
+        startTime,
+        startMinites,
+        endTime,
+        endMinites
+      },
+      day:1,
+      peopleMode:1,
+      rooms:[],
+      roomsId:[]
     }
 
-    // 初始 Rooms
+    // 初始 Rooms 
     await this.getRooms()
     let { rooms }  = this.props
     rooms.forEach((roomId)=>{
@@ -87,9 +93,10 @@ class Panel extends React.Component {
     })
 
 
+    this.addNode(defaultConditions)
 
-    nodes[rootId]['condition'] = defaultConditions
-    this.setState({ nodes })
+    // nodes[rootId]['condition'] = defaultConditions
+    // this.setState({ nodes })
   }
 
 
@@ -97,11 +104,29 @@ class Panel extends React.Component {
   render() {
     const { connectDropTarget } = this.props
     const { nodes , links ,showCondiPanel } = this.state
+    
     return connectDropTarget(
       <div 	
       	style={panelStyle} 
       	className="panel" >  
         
+
+        <div  className='add-node'  
+          style={{
+              height:nodeRectHeight,
+              width:nodeRectWidth
+          }}
+          onClick={this.addNodeButtonHandler}
+        >
+          <span>
+              <Icon type='plus' />
+              <div className="ant-upload-text">
+              添加节点
+              </div>
+          </span>
+        </div>
+
+
         {Object.keys(nodes).map((key) => {
         	let node = nodes[key]
           
@@ -114,10 +139,11 @@ class Panel extends React.Component {
 	              delFlag={!node.deleteAble}
                 ifChoosen={node.choosen}
 	              hideSourceOnDrag={true}
-	              handleNodeAdd={this.addCondition}
+	              handleConditionChange={this.changeCondition}
 	              handleNodeDel={this.delNode.bind(this)}
                 handleStateChage={this.chooseNode.bind(this)}
                 condition={node.condition}
+                handleUnionTwoNode={this.unionTwoNode}
 	            >
 	            </Node>
 	          )
@@ -133,12 +159,17 @@ class Panel extends React.Component {
            roomsMap={roomsMap}
         />
       )}
-
-       
+      
       </div>
-
     )
   }
+
+  // 点击添加节点按钮触发
+  addNodeButtonHandler=()=>{
+    this.showCondiPanel()
+  }
+
+
 
   moveBox(id, x, y) {
   	let { links }  = this.state
@@ -153,30 +184,29 @@ class Panel extends React.Component {
     )
 
     //updatelinks 
+    /*[{
+        source: { id1:{ x,y},id2:{ x,y} },
+        target: { id : {x,y}}
+    }]*/
     links.forEach((link)=>{
-    	Object.keys(link).forEach((key)=>{
-    		if(link[key].id == id){
-    			link[key].x =  x
-    			link[key].y =  y
-    		}
-    	})
+      if(link.source[id]){
+        link.source[id].x = x
+        link.source[id].y = y
+      }
+      if(link.target[id]){
+        link.target[id].x = x
+        link.target[id].y = y
+      }
     })
-
     this.setState({links})
-
   }
 
-  addNode = (condition)=>{
+  // 从 conditionPanel 中获取 condition ，并添加至全局 nodes 中
+  addNode = (condition,sourceNodes)=>{
   	let { nodes,links,currentSourceID } = this.state 
 
-    let sourceId = currentSourceID
-  	let sourceNode = nodes[sourceId]
-  	if(!sourceNode) return
-
   	let newId = getRandId(),
-  		{ x,y } = getNewPosition(sourceNode.x , sourceNode.y)
-
-  	sourceNode['deleteAble'] = false
+  		{ x,y } = getNewPosition()
 
   	let newNode =  {
       condition,
@@ -187,10 +217,20 @@ class Panel extends React.Component {
   	}
   	nodes[newId] = newNode
 
-  	links.push({
-  		source: sourceNode,
-  		target: newNode,
-  	})
+    if(sourceNodes){
+      let sourceA = sourceNodes[0],
+          sourceB = sourceNodes[1],
+          positionA = { x : nodes[sourceA]['x'] ,  y : nodes[sourceA]['y'] },
+          positionB = { x : nodes[sourceB]['x'] ,  y : nodes[sourceB]['y'] }
+
+      let newLink = {}
+      newLink['target'] = {}
+      newLink['target'][newId] = { x,y }
+      newLink['source'] = {}
+      newLink['source'][sourceA] = positionA 
+      newLink['source'][sourceB] = positionB
+      links.push(newLink)
+    }
 
   	this.setState({ nodes,links })
     this.hideCondiPanel()    
@@ -224,6 +264,7 @@ class Panel extends React.Component {
   		nodes,links
   	})
   }
+
   chooseNode(sourceId){
     let { nodes } = this.state
     
@@ -241,6 +282,29 @@ class Panel extends React.Component {
     this.setState({nodes})
   }
 
+  unionTwoNode =(aId,bId)=>{
+    // 获取两个node 的 ids 
+    let { nodes } = this.state
+    let nodeA = nodes[aId],
+        nodeB = nodes[bId],
+        uidsA = nodeA['condition']['uids'],
+        uidsB = nodeB['condition']['uids'],
+        uidsUnion = uidsA.filter(function(u){ return uidsB.indexOf(u) > -1 })  // 考虑NAN
+    // 取交集
+
+    console.log(uidsA,uidsB,uidsUnion)
+    // 添加新节点
+    let condition = {
+      uids : uidsUnion
+    },sourceNodes = [aId,bId]
+
+    this.addNode(condition , sourceNodes)
+  }
+
+  // 修改节点的条件
+  changeCondition = (id)=>{
+
+  }
 
   showCondiPanel = ()=>{
     this.setState({
@@ -297,6 +361,7 @@ const targetSpec =  {
     }
     const item = monitor.getItem()   //  获取 drag 对象 ，来自与 dragsource 的 beginDrag的返回    // monitor 为 DropTargetMonitor 的实例
     const delta = monitor.getDifferenceFromInitialOffset()
+    if(!delta || !item)  return
     const x = Math.round(item.x + delta.x)
     const y = Math.round(item.y + delta.y)
     component.moveBox(item.id, x, y)  //调用本组件的函数

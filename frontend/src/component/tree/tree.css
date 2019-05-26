@@ -39,7 +39,9 @@ code {
 .node-rect-choosen:hover{
   background-color: #8c8c8c
 }
-
+.node-rect-over{
+  border:  gray dashed 1px;
+}
 
 .node-rect .conditions-contain{
   width: 110px;

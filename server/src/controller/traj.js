@@ -103,7 +103,7 @@ class TrajController {
 
 		info['length'] = uids.length
 		info['user'] = groups
-		
+		info['uids'] = uids
 
 		// 时间统计  每五分钟的活跃人数
 

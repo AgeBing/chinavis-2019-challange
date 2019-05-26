@@ -8,129 +8,114 @@ import { Modal,
 		Checkbox,
 		TimePicker,
     Row, Col,
-    message  } from 'antd'
+    message,
+    Radio   } from 'antd'
 
 import moment from 'moment';
 import { _M2T,_T2M }  from './Config'
 
 const Option = Select.Option;
 const CheckboxGroup = Checkbox.Group;
+const RadioGroup = Radio.Group;
 const format = 'HH:mm';
 
 
-const dayOptions = [
-  { label: 'Day 1', value: 1 },
-  { label: 'Day 2', value: 2 },
-  { label: 'Day 3', value: 3 },
+const peopleModeOptions = [
+  { label: '所有人员', value: 1 },
+  { label: '当前选中人员', value: 2 }
 ];
-
+const dayOptions = [
+  { label: '第 1 天', value: 1 },
+  { label: '第 2 天', value: 2 },
+  { label: '第 3 天', value: 3 },
+];
 const roomOptions = [ "展厅", "主会场", "分会场 A", "签到处,", "分会场 B,", "分会场 C,", "分会场 D,", "海报区,", "厕所1,", "room1,", "room2,", "服务台,", "room3,", "room4,", "厕所2,", "餐厅,", "room5,", "休闲区,", "厕所3,", "room6,", "扶梯,", "扶梯,", "扶梯,", "扶梯,"]
+
+let timeOption = {
+  startTime : '8:00',
+  endTime : '9:00'
+}
+
 
 export default class CondiPanel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-    	checkedDays: [1],
-    	times:{
-    		1 : {
-    			startTime:   '8:2',
-    			endTime:     '12:00',
-    		}
-    	},
-    	rooms:[],
+      selectDay:1,
+      selectPeopleMode:1 ,
+      selectTime:{
+          startTime : '8:00',
+          endTime : '9:00',
+          startMinites : 480,
+          endMinites:540
+      },
+      rooms:[],
       roomCheckAll:false,
       indeterminate:false
     };
   }
 
 
-
-  initial = ()=>{
-  }
-
   componentWillMount(){
-  	let { times,roomsId } = this.props.defaultConditions
-
-    let { roomsMap } = this.props
-    let allRooms = Object.keys(roomsMap).map((key)=>+key)
-
-  	let checkedDays = []
-
-  	Object.keys(times).forEach((day)=>{
-  		checkedDays.push(+day)
-  		// times[day]['startMinites'] = _T2M(times[day]['startTime'])
-  		// times[day]['endMinites'] = _T2M(times[day]['endTime'])
-  	})
-
-  	// let stateTime = Object.assign({}, times)   //deep copy 
-    let stateTime = JSON.parse(JSON.stringify(times))  // real deep copy
-  	let stateRooms = [].concat(roomsId)
-
-  	this.setState({
-  		checkedDays,
-  		times: stateTime,
-  		rooms: stateRooms,
-      indeterminate: ( stateRooms.length > 0 &&  stateRooms.length < allRooms.length ) ,
-      roomCheckAll: (stateRooms.length == allRooms.length)
-  	})
   }
 
+  // 确定 添加
+  hanleOK =()=>{
+    let { hanldeAddCondition,roomsMap }  = this.props
+    let { rooms,selectTime,selectPeopleMode,selectDay } = this.state
+    let roomsName = rooms.map((id)=>roomsMap[id])
 
+
+    if(rooms.length == 0){
+       message.error('请选择至少一个房间!')
+      return
+    }
+
+    hanldeAddCondition({
+      peopleMode : selectPeopleMode ,
+      time:selectTime ,
+      rooms:roomsName,
+      roomsId:rooms,
+      day:selectDay
+    })
+  }
+  // 取消
+  hanleCancel = ()=>{
+    let { hanldeCancel } = this.props
+    hanldeCancel()
+  }
   handleTimeChange = (day,order,time)=>{
-  	let { times } = this.state
+  	let { selectTime } = this.state
 
   	let date = time['_d'],
     	h = date.getHours(),
     	m  = date.getMinutes()
+	  selectTime[order + 'Minites'] = h * 60 + m
+	   m =  ( m >= 10 ? ""+m : "0"+m )
+  	selectTime[order + 'Time'] =    h + ':' +m
 
-	times[day][order + 'Minites'] = h * 60 + m
-	
-	m =  ( m >= 10 ? ""+m : "0"+m )
-  	times[day][order + 'Time'] =    h + ':' +m
-
-  	this.setState({times})
+  	this.setState({selectTime})
   }
-  handleDayChange = (checkedDays)=>{
-
-  	let { times } = this.state
-  	let defaultDays = Object.keys( this.props.defaultConditions.times )  // 返回 ["1","2"]
-
-  	checkedDays.forEach((day)=>{
-  		if( defaultDays.indexOf(""+day) != -1 ){
-  			times[day] = Object.assign({} ,this.props.defaultConditions.times[day])
-  		}else{
-  			times[day] = {
-  				'startTime' : '8:00',
-  				'endTime'   : '18:00',
-  				'startMinites':_T2M('8:00'),
-  				'endMinites':_T2M('18:00')
-  			}
-  		}
-  	})
-
-  	let oldDays = Object.keys(times)
-
-  	oldDays.forEach((day)=>{
-  		if(checkedDays.indexOf(+day) == -1)
-  			delete times[day]
-  	})
-
-  	this.setState({
-  		checkedDays,
-  		times
-  	})
+  handlePeopleModeChange = (e)=>{
+    this.setState({
+      selectPeopleMode : e.target.value
+    })
+  }
+  handleDayChange = (e)=>{
+    let selectDay = e.target.value
+    this.setState({
+      selectDay
+    })
   }
   handleRoomChange = (checkedRooms)=>{
    let { roomsMap } = this.props
-
   	this.setState({
   		rooms:checkedRooms,
       roomCheckAll:  Object.keys(roomsMap).length === checkedRooms.length,
       indeterminate: !!checkedRooms.length && Object.keys(roomsMap).length > checkedRooms.length
   	})
   }
-
- handleRoomChangeAll =( event)=>{
+  handleRoomChangeAll =( event)=>{
    let { roomsMap } = this.props
    let checked = event.target.checked
 
@@ -142,34 +127,10 @@ export default class CondiPanel extends Component {
         roomCheckAll: checked
     })
 
- }
-
-  hanleOK =()=>{
-  	let { hanldeAddCondition,roomsMap }  = this.props
-  	let { times,rooms } = this.state
-    let roomsName = rooms.map((id)=>roomsMap[id])
-
-
-    if(rooms.length == 0){
-       message.error('请选择至少一个房间!')
-      return
-    }
-
-  	hanldeAddCondition({ 
-      times ,
-      rooms:roomsName,
-      roomsId:rooms
-    })
-  }
-  hanleCancel = ()=>{
-  	let { hanldeCancel } = this.props
-  	hanldeCancel()
   }
 
   render(){
   	let { defaultConditions,roomsMap } = this.props
-
-  	let { checkedDays,times }  = this.state
 
   	return(
   		<Modal
@@ -180,58 +141,47 @@ export default class CondiPanel extends Component {
             onCancel={this.hanleCancel}
           >
 
-{/*          <div className='condition-line'>
-          	<div className='words'> 节点个数 </div> 
-          	<InputNumber className='condis'
-          		min={1} max={4} defaultValue={1}/>
-          </div>
-*/}
-{/*          <div className='condition-line'>
-          	<div className='words'> 条件类型 </div> 
-          	 <Select className='condis'
-                  placeholder="Select Condition Type" >
-                      <Option value="time"><Icon type="clock-circle" /> 时间</Option>
-                      <Option value="date"><Icon type="calendar" /> 日期 </Option>
-                      <Option value="location"><Icon type="environment" />地点</Option>
-                </Select>
-          </div>*/}
+         <Divider  orientation="left"> 人员选择 </Divider>
+          <RadioGroup className='condition-line'
+             onChange={this.handlePeopleModeChange} value={this.state.selectPeopleMode} >
+              {peopleModeOptions.map((d)=>
+                  (<Radio value={d.value}>{d.label}</Radio>)
+              )}
+          </RadioGroup>
 
 
          
-         <Divider  orientation="left"> 时间 </Divider>
+         <Divider  orientation="left"> 时间选择 </Divider>
+          <RadioGroup className='condition-line'
+             onChange={this.handleDayChange} value={this.state.selectDay} >
+              {dayOptions.map((d)=>
+                  (<Radio value={d.value}>{d.label}</Radio>)
+              )}
+          </RadioGroup>
 
-         <CheckboxGroup className='condition-line'
-         	options={ dayOptions } defaultValue={checkedDays}  onChange={this.handleDayChange}/>
+	       <div className='condition-line'>
+		           <div className='words'> Day {this.state.selectDay} </div> 
 
-        { checkedDays.map((day)=>{
-        	let startTime = times[day]['startTime'],
-        		endTime   = times[day]['endTime']
-
-        	return (
-	         <div className='condition-line' key={day}>
-		        <div className='words'> Day {day} </div> 
-
-		        <div className='condition-line-half'>
+		          <div className='condition-line-half'>
 		           <div className='words' > Start </div> 
 		           <TimePicker className='condis' 
-		           	defaultValue={moment(startTime,format)}
-		           	onChange={this.handleTimeChange.bind(this,day,'start')}
+		           	defaultValue={moment(timeOption.startTime,format)}
+		           	onChange={this.handleTimeChange.bind(this,this.state.selectDay,'start')}
 		           	format={format} />
-		        </div>
-		         <div className='condition-line-half'>
+		          </div>
+		          <div className='condition-line-half'>
 		           <div className='words'> End </div> 
 		           <TimePicker  className='condis' 
-		           	defaultValue={moment(endTime,format)}
-		           	onChange={this.handleTimeChange.bind(this,day,'end')}
+		           	defaultValue={moment(timeOption.endTime,format)}
+		           	onChange={this.handleTimeChange.bind(this,this.state.selectDay,'end')}
 		           	format={format} />
-		        </div>
+	            </div>
 	        </div>
-        )})}
 
 
 
 
-        <Divider  orientation="left"> 地点 </Divider>
+        <Divider  orientation="left"> 地点选择 </Divider>
         
          <div className='condition-line' >
             <Checkbox value={'all'} style={{margin: '0 auto'}}
