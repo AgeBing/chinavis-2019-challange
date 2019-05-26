@@ -454,7 +454,7 @@ def cluster(days):
 
 '''
 mysqldump -uroot -p --databases chinavis2019  --tables   traj_mergetr0_day1 traj_mergetr0_day2 traj_mergetr0_day3 traj_mergetimeroom_day1 traj_mergetimeroom_day2 traj_mergetimeroom_day3> D:/traj.sql
-mysqldump -uroot -p --databases chinavis2019  --tables   cluster_mergeroom2 cluster_mergeroom3 traj_mergeroom4 traj_mergeroom5 traj_mergeroom6 traj_mergeroom7 traj_mergeroom8 traj_mergeroom9 traj_mergeroom10 traj_mergeroom11> D:/mergeroom.sql
-mysqldump -uroot -p --databases chinavis2019  --tables   cluster_mergert02 cluster_mergert03 traj_mergert04 traj_mergert05 traj_mergert06 traj_mergert07 traj_mergert08 traj_mergert09 traj_mergert010 traj_mergert011> D:/mergert0.sql
-
+mysqldump -uroot -p --databases chinavis2019  --tables   cluster_mergeroom2 cluster_mergeroom3 cluster_mergeroom4 cluster_mergeroom5 cluster_mergeroom6 cluster_mergeroom7 cluster_mergeroom8 cluster_mergeroom9 cluster_mergeroom10 cluster_mergeroom11> D:/mergeroom.sql
+mysqldump -uroot -p --databases chinavis2019  --tables   cluster_mergert02 cluster_mergert03 cluster_mergert04 cluster_mergert05 cluster_mergert06 cluster_mergert07 cluster_mergert08 cluster_mergert09 cluster_mergert010 cluster_mergert011> D:/mergert0.sql
+mysql -h115.159.202.238  -P3306 -uchinavis  -pchinavis2019  chinavis2019<D:\traj.sql
 '''
