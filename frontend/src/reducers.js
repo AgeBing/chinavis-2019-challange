@@ -10,7 +10,9 @@ const initialState = {
     opacity: 0.50,
     cluster: 4,
 
-    clusterNum : 0   //视图联动 用户选择某一各聚类的人员  0表示全部
+    clusterNum : 0,   //视图联动 用户选择某一各聚类的人员  0表示全部
+
+    selectIdsGlobal: []  //用户选中的轨迹 id 数组
 };
 
 function appReducer(state = initialState, action, opation) {
@@ -44,7 +46,11 @@ function appReducer(state = initialState, action, opation) {
                 clusterNum:action.clusterNum
             }
 
-
+        case "CHANGE_SELECT_TRAJ_IDS":
+            return {
+                ...state,
+                selectIdsGlobal: action.ids
+            }
         default:
             return state;
 
