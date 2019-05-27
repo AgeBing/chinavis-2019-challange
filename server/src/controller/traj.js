@@ -51,6 +51,11 @@ class TrajController {
 
 		console.log(uids.length)
 		
+		if(uids.length ==0){
+			
+			ctx.body = []
+			return 
+		}
 		let uidsStr = uids.join(',')
 
 
@@ -83,6 +88,15 @@ class TrajController {
 		let info = {}
 		console.log('user length ',uids.length)
 		
+		if(uids.length ==0){
+			info['length'] = 0
+			info['user'] = []
+			info['uids'] = []
+			info['rooms'] = []
+			ctx.body = info
+			return 
+		}
+
 		// 人员统计  饼图
 		// 按照 聚类结果 统计人员比例
 		let groups = [] , groupsCount = []

@@ -37,11 +37,25 @@ class Node extends React.Component{
         summary:{},
         popContent:pieContent,
         userLength:0 ,
-        sendingFLag:false
+        sendingFLag:false,
     }
   }
 
   componentWillMount(){
+
+  }
+  componentWillReceiveProps(nextProps){
+      let { condition } =  this.props,
+          { nextCondition } = nextProps
+      if(!condition || !nextCondition ) return
+
+      if( condition.day != nextCondition.day ||
+          condition.roomsId.toString() != nextCondition.roomsId.toString() ||
+          condition.time.startMinites != nextCondition.time.startMinites ||
+          condition.time.endMinites != nextCondition.time.endMinites  ){
+        console.log(condition,nextCondition)
+        this.getSummaryInfo(nextProps)
+      }
 
   }
   showConditions(){
@@ -106,16 +120,16 @@ class Node extends React.Component{
     return show
   }
 
-  getSummaryInfo(){
+  getSummaryInfo(nextProps){
     
-    // 避免重复发送
-    if(Object.keys(this.state.summary).length != 0)  return
+    // 会发送两次
+    
     if(this.state.sendingFLag) return
     this.setState({
       sendingFLag : true
     })
 
-    let { condition } = this.props
+    let { condition } = nextProps || this.props
    
     let startMiniter  = condition.time.startMinites,
         endMiniter    = condition.time.endMinites,
@@ -128,7 +142,8 @@ class Node extends React.Component{
 
         this.setState({
           summary : res,
-          userLength:res['length']
+          userLength:res['length'],
+          sendingFLag : false
         })
         condition['uids'] = res['uids']
     })
@@ -142,6 +157,7 @@ class Node extends React.Component{
       x,
       y,
       delFlag,
+      chaFlag,
       ifChoosen,
       connectDragSource,
       connectDropTarget,
@@ -192,10 +208,12 @@ class Node extends React.Component{
               disabled={delFlag}/>
           </div>
           <div className='config-box'>
-            <Button icon="tool" onClick={this.onHandleConditionChange.bind(this)} />
+            <Button icon="tool" 
+              onClick={this.onHandleConditionChange.bind(this)}
+              disabled={chaFlag} />
           </div>
           <div className='config-box'>
-            <Button icon="swap" 
+            <Button icon={!this.state.sendingFLag?"swap":'loading'}
                onClick={this.onHandleChangeState.bind(this)}
                disabled={ifChoosen} />
           </div>

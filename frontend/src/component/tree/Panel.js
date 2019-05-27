@@ -1,5 +1,6 @@
 import React from 'react'
 import { DropTarget } from 'react-dnd'
+import './Panel.css'
 import ItemType from './ItemType'
 import Node from './Node'
 import Links from './Links'
@@ -7,17 +8,15 @@ import CondiPanel from './CondiPanel'
 import update from 'immutability-helper'
 import { connect } from 'react-redux'
 
-import { panelWidth,panelHeight,
+import { _M2T,_T2M,
+    panelWidth,panelHeight,
 		initalNodeX,initalNodeY,
 		getRandId,getNewPosition,
     nodeRectWidth,nodeRectHeight } from './Config'
 
 import { Icon,  } from 'antd';
-import './Panel.css'
-
-import { _M2T,_T2M }  from './Config'
-
 import { API_SYNC_Rooms } from '../../api/index'
+
 
 const roomsMap = {}   // id => name
 
@@ -35,6 +34,11 @@ class Panel extends React.Component {
       nodes: {},
       links: [],
       showCondiPanel:false,
+      conditionPanelMode:'add' | 'change',
+      conditionChange:{
+        condition:{},
+        id:0
+      },
       defaultConditions:{},
       currentSourceID:0
     }
@@ -45,21 +49,10 @@ class Panel extends React.Component {
   async componentWillMount(){
     let { nodes }  = this.state 
 
+
     // 初始 Node
     let rootId = getRandId()
-    // nodes[rootId] = {
-    // 	id : rootId,
-    // 	x : initalNodeX,
-    // 	y : initalNodeY,
-    // 	deleteAble: false,
-    //   condition : {},
-    //   choosen: true
-    // }
-
-
     let defaultConditions = {}
-
-     // 初始 time
     let { timeInterval } = this.props
     let startMinites = timeInterval.minites[0],
         endMinites   = timeInterval.minites[1],
@@ -94,9 +87,6 @@ class Panel extends React.Component {
 
 
     this.addNode(defaultConditions)
-
-    // nodes[rootId]['condition'] = defaultConditions
-    // this.setState({ nodes })
   }
 
 
@@ -137,9 +127,10 @@ class Panel extends React.Component {
 	              x={node.x}
 	              y={node.y}
 	              delFlag={!node.deleteAble}
+                chaFlag={!node.changeAble}
                 ifChoosen={node.choosen}
 	              hideSourceOnDrag={true}
-	              handleConditionChange={this.changeCondition}
+	              handleConditionChange={this.changeNodeConditionHandler}
 	              handleNodeDel={this.delNode.bind(this)}
                 handleStateChage={this.chooseNode.bind(this)}
                 condition={node.condition}
@@ -154,9 +145,11 @@ class Panel extends React.Component {
       {  showCondiPanel && (
         <CondiPanel 
            hanldeAddCondition={this.addNode}
+           handleChangeCondition={this.changeCondition}
            hanldeCancel={this.hideCondiPanel}
-           defaultConditions={this.state.defaultConditions}
+           defaultConditions={this.state.conditionChange}
            roomsMap={roomsMap}
+           mode={this.state.conditionPanelMode}
         />
       )}
       
@@ -166,11 +159,26 @@ class Panel extends React.Component {
 
   // 点击添加节点按钮触发
   addNodeButtonHandler=()=>{
+    this.setState({
+      conditionPanelMode : 'add'
+    })
+    this.showCondiPanel()
+  }
+
+  changeNodeConditionHandler =(id)=>{
+    let {nodes} = this.state
+    this.setState({
+      conditionPanelMode : 'change',
+      conditionChange: {
+        condition : nodes[id]['condition'],
+        id
+      }
+    })
     this.showCondiPanel()
   }
 
 
-
+  // 拖动节点时触发
   moveBox(id, x, y) {
   	let { links }  = this.state
     this.setState(
@@ -182,7 +190,6 @@ class Panel extends React.Component {
         },
       }),
     )
-
     //updatelinks 
     /*[{
         source: { id1:{ x,y},id2:{ x,y} },
@@ -210,10 +217,11 @@ class Panel extends React.Component {
 
   	let newNode =  {
       condition,
-  		x,y,
-  		id:newId,
-  		deleteAble:true,
-      choosen  : false,
+  		x,y,                 //位置
+  		id:newId,            //nodes[id]查找
+  		deleteAble : true,  //是否可删除
+      changeAble : true,  // 是否可更改条件
+      choosen  : false,  //是否为选中
   	}
   	nodes[newId] = newNode
 
@@ -230,34 +238,49 @@ class Panel extends React.Component {
       newLink['source'][sourceA] = positionA 
       newLink['source'][sourceB] = positionB
       links.push(newLink)
+
+      //设置为不可删除
+      nodes[sourceA]['deleteAble'] = false
+      nodes[sourceB]['deleteAble'] = false
+      nodes[sourceA]['changeAble'] = false
+      nodes[sourceB]['changeAble'] = false
     }
 
   	this.setState({ nodes,links })
     this.hideCondiPanel()    
   }
 
+  // 删除节点
   delNode(deleteId){
   	let { nodes,links } = this.state
+
+    // 删除目标节点
   	delete nodes[deleteId]
 
-
-  	let i , sourceId
+    // 删除 link
+  	let i , sourceIds = []
   	for(i = 0;i < links.length;i++){
-  		if( links[i].target.id == deleteId ){  			
-  			sourceId = links[i].source.id
-  			break
+  		if( links[i].target[deleteId] != null){  			
+  			sourceIds = Object.keys(links[i].source)
+  			break;
   		}
   	}
   	links.splice(i ,1)
 
-  	nodes[sourceId]['deleteAble'] = true
+  	nodes[sourceIds[0]]['deleteAble'] = true
+    nodes[sourceIds[1]]['deleteAble'] = true
+    nodes[sourceIds[0]]['changeAble'] = true
+    nodes[sourceIds[1]]['changeAble'] = true
 
   	// 查看 sourceId 下是否还有 target
   	for(i = 0;i < links.length;i++){
-  		if( links[i].source.id == sourceId ){ 
-  			nodes[sourceId]['deleteAble'] = false
-  			break;
-  		}
+      for(let j = 0;j < 2;j++){
+        let _id = sourceIds[j]
+        if( links[i].source[_id] != null ){ 
+            nodes[_id]['deleteAble'] = false
+            nodes[_id]['changeAble'] = false
+        }
+      }
   	}
 
   	this.setState({
@@ -265,6 +288,7 @@ class Panel extends React.Component {
   	})
   }
 
+  // 选中某个节点，切换状态 
   chooseNode(sourceId){
     let { nodes } = this.state
     
@@ -272,7 +296,7 @@ class Panel extends React.Component {
       if(id == sourceId){
         nodes[id]['choosen'] = true
         console.log('Current Condition:',nodes[id]['condition']  )
-        this.props.changeState(nodes[id]['condition'] , sourceId)
+        this.props.changeState(nodes[id]['condition'] , id)
       }else{
         nodes[id]['choosen'] = false
       }
@@ -292,7 +316,7 @@ class Panel extends React.Component {
         uidsUnion = uidsA.filter(function(u){ return uidsB.indexOf(u) > -1 })  // 考虑NAN
     // 取交集
 
-    console.log(uidsA,uidsB,uidsUnion)
+    // console.log(uidsA,uidsB,uidsUnion)
     // 添加新节点
     let condition = {
       uids : uidsUnion
@@ -302,8 +326,19 @@ class Panel extends React.Component {
   }
 
   // 修改节点的条件
-  changeCondition = (id)=>{
-
+  changeCondition = (condition , ifChanged)=>{
+    if(ifChanged){
+      let { conditionChange,nodes } = this.state
+      let { id } = conditionChange
+      nodes[id]['condition'] = condition
+      this.setState({
+         nodes
+      })
+      if(nodes[id]['choosen'] = true){
+         this.props.changeState(nodes[id]['condition'] , id)
+      }
+    }
+    this.hideCondiPanel()
   }
 
   showCondiPanel = ()=>{
@@ -400,32 +435,46 @@ const mapDispatchToProps = dispatch => {
 
   return {
     changeState: (condition,id) => {
-      // let change = checked ? "SHOW" : "HIDE";
-      // let type = change + "_" + name.toLocaleUpperCase();
+      let { day,roomsId,time,uids  } = condition
+      
+      let rooms , timeInterval 
+      if(day != null && roomsId != null && time !=null ){
+            rooms  = roomsId
+            timeInterval = {
+              day : day,
+              minites : [
+                  time.startMinites,
+                  time.endMinites
+              ],
+              times: [
+                  time.startTime,
+                  time.endTime
+              ]
+            }
 
-      let days = Object.keys(condition['times']),
-          day , minites ,times
-      if(!condition['times']){
-          day = 1
-          minites  = [0,0]
-          times = ['0:00','0:00']
-      }else{
-         day = +days[0]
-         minites = [
-          condition['times'][day]['startMinites'],
-          condition['times'][day]['endMinites']
-         ]
-         times = [
-          condition['times'][day]['startTime'],
-          condition['times'][day]['endTime']
-         ]
+      }else{//考虑 condition 为空的情况 ， 即只有 ids 
+          
+          rooms = []  // 空表示所有，在sql语句中实现
+          timeInterval = {  // 默认
+               day : 1,
+               minites:[
+                  480,
+                  1080
+               ],
+               times:[
+                  '8:00',
+                  '18:00'
+               ]
+          }
       }
-      let timeInterval = { day ,minites,times }
-      let rooms = condition['roomsId']
-      let stateNodeId  = id
-      let type = 'CHANGE_STATE'
 
-      dispatch({ type, timeInterval,stateNodeId,rooms });
+      
+
+      let type = 'CHANGE_STATE',
+          stateNodeId = id,
+            ids = uids
+
+      dispatch({ type, timeInterval,stateNodeId,rooms,ids });
     },
   }
 }
