@@ -17,7 +17,7 @@ import { connect } from 'react-redux'
 
 const mapStateToProps = (state) => {
   return {
-    heatmap_time: state.heatmap_time,
+    heatmap_time: state.timeInterval.minites,
   }
 }
 
@@ -27,13 +27,13 @@ let Config = {
      x_num: 30,
      y_num: 15,
      width: 640,
-     height: 368
+     height: 320
   },
   2 : {
      x_num: 12,
      y_num: 15,
      width: 280,
-     height: 368
+     height: 320
   }
 }
 
@@ -134,10 +134,10 @@ class Heatmap extends React.Component {
       <div style={{ 'display':'inline-block', 'width':config.width , 'height':config.height  }}>
         <Chart
           width={config.width}
-          height={config.height - 9 + 70}
+          height={config.height}
           data={this.state.data}
           scale={cols}
-          padding={[ 20, 20, 90, 20]}
+          padding={[ 0, 40, 0, 0]}
         >
           <Axis
             name="x"
