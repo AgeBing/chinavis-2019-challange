@@ -4,21 +4,45 @@ import  Sensors  from './Sensors'
 import  Bricks  from './Bricks'
 import  Rooms  from './Rooms'
 import  Traj   from  './Traj'
+import Heatmap from './Heatmap'
 
 import * as Config from './Config'
 
 import { connect } from 'react-redux'
 
-import { Slider,Drawer,Button,List } from 'antd';
+import { Slider,Drawer,Button,List,Card  } from 'antd';
 
 import './map.css'
+
+
+
+
+const tabListNoTitle = [
+  {
+    key: 'traj',
+    tab: '轨迹视图',
+  },
+  {
+    key: 'heat',
+    tab: '热力图',
+  },
+];
+const contentListNoTitle = {
+  'traj': <p>轨迹配置项</p>,
+  'heat': <p>热力图配置项</p>,
+};
+
+
+
 
 class  MyMap  extends Component{
 	constructor(props){
 		super(props)
 		this.state = {
 			visible: false,
-			showIds:[]
+			showIds:[],
+
+			noTitleKey: 'traj',
 		}
 	}
 	componentWillMount(){
@@ -68,13 +92,13 @@ class  MyMap  extends Component{
 				</div>
 
 				<div className='map-views'>
-					{/*<HeatMap  floor={1} />*/}
-		
+					<Heatmap  floor={1} />
+					<Heatmap  floor={2} />
 
-					<Traj floor={1}  height={Config.mapHeight} width={Config.mapWidth} />
-					<Traj floor={2} height={Config.mapHeight} width={Config.mapWidthHalf} />
+					{/*<Traj floor={1}  height={Config.mapHeight} width={Config.mapWidth} />*/}
+					{/*<Traj floor={2} height={Config.mapHeight} width={Config.mapWidthHalf} />*/}
 
-					{/*<HeatMap  floor={2} />*/}
+					
 				</div>
 
 				<div className='map-floors'>
@@ -83,9 +107,23 @@ class  MyMap  extends Component{
 				</div>
 
 
-			</div>
 
-			<div className='map-config'> 
+
+		 		<Card
+		          className='config-container'
+		          tabList={tabListNoTitle}
+		          activeTabKey={this.state.noTitleKey}
+		          onTabChange={key => {
+		            this.onTabChange(key, 'noTitleKey');
+		          }}
+		        >
+		          {contentListNoTitle[this.state.noTitleKey]}
+		        </Card>
+
+		</div>
+
+
+{/*			<div className='map-config'> 
 				<div className='config-name'> 轨迹透明度 </div>
 				<Slider className='config-wiget' 
 					min={0.01}
@@ -98,7 +136,7 @@ class  MyMap  extends Component{
           			Open
         		</Button>
 			</div>
-
+*/}
 
 
 			 <Drawer
@@ -134,6 +172,12 @@ class  MyMap  extends Component{
 	    this.setState({
 	      visible: false,
 	    });
+	  };
+
+
+	onTabChange = (key, type) => {
+	    console.log(key, type);
+	    this.setState({ [type]: key });
 	  };
 
 }

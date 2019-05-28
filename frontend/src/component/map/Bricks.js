@@ -36,7 +36,7 @@ export default class Bricks extends Component {
       }
     }
     let width = (x_n + 2) * rectWidth,
-        height = (y_n + 2) * rectHeight 
+        height = (y_n) * rectHeight 
     this.setState({
        grids : _grids,
        width,

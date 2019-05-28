@@ -21,8 +21,8 @@ export default class Brick extends Component {
     return (
       <g>
           <rect 
-            x={ (x+1)*rectWidth }  
-            y={ (y+1)*rectHeight}
+            x={ (x)*rectWidth }  
+            y={ (y)*rectHeight}
             width={rectWidth} height={rectHeight}
             fill={fillColor}
             ></rect>

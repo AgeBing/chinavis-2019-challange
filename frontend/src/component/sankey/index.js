@@ -37,7 +37,9 @@ class Sankey extends React.Component {
       cluster = 4, 
       timeStart = 480, 
       timeEnd = 960, 
-      limit  = 1000000
+      // limit  = 1000 
+      limit  = 30000000
+
 
     API_Sankey({
       day, cluster, timeStart, timeEnd, limit
@@ -69,18 +71,43 @@ class Sankey extends React.Component {
       }
     };
 
+    let depthArr = [],
+        heightArr = []
+
+    for(let i = 0 ;i < 30;i++){
+      depthArr.push(i)
+    }
+
+    for(let i = 0 ;i < 8;i++){
+      heightArr.push(i)
+    }
+    let nodeScale = {
+      x_index : {
+        type : 'cat',
+        values: data.times,
+      },
+      y_index : {
+        type : 'cat',
+        values: data.rooms,
+      }
+
+    }
+
     let chartIns,
         self = this
 
+        console.log(data)
 
     return (
       <div>
         <Chart
-          forceFit={true}
-          data={[1]}
-          height={1000}
+          scale={nodeScale}
+          data={data.nodes}
+          forceFit={false}
+          height={580}
+          width={1200}
           scale={scale}
-          padding={[40, 80]}
+          padding={[40, 40, 20,80]}
 
           //https://bizcharts.net/products/bizCharts/api/chart#%E5%9B%BE%E8%A1%A8%E4%BA%8B%E4%BB%B6
           onGetG2Instance={g2Chart => {chartIns = g2Chart;}}
@@ -107,7 +134,24 @@ class Sankey extends React.Component {
           }}
 
         >
-          <Tooltip showTitle={false} />
+
+        
+           <View data={data.nodes} scale={nodeScale}>
+            <Geom
+              type="polygon"
+              position="x_index*y_index"
+              color="transparent"
+              style={{
+                fill:'none',
+                stroke: "#ccc"
+              }}
+            >
+            </Geom>
+            <Axis name='x_index'  title={true} position="top"/>
+            <Axis name='y_index'  title={true} />
+
+          </View>
+
           <View data={data.links}>
             <Geom
               type="edge"
@@ -147,28 +191,32 @@ class Sankey extends React.Component {
 
             />
           </View>
-          <View data={data.nodes}>
+
+         <View data={data.nodes} scale={nodeScale}>
             <Geom
               type="polygon"
               position="x*y"
-              color="name"
               style={{
                 stroke: "#ccc"
               }}
             >
-              <Label
-                content="name"
-                textStyle={{
-                  fill: "#545454",
-                  textAlign: "start"
-                }}
-                offset={0}
-                formatter={val => {
-                  return "  " + val;
-                }}
-              />
+           {/* <Label
+              content="name"
+              textStyle={{
+                fill: "#545454",
+                textAlign: "start"
+              }}
+              offset={0}
+              formatter={val => {
+                return "  " + val;
+              }}
+            />*/}
             </Geom>
+
           </View>
+           
+
+
         </Chart>
       </div>
     );

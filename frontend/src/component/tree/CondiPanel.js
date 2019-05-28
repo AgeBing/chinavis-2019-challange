@@ -51,17 +51,38 @@ export default class CondiPanel extends Component {
       },
       rooms:[],
       roomCheckAll:false,
-      indeterminate:false
+      indeterminate:false,
     };
   }
 
 
   componentWillMount(){
+    let { selectTime,selectDay,rooms } = this.state
+    let { mode,defaultConditions } = this.props
+
+    if(mode == 'change'){ 
+      let condition  = defaultConditions['condition'],
+          _selectTime = condition['time'] ? { 
+              startTime : condition['time']['startTime'],
+              endTime   : condition['time']['endTime'],
+              startMinites : condition['time']['startMinites'],
+              endMinites : condition['time']['endMinites']
+          } : selectTime ,
+          _selectDay  =  condition['day'] ? condition['day'] : selectDay,
+          _rooms      = condition['roomsId'] ? condition['roomsId']:rooms 
+    
+      this.setState({
+         selectTime : _selectTime,
+         selectDay  : _selectDay,
+         rooms      : _rooms
+      })
+    }
   }
 
   // 确定 添加
   hanleOK =()=>{
-    let { hanldeAddCondition,roomsMap }  = this.props
+    let { hanldeAddCondition,handleChangeCondition,
+          roomsMap,mode,defaultConditions }  = this.props
     let { rooms,selectTime,selectPeopleMode,selectDay } = this.state
     let roomsName = rooms.map((id)=>roomsMap[id])
 
@@ -71,13 +92,34 @@ export default class CondiPanel extends Component {
       return
     }
 
-    hanldeAddCondition({
-      peopleMode : selectPeopleMode ,
-      time:selectTime ,
-      rooms:roomsName,
-      roomsId:rooms,
-      day:selectDay
-    })
+    if(mode == 'add'){
+      hanldeAddCondition({
+        peopleMode : selectPeopleMode ,
+        time:selectTime ,
+        rooms:roomsName,
+        roomsId:rooms,
+        day:selectDay,
+      })
+    }else{
+
+      let ifConditionChanged = false
+      if( defaultConditions.condition.day != selectDay ||
+          defaultConditions.condition.roomsId.toString() != rooms.toString() ||
+          defaultConditions.condition.time.startMinites != selectTime.startMinites ||
+          defaultConditions.condition.time.endMinites != selectTime.endMinites  ){
+        ifConditionChanged = true
+      console.log(defaultConditions,selectTime,rooms,selectDay)
+      }
+
+
+      handleChangeCondition({
+        peopleMode : selectPeopleMode ,
+        time:selectTime ,
+        rooms:roomsName,
+        roomsId:rooms,
+        day:selectDay,
+      }, ifConditionChanged)
+    }
   }
   // 取消
   hanleCancel = ()=>{
@@ -130,11 +172,11 @@ export default class CondiPanel extends Component {
   }
 
   render(){
-  	let { defaultConditions,roomsMap } = this.props
+  	let { defaultConditions,roomsMap,mode } = this.props
 
   	return(
   		<Modal
-            title="添加条件"
+            title={mode == 'add' ? "添加节点" : "修改条件"}
             width={400}
             visible={true}
             onOk={this.hanleOK}

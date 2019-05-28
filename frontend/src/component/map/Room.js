@@ -39,8 +39,8 @@ export default class Room extends Component {
     let { rectWidth,rectHeight } = Config
 
     let style = {
-      left : (x+1)*rectWidth ,
-      top :  (y+1)*rectHeight ,
+      left : (x)*rectWidth ,
+      top :  (y)*rectHeight ,
       width : width * rectWidth ,
       height : height * rectHeight
 

@@ -5,17 +5,26 @@
 
 let nodeConfig = {
 	// 各种间距配置
-	height : 50,
-	width  : 10,
-	xGap   : 400,
-	yGap   : 10,
+	height : 100,
+	width  : 20,
+	xGap   : 50,
+	yGap   : 5,
 	heightPerCount : 0.5,
+	lineGap:1
 }
 
 
 export function sankeyLayout(data) {
 	if(data == null) return null
-	let { nodes,links }  = data
+	let { nodes,links,maxValue,rooms,times }  = data
+
+
+	let perCount  = nodeConfig.height / maxValue
+	perCount = +perCount.toFixed(4)
+	nodeConfig.heightPerCount = perCount
+
+
+	console.log(maxValue,perCount)
 
 	let _nodes = [],
 		_links = []
@@ -31,7 +40,9 @@ export function sankeyLayout(data) {
 
 	return {
 		nodes : _nodes,
-		links : _links
+		links : _links,
+		rooms : rooms,
+		times : times
 	}
 }
 
@@ -40,7 +51,7 @@ export function sankeyLayout(data) {
 // 第一步 计算各节点位置
 // depth: 第几排
 // height: 某一排的第几个
-function nodePosition({depth , height, name}){
+function nodePosition({depth , height, name,x_index,y_index}){
 
 	let x0 = depth * (nodeConfig.xGap + nodeConfig.width),
 		x1 = x0 + nodeConfig.width,
@@ -60,7 +71,9 @@ function nodePosition({depth , height, name}){
 		x0,x1,
 		y0,y1,
 		x,y,
-		name
+		name,
+		x_index,
+		y_index
 	}
 }
 
@@ -70,7 +83,8 @@ function nodePosition({depth , height, name}){
 function linkPosition(_nodes , link){
 	let { source,target,value,ids,index } = link
 
-	let lineHeight  = value * nodeConfig.heightPerCount
+
+	let lineHeight  = value * nodeConfig.heightPerCount + nodeConfig.lineGap
 
 	let sourceNode = _nodes[source],
 		targetNode = _nodes[target]
@@ -84,19 +98,34 @@ function linkPosition(_nodes , link){
 	 * 0-------2 
 	 */
 
-	let x0 = sourceNode.x1 + nodeConfig.width ,
-		y0 = sourceNode.useHeight + sourceNode.y1,
-		x1 = x0,
-		y1 = y0 - lineHeight,
-		x2 = targetNode.x0 ,
-		y2 = targetNode.useHeight + targetNode.y1,
-		x3 = x2,
-		y3 = y2 - lineHeight
+	// let x0 = sourceNode.x1 + nodeConfig.width ,
+	// 	y0 = sourceNode.useHeight + sourceNode.y1,
+	// 	x1 = x0,
+	// 	y1 = y0 - lineHeight,
+	// 	x2 = targetNode.x0 ,
+	// 	y2 = targetNode.useHeight + targetNode.y1,
+	// 	x3 = x2,
+	// 	y3 = y2 - lineHeight
 
-	let x = [ x0,x1,x2,x3 ],
+	// let x = [ x0_,x1_,x2_,x3_],
+	// 	y = [ y0,y1,y2,y3 ] 
+
+	let insideLength = 0
+	let x1 = sourceNode.x1  - insideLength,
+		y0 = sourceNode.y0 -  sourceNode.useHeight ,
+		x0 = x1,
+		y1 = y0 + lineHeight,
+		x3 = targetNode.x0 + insideLength ,
+		y2 = targetNode.y0 - targetNode.useHeight,
+		x2 = x3,
+		y3 = y2 + lineHeight
+
+	let x = [ x0,x1,x2,x3],
 		y = [ y0,y1,y2,y3 ] 
 
-	return { x,y,ids,index,source:sourceNode['height'],target:targetNode['height'],width:lineHeight,value }
+
+	return { x,y,
+		ids,index,source:sourceNode['height'],target:targetNode['height'],width:lineHeight,value }
 }
 
 

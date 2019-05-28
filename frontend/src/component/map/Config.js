@@ -1,5 +1,5 @@
 export let mapWidth 	= 640
-export let mapHeight 	= 360
+export let mapHeight 	= 320
 export let mapWidthHalf = 280
 
 
@@ -34,14 +34,14 @@ export function getRandOffset(p1,p2){
 
 	}else{
 		p1_offset = {
-			x : rectWidth*( p1.x  + 1 + getRandSet()),
-			y : rectHeight*( p1.y + 1 + getRandSet())
+			x : rectWidth*( p1.x   + getRandSet()),
+			y : rectHeight*( p1.y  + getRandSet())
 		}
 	}
 
 	p2_offset = {
-		x : rectWidth*( p2.x  + 1 + getRandSet()),
-		y : rectHeight*( p2.y + 1 + getRandSet())
+		x : rectWidth*( p2.x   + getRandSet()),
+		y : rectHeight*( p2.y  + getRandSet())
 	}
 	lastoffSet = {
 		origin :  Object.assign({}, p2) , 
