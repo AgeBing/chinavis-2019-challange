@@ -41,8 +41,8 @@ class  MyMap  extends Component{
 		this.state = {
 			visible: false,
 			showIds:[],
-
-			noTitleKey: 'traj',
+    
+    		mapMode: 'traj' || 'heat',
 		}
 	}
 	componentWillMount(){
@@ -71,7 +71,7 @@ class  MyMap  extends Component{
   		})
   	}
 	render(){
-		let { opacity,showIds } = this.state
+		let { opacity,showIds,mapMode } = this.state
 
 
 		let data = ['123','21213','324','123']
@@ -91,15 +91,18 @@ class  MyMap  extends Component{
 					<Sensors  floor={2}  height={Config.mapHeight} width={Config.mapWidthHalf} />*/}
 				</div>
 
-				<div className='map-views'>
-					<Heatmap  floor={1} />
-					<Heatmap  floor={2} />
-
-					{/*<Traj floor={1}  height={Config.mapHeight} width={Config.mapWidth} />*/}
-					{/*<Traj floor={2} height={Config.mapHeight} width={Config.mapWidthHalf} />*/}
-
-					
-				</div>
+				{mapMode == 'traj' ? (
+						<div className='map-views'>
+						<Traj floor={1}  height={Config.mapHeight} width={Config.mapWidth} />
+						<Traj floor={2} height={Config.mapHeight} width={Config.mapWidthHalf} />
+						</div>
+					):(
+						<div className='map-views'>
+						<Heatmap  floor={1} />
+						<Heatmap  floor={2} />
+						</div>
+					)
+				}
 
 				<div className='map-floors'>
 					<Rooms floor={1} height={Config.mapHeight} width={Config.mapWidth}  />
@@ -112,12 +115,12 @@ class  MyMap  extends Component{
 		 		<Card
 		          className='config-container'
 		          tabList={tabListNoTitle}
-		          activeTabKey={this.state.noTitleKey}
+		          activeTabKey={this.state.mapMode}
 		          onTabChange={key => {
-		            this.onTabChange(key, 'noTitleKey');
+		            this.onTabChange(key, 'mapMode');
 		          }}
 		        >
-		          {contentListNoTitle[this.state.noTitleKey]}
+		          {contentListNoTitle[this.state.mapMode]}
 		        </Card>
 
 		</div>
@@ -176,9 +179,9 @@ class  MyMap  extends Component{
 
 
 	onTabChange = (key, type) => {
-	    console.log(key, type);
 	    this.setState({ [type]: key });
-	  };
+	    this.props.changeMode(key)
+	 };
 
 }
 
@@ -205,6 +208,12 @@ const mapDispatchToProps = dispatch => {
         dispatch({ type, opacity });
       }, delay);
     },
+
+     changeMode: (mode) => {
+      let type = 'CHANGE_MAP_MODE'
+      dispatch({ type, mode });
+    },
+
   }
 }
 
