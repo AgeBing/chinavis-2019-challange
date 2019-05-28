@@ -30,7 +30,9 @@ class Traj extends Component {
   componentWillReceiveProps(nextProps){
     //参数变化  
       // 切换状态
-      if(this.props.stateNodeId != nextProps.stateNodeId){
+      if(this.props.selectTimeInterval.day != nextProps.selectTimeInterval.day ||
+         this.props.selectTimeInterval.minites.toString() != nextProps.selectTimeInterval.minites.toString() ||
+         this.props.rooms.toString() != nextProps.rooms.toString()){
         this.requestNewTrajs(nextProps)
       }
       // 切换透明度
@@ -48,11 +50,11 @@ class Traj extends Component {
   }
 
   requestNewTrajs(nextProps){
-    let { timeInterval,stateNodeId,floor,rooms,opacity } = nextProps || this.props
+    let { selectTimeInterval,stateNodeId,floor,rooms,opacity } = nextProps || this.props
     
-    let startMiniter = timeInterval.minites[0],
-        endMiniter = timeInterval.minites[1],
-        day = timeInterval.day ,
+    let startMiniter = selectTimeInterval.minites[0],
+        endMiniter = selectTimeInterval.minites[1],
+        day = selectTimeInterval.day ,
         self = this
 
     this.clearCanvas(0)
@@ -195,7 +197,7 @@ class Traj extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    timeInterval: state.timeInterval,
+    selectTimeInterval: state.selectTimeInterval,
     stateNodeId : state.stateNodeId,
     rooms:state.rooms,
     opacity:state.opacity,

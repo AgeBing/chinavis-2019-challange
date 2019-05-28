@@ -8,16 +8,21 @@
 	width: 100%;
 }
 .layout-item{
-	height: calc( 97vh + 10px );
+	height: calc( 97vh + 20px );
 }
 
 .layout-item-sub1{
 	height: 35vh;
 	width: 100%;
 }
+.layout-item-submid{
+	margin-top:10px;
+	height:6vh;
+	width: 100%;	
+}
 .layout-item-sub2{
 	margin-top:10px;
-	height:62vh;
+	height:56vh;
 	width: 100%;
 }
 .layout-view{

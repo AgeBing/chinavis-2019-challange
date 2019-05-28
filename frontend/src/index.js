@@ -14,7 +14,7 @@ const store = createStore(appReducer);
 
 store.subscribe(() => {
   //传入数据变化的监听事件
-  console.log("state change log");
+  console.log("---------------state change log------------");
   console.log(store.getState());
 });
 

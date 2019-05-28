@@ -56,7 +56,7 @@ export function getNewPosition(x,y){
 		}
 	}
 
-	console.log(grids)
+	// console.log(grids)
 	for(let i = 0;i < m;i++){
 		for(let j = 0;j < n;j++){
 			if(!grids[i*n + j]){

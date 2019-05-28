@@ -24,7 +24,7 @@ export function sankeyLayout(data) {
 	nodeConfig.heightPerCount = perCount
 
 
-	console.log(maxValue,perCount)
+	// console.log(maxValue,perCount)
 
 	let _nodes = [],
 		_links = []

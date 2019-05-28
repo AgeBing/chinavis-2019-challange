@@ -104,7 +104,7 @@ class Sankey extends React.Component {
           scale={nodeScale}
           data={data.nodes}
           forceFit={false}
-          height={580}
+          height={542}
           width={1200}
           scale={scale}
           padding={[40, 40, 20,80]}
@@ -147,7 +147,7 @@ class Sankey extends React.Component {
               }}
             >
             </Geom>
-            <Axis name='x_index'  title={true} position="top"/>
+            <Axis name='x_index' visable={false}/>
             <Axis name='y_index'  title={true} />
 
           </View>

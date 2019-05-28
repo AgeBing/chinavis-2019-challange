@@ -1,0 +1,39 @@
+.time-container{
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+}
+
+.time-info{
+	width: 60px;
+	height: 100%;
+	display: inline-block;
+	float: left;
+    font-size: 9px;
+    font-weight: 900;
+}
+.time-info-day{
+	display: block;
+    line-height: 16px;
+    text-align: center;
+    font-size: 12px;
+}
+.time-info-time{
+	display: block;
+    line-height: 16px;
+    text-align: center;
+}
+.time-svg{
+	display: inline-block;
+	border: 1px solid gray;
+}
+
+.cursor{
+	cursor:move;
+	z-index: 99;
+	fill: red;
+	    pointer-events: all;
+}
+.zoom{
+	pointer-events: all;
+}
