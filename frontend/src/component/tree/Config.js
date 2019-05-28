@@ -3,11 +3,14 @@ export const nodeRectHeight = 100
 
 export const padding = 20
 
-export const panelWidth = 525
-export const panelHeight = 790
+export const panelWidth = 620
+export const panelHeight = 930
 
 export const initalNodeX = 100
 export const initalNodeY = 80
+
+export const linkOffsetY = nodeRectHeight
+export const linkOffsetX = 15
 
 let idCounts = 100,
 	idArray = []
@@ -45,6 +48,7 @@ export function getNewPosition(x,y){
 				m_ = Math.floor(h / nodeRectHeight ),
 				n__ = Math.floor( (w + nodeRectWidth) / nodeRectWidth ),
 				m__ = Math.floor( (h +nodeRectHeight) / nodeRectHeight)
+				
 				grids[n_ + m_* n] = 1
 				grids[n__ + m_* n] = 1
 				grids[n_ + m__* n] = 1

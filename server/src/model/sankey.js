@@ -9,6 +9,14 @@ class Sankey{
         let dataList = await query( sql );
         return await dataList;
     }
+
+    async getRooms(){
+    	let sql;
+    	sql = `SELECT id, name FROM room;`
+    	let dataList = await query( sql )
+    	return await dataList
+    }
+
 }
 
 module.exports = new Sankey();

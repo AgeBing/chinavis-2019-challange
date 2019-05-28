@@ -8,6 +8,7 @@ class SankeyController {
         let timeInit = timeStart,
         	timeInterval = 30,
         	map = {}
+            //  uid => [ t1:rid , t2:rid ... tn:rid ]
 
 		let intervalCounts =  Math.floor( (timeEnd - timeStart )/ timeInterval )
 
@@ -15,7 +16,10 @@ class SankeyController {
         // 输出一个稀疏矩阵
         res.forEach((r)=>{
         	let { id,time,place,label } = r
-        	time = Math.floor(time / 60)
+        	time = Math.floor(time / 60)   // 单位为分
+
+
+            if(place >= 8) place = 8
 
         	let arr = map[id]
         	if(!map.hasOwnProperty(id)){
@@ -26,19 +30,17 @@ class SankeyController {
 			let intervalIndex = Math.floor( (time - timeInit )/ timeInterval ),
 				stayInterval = time - timeInterval * intervalIndex - timeInit 
 
-
 			if( !arr[intervalIndex] || 
-				( arr[intervalIndex] && stayInterval > arr[intervalIndex].stay) ){
+				( arr[intervalIndex] && stayInterval > arr[intervalIndex].stay) ){  //取该时间段更久的 ？！
 
 				arr[intervalIndex] = {
-					stay : stayInterval,
-					place,
-					label
+					stay : stayInterval,   // 在该 时间区间内呆的时间
+					place
 				}
 			}
         })
 
-
+        // 补全稀疏矩阵中的空值，向两边去寻找 ？！
         function findNearst(id,index){
         	let arr = map[id]
         	for(let i = index;i >= 0;i--)
@@ -48,10 +50,11 @@ class SankeyController {
         		if(arr[i]) return arr[i].place
         }
 
-        let ids = Object.keys(map)
+        let ids = Object.keys(map)  
+
 
         let room = {}  //每个时间段内每个房间待的人数
-
+        // rid => [ t1 : {count , uids} , t2:{ } , tn:{} ]
         // 时间间隔 到 房间 的矩阵
         // 也是稀疏矩阵
         ids.forEach((_id)=>{
@@ -84,16 +87,22 @@ class SankeyController {
         let nodes = [],
         	links = [],
         	linksMap = {},
-        	rooms = Object.keys(room)
+        	rooms = Object.keys(room),
+            maxValue = 0
 
         for(let i = 0;i < rooms.length ;i++){
         	for(let j = 0;j < intervalCounts;j++){
-        		nodes.push({
+                let _rid = rooms[i]
+        		let value = room[_rid][j] == null ? 0 : room[_rid][j]['count']
+                maxValue = maxValue > value ? maxValue : value
+                nodes.push({
         			index: i * intervalCounts + j,
-        			name : rooms[i] +','+  (timeStart + timeInterval*j),
-        			value : room[rooms[i]][j] == null ? 0 : room[rooms[i]][j]['count'],
+        			name : _rid +','+  (timeStart + timeInterval*j),
+        			value :value,
         			depth : j ,
-        			height : i
+        			height : +_rid,
+                    x_index: j,
+                    y_index :+_rid,
         		})
         	}
         }	
@@ -141,7 +150,7 @@ class SankeyController {
     		return rooms.indexOf(rid) * intervalCounts + timeIndex
     	}
 
-        let linkCount = 0
+        let linkCount = 0 
     	Object.keys(linksMap).forEach((startName)=>{
     		let targets = linksMap[startName]
     		Object.keys(targets).forEach((targetName)=>{
@@ -159,7 +168,30 @@ class SankeyController {
 
 
 
-        ctx.body = { nodes,links };
+        let roomsArrFromDB =  await sankey.getRooms(),
+            rnames = [],
+            tnames = []
+
+        rnames = rooms.map((id)=>{
+            for(let i =0;i < roomsArrFromDB.length;i++){
+                if(roomsArrFromDB[i]['id'] == id){
+                    let name = roomsArrFromDB[i]['name']
+                    if(name == null) name = '其他' 
+                    return name
+                }
+            }
+            return '其他'
+        })
+
+        for(let i =0;i < intervalCounts;i++){
+            tnames.push(
+                timeStart + i*timeInterval
+            )
+        }
+
+
+
+        ctx.body = { nodes,links,maxValue,rooms:rnames,times:tnames };
     }
 }
 

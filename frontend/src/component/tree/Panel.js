@@ -96,10 +96,10 @@ class Panel extends React.Component {
     const { nodes , links ,showCondiPanel } = this.state
     
     return connectDropTarget(
+      <div>
       <div 	
       	style={panelStyle} 
       	className="panel" >  
-        
 
         <div  className='add-node'  
           style={{
@@ -140,7 +140,6 @@ class Panel extends React.Component {
 	          )
         })}
 
-      <Links links={links} />
       
       {  showCondiPanel && (
         <CondiPanel 
@@ -153,6 +152,8 @@ class Panel extends React.Component {
         />
       )}
       
+       </div>
+       <Links links={links} />
       </div>
     )
   }
@@ -401,7 +402,7 @@ const targetSpec =  {
     const y = Math.round(item.y + delta.y)
     component.moveBox(item.id, x, y)  //调用本组件的函数
   },
-  // hover(props, monitor, component) { 
+  // hover(props, monitor, component) {  // 拖动的时候也触发
   //   if (!component) {     
   //     return null
   //   }
