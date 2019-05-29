@@ -55,9 +55,12 @@ code {
 }
 .node-rect .cond-line{
   margin: 2px;
-  font-size: 9px;
+  font-size: 9px !important;
 }
-
+.node-rect .cond-line .ant-tag{
+  margin: 2px;
+  font-size: 9px !important;
+}
 
 .node-rect .config-contain{
 	width: 30px;

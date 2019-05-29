@@ -27,7 +27,8 @@ export function sankeyLayout(data) {
 	// console.log(maxValue,perCount)
 
 	let _nodes = [],
-		_links = []
+		_links = [],
+		subNodes = []
 
 
 	nodes.forEach((node)=>{
@@ -38,11 +39,16 @@ export function sankeyLayout(data) {
 		_links.push( linkPosition(_nodes,link) )
 	})
 
+	_nodes.forEach((node)=>{
+		subNodes.push( changeNodeHeight(node) )
+	})
+
 	return {
 		nodes : _nodes,
 		links : _links,
 		rooms : rooms,
-		times : times
+		times : times,
+		subNodes
 	}
 }
 
@@ -51,7 +57,7 @@ export function sankeyLayout(data) {
 // 第一步 计算各节点位置
 // depth: 第几排
 // height: 某一排的第几个
-function nodePosition({depth , height, name,x_index,y_index}){
+function nodePosition({depth , height, name,x_index,y_index,index}){
 
 	let x0 = depth * (nodeConfig.xGap + nodeConfig.width),
 		x1 = x0 + nodeConfig.width,
@@ -73,7 +79,8 @@ function nodePosition({depth , height, name,x_index,y_index}){
 		x,y,
 		name,
 		x_index,
-		y_index
+		y_index,
+		index
 	}
 }
 
@@ -125,7 +132,24 @@ function linkPosition(_nodes , link){
 
 
 	return { x,y,
-		ids,index,source:sourceNode['height'],target:targetNode['height'],width:lineHeight,value }
+		ids,index,
+		source:sourceNode['height'],target:targetNode['height'],
+		sourceNodeIndex:source,targetNodeIndex:target,
+		width:lineHeight,value }
 }
 
 
+
+function changeNodeHeight(_node){
+
+	let node = JSON.parse(JSON.stringify(_node))
+	
+	// console.log(_node,node)
+
+	let h = node.useHeight,
+		y0 = node.y0,    // 上
+		y1 = y0 - h
+	node.y1 = y1
+	node.y  = [y0,y0,y1,y1]
+	return node
+}

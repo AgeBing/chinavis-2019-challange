@@ -28,7 +28,8 @@ class Sankey extends React.Component {
     this.state = {
       data : null,
       selectIds : [],
-      selectItemId:-1
+      selectLinkId:-1,
+      selectNodeId:-1,
     }
   }
 
@@ -56,11 +57,12 @@ class Sankey extends React.Component {
 
 
   render() {
-    let { data,selectIds,selectItemId }  = this.state
+    let { data,selectIds,selectLinkId,selectNodeId }  = this.state
     let { changeSelectTrajIds } = this.props
     if( data == null) return (
       <div></div>
     )
+
 
     const scale = {
       x: {
@@ -89,6 +91,7 @@ class Sankey extends React.Component {
       y_index : {
         type : 'cat',
         values: data.rooms,
+        tickInterval:105,
       }
 
     }
@@ -96,18 +99,14 @@ class Sankey extends React.Component {
     let chartIns,
         self = this
 
-        console.log(data)
-
     return (
       <div>
         <Chart
-          scale={nodeScale}
           data={data.nodes}
           forceFit={false}
           height={542}
           width={1200}
-          scale={scale}
-          padding={[40, 40, 20,80]}
+          padding={[0,0,0,70]}
 
           //https://bizcharts.net/products/bizCharts/api/chart#%E5%9B%BE%E8%A1%A8%E4%BA%8B%E4%BB%B6
           onGetG2Instance={g2Chart => {chartIns = g2Chart;}}
@@ -119,48 +118,87 @@ class Sankey extends React.Component {
             };
 
             let selectIds = ev.data._origin.ids
-            let _selectItemId = ev.data._origin.index
+            let _selectLinkId = ev.data._origin.index
 
-            if(selectItemId == _selectItemId){ // 取消
+            if(selectLinkId == _selectLinkId){ // 取消
                 selectIds = []
-                _selectItemId = -1
+                _selectLinkId = -1
             }
 
             changeSelectTrajIds(selectIds)
             self.setState({
               selectIds,
-              selectItemId:_selectItemId
+              selectLinkId:_selectLinkId,
+              selectNodeId:-1
             })
           }}
+
+          onPolygonClick={ev => {
+            var point = {
+              x: ev.x,
+              y: ev.y
+            };
+
+
+            let nodeIndex =  ev.data._origin.index 
+            let ids = []
+
+            if(selectNodeId == nodeIndex){
+                selectNodeId = -1
+                ids = []
+            }else{
+              //遍历 links 找出source 或 target 对应的边，取出 ids
+              for(let i = 0;i < data.links.length; i++){
+                  let link = data.links[i]
+                  if(link['sourceNodeIndex'] == nodeIndex || link['targetNodeIndex'] == nodeIndex){
+                   ids =  ids.concat(link.ids)
+                  }
+              }
+              selectNodeId = nodeIndex
+            }
+
+            self.setState({
+              selectIds : ids,
+              selectNodeId,
+              selectLinkId:-1
+            })
+
+          }}
+
+
 
         >
 
         
-           <View data={data.nodes} scale={nodeScale}>
-            <Geom
-              type="polygon"
-              position="x_index*y_index"
-              color="transparent"
-              style={{
-                fill:'none',
-                stroke: "#ccc"
-              }}
-            >
-            </Geom>
-            <Axis name='x_index' visable={false}/>
-            <Axis name='y_index'  title={true} />
+        <View data={data.nodes} scale={nodeScale} 
+            start={{x:0,y:0.05}} end={{x:1, y:1}} 
+            forceFit={false}>
+          <Geom
+            type="polygon"
+            position="x_index*y_index"
+            color="transparent"
+            style={{
+              fill:'none',
+              stroke: "#ccc"
+            }}
+          >
+          </Geom>
+          <Axis name='x_index' visable={false}/>
+          <Axis name='y_index'  title={false} label={{
+            autoRotate: false
+          }} />
+        </View>
 
-          </View>
 
-          <View data={data.links}>
+        <View data={data.links}>
             <Geom
               type="edge"
               position="x*y"
               shape="arc"
 
               color={['ids*index', (ids,index)=>{
-                  if(index == selectItemId){
-                    return 'red';
+                  if(index == selectLinkId){
+                    return '#c41d7f';
                   }
                   let flag  = false
                   for(let i=0;i<selectIds.length;i++){
@@ -170,7 +208,7 @@ class Sankey extends React.Component {
                     }
                   }
                   if(flag)
-                    return '#00ff00';
+                    return '#ffadd2';
                   else
                     return '#bbb';
                 }]}
@@ -187,34 +225,57 @@ class Sankey extends React.Component {
                   };
                 }
               ]}
-
-
             />
-          </View>
+        </View>
 
          <View data={data.nodes} scale={nodeScale}>
             <Geom
               type="polygon"
               position="x*y"
               style={{
-                stroke: "#ccc"
+                lineWidth:1,
+                stroke: "#ccc",
+                fill: 'transparent'
               }}
             >
-           {/* <Label
+           <Label
               content="name"
               textStyle={{
                 fill: "#545454",
-                textAlign: "start"
               }}
-              offset={0}
-              formatter={val => {
-                return "  " + val;
-              }}
-            />*/}
-            </Geom>
 
+              formatter={(name) => {
+                  let h = name.split(',')[0],
+                      time = name.split(',')[1]
+
+                  if(h == "8")
+                    return time;
+                  return ""
+              }}
+              position='middle'
+              offset={20}
+            />
+            </Geom>
           </View>
-           
+          
+        <View data={data.subNodes} scale={nodeScale}>
+            <Geom
+              type="polygon"
+              position="x*y"
+
+              style={['index', {
+                  fill:(index)=>{
+                    if(index == selectNodeId){
+                      return "#c41d7f";
+                    }else{
+                      return "#bae7ff";
+                    }
+                  }
+              }]}
+
+            >
+            </Geom>
+        </View> 
 
 
         </Chart>
