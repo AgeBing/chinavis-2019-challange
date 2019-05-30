@@ -105,7 +105,7 @@ class Sankey extends React.Component {
           data={data.nodes}
           forceFit={false}
           height={542}
-          width={1200}
+          width={1230}
           padding={[0,0,0,70]}
 
           //https://bizcharts.net/products/bizCharts/api/chart#%E5%9B%BE%E8%A1%A8%E4%BA%8B%E4%BB%B6

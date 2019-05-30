@@ -6,7 +6,7 @@
 let nodeConfig = {
 	// 各种间距配置
 	height : 100,
-	width  : 20,
+	width  : 28,
 	xGap   : 50,
 	yGap   : 5,
 	heightPerCount : 0.5,

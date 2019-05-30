@@ -22,7 +22,7 @@ class App extends Component {
 			    <Row gutter={8} className='layout-app'>
 			 
 			      <Col span={16} className='layout-item '>
-					<div className='layout-item-sub1 layout-view'>
+					<div className='layout-item-sub1'>
 						<MyMap />
 						
 					</div>
