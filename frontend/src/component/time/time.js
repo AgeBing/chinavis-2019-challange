@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 
 import { m2h,m2m,m2t,t2m } from './util.js'
 
-const width = 1000;
+const width = 1160;
 const height = 36;
 
 

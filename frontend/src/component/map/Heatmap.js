@@ -146,6 +146,7 @@ class Heatmap extends React.Component {
               lineStyle: {
                 lineWidth: 1,
                 lineDash: null,
+                
                 stroke: '#f0f0f0',
               },
               showFirstLine: true,

@@ -8,6 +8,8 @@ import { nodeRectWidth,nodeRectHeight } from './Config'
 
 import PieChart from './PieChart'
 import StackChart from './StackChart'
+import UserList from './List'
+
 
 
 import { API_Traj_Info }  from '../../api/index'
@@ -70,11 +72,20 @@ class Node extends React.Component{
 
 
     show.push( 
-      <Tag className='cond-line' key={'users'}
+      <div className='cond-line'>
+
+        <Tag key={'users'}
           onClick={this.onHandleShowOrHidePop.bind(this,'users')}>
-        <Icon type="user" /> 
-        {hasUids ?condition['uids'].length : this.state.userLength}
-      </Tag>
+          <Icon type="team" /> 
+          {hasUids ?condition['uids'].length : this.state.userLength}
+        </Tag>
+{/*        <Tag key={'users'}
+          onClick={this.onHandleShowOrHidePop.bind(this,'users')}>
+          <Icon type="user" /> 
+          {hasUids ?condition['uids'].length : this.state.userLength}
+        </Tag>*/}
+      </div>
+
     )
 
     if( condition['time'] ){
@@ -267,7 +278,8 @@ class Node extends React.Component{
         case "users":
           newPopContent =  (
             <div style={popStyle}>
-                <PieChart  counts={summary.user} style={popStyle}/>
+                {/*<PieChart  counts={summary.user} style={popStyle}/>*/}
+                <UserList />
             </div>
           );
           break;

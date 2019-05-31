@@ -3,6 +3,16 @@ import React, { Component } from 'react';
 import Brick from './Brick'
 import * as Config from './Config'
 
+import PIC1 from '../../static/1.jpg'
+import PIC2 from '../../static/2.jpg'
+
+let pics = {
+  1 :PIC1,
+  2 :PIC2
+}
+
+
+
 export default class Bricks extends Component {
   constructor(props) {
     super(props);
@@ -44,19 +54,48 @@ export default class Bricks extends Component {
     })
   }
   render() {
-    let { grids,width,height } = this.state 
+
+
+
+    let { grids,width,height } = this.state
+    let { floor } = this.props
+
+    let s = (        <svg  className='map-bricks' 
+          width={width} height={height} >
+            {
+              grids.map((grid)=>(
+                 <Brick  key={grid.id}
+                  x = {grid.x}
+                  y = {grid.y}
+                              />  
+              ))
+            }
+        </svg>)
+
+    let style = {
+        1 : {
+          width: '629px',
+          height: '345px',
+          left: '-14px',
+          position: 'absolute',
+          top: '-10px'
+        },
+        2 :{
+          width : '326px',
+          height : '345px',
+          left: '625px',
+          position: 'absolute',
+          top: '-10px'         
+        }
+
+    }
+
+
     return (
-      <svg  className='map-bricks' 
-        width={width} height={height} >
-          {
-            grids.map((grid)=>(
-               <Brick  key={grid.id}
-                x = {grid.x}
-                y = {grid.y}
-                            />  
-            ))
-          }
-      </svg>
+
+        <img src={pics[floor]} className='map-pic' style={style[floor]}/>
+
+
     );
   }
 }
