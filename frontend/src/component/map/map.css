@@ -137,15 +137,29 @@
 }
 .config-name{
   display: inline-block;
-  width: 100px;
+  width: 72px;
   line-height: 40px;
 }
 .config-wiget{
   display: inline-block;
-  width: 200px;
+  width: 102px;
   float: right;
 }
 
+.config-wiget-heat{
+  height: 40px;
+  width: 100%;
+}
+.config-wiget-heat .rect{
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+
+    font-size: 8px;
+    line-height: 54px;
+    text-align: center;
+    font-weight: 700;
+}
 
 .traj-canvas-hide{
   opacity: 0.1

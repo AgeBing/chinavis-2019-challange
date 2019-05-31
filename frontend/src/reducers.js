@@ -10,14 +10,14 @@ const initialState = {
     rooms: [1, 2, 4],       //给视图作为地理条件
     ids:[],
     stateNodeId: 0,
-    opacity: 0.50,
+    opacityTraj: 0.50,
     cluster: 4,
 
     clusterNum : 0,   //视图联动 用户选择某一各聚类的人员  0表示全部
 
     selectIdsGlobal: [],  //用户选中的轨迹 id 数组
 
-    mode:'traj' || 'heat',
+    mode:'heat'|| 'traj',
     cursorTime:480,  //热力图显示的单个时刻 
 };
 console.log(initialState)
@@ -44,7 +44,7 @@ function appReducer(state = initialState, action, opation) {
         case "CHANGE_OPACITY":
             return {
                 ...state,
-                opacity: action.opacity
+                opacityTraj: action.opacity
             };
             break;
 
