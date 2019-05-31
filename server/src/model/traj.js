@@ -24,7 +24,9 @@ class Traj{
 
 
   async getUids(startMiniter,endHMiniter,day,rids) {
-      let tableName  = 'traj_MergeTime_day'+day,
+      //之前的可能会导致找不到符合条件的记录，因为时间被合并了，
+      //例如记录为9点和12点，而约束为10点和11,但当前的算法误差也较小，可以不改
+      let tableName  = 'traj_MergeTime_day'+day,//'trajectories_inf'+day,
           sql
       if(!rids){ // rids 为空表示 无地点限制
        sql = `SELECT DISTINCT  id  FROM ${tableName} WHERE 
@@ -44,7 +46,7 @@ class Traj{
       let tableName  = 'base_trajectory_day'+day
       let sql = `SELECT *  FROM ${tableName} WHERE id IN (${uids})  AND 
          time1 >= ${startMiniter} AND time2 <= ${endHMiniter}
-         AND floor2=${floor} LIMIT 0,8000`
+         AND floor2=${floor}`// LIMIT 0,8000
 
 
       let dataList = await query( sql )

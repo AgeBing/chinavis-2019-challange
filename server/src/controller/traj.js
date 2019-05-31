@@ -130,7 +130,10 @@ class TrajController {
 		if(interval_length <= 0){
 			intervals = []
 		}else if(interval_length == 1){
-			intervals = [startMiniter,endMiniter]
+			// intervals = [startMiniter,endMiniter]
+			for(let i = 0;i <= timeIntervalCount;i++){
+				intervals.push( startMiniter + i  )
+			}
 		}else{
 			for(let i = 0;i <= timeIntervalCount;i++){
 				intervals.push( startMiniter + i * interval_length )
@@ -140,14 +143,15 @@ class TrajController {
 		for(let r = 0;r < rids.length; r++){
 				let rid = rids[r]
 				let roomName = await traj.getRoomName(rid)
-				for(let t = 1;t < intervals.length-1; t++){
-					let s = intervals[t - 1],
-						m = intervals[t],
-						e = intervals[t + 1]
-
+				for(let t = 0;t < intervals.length-1; t++){
+					let s = intervals[t],
+					e=s+1
+						// m = intervals[t],
+						// e = intervals[t]
+					// let d1 = datetime.datetime.strptime(s, '%H:%M:%S')+datetime.timedelta(minutes=1)
 					let c = await  traj.getTrajsCountByTimeIntervalAndRoom(s,e,day,rid)
 					rooms.push({
-						time : m_t(m),         // 时间段表示的是前后的两个时间节点 这段时间的人数
+						time : m_t(s),        // 时间段表示的是前后的两个时间节点 这段时间的人数
 						name  : roomName['name'],
 						count: c
 					})

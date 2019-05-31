@@ -152,6 +152,22 @@ def clone_DB():
 	res = cur.fetchall()
 	conn.commit()
 	cur.close()
+def Get_row_len(in_table):#'in_table:traj_MergeTime_day'
+	conn = Connect_MYSQL()
+	sql_select = "select *  from "+in_table+str(day)#+" LIMIT 100"# id,time,floor,rid,time2
+	cur = conn.cursor()
+	cur.execute(sql_select)
+	res = cur.fetchall()
+	num = 0
+	results={}
+	before=""
+	for row in res:
+		if before=="":
+			before=row
+			continue
+		else:
+			if before[0]==row[0]:
+				
 # clone_DB()
 # get_len()
 # for day in range(1,4):
