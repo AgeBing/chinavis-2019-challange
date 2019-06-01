@@ -30,12 +30,26 @@ class Traj{
           sql
       if(!rids){ // rids 为空表示 无地点限制
        sql = `SELECT DISTINCT  id  FROM ${tableName} WHERE 
+        (
         (HOUR(time)*60 + MINUTE(time))  >= ${startMiniter}  AND 
-        (HOUR(time)*60 + MINUTE(time))  <= ${endHMiniter}`       
+        (HOUR(time)*60 + MINUTE(time))  <= ${endHMiniter}
+        )
+        OR 
+        (
+        (HOUR(time)*60 + MINUTE(time))  < ${startMiniter} AND 
+        (HOUR(time)*60 + MINUTE(time)+SECOND(time)/60+len_minutes)  >= ${endHMiniter}
+        )`  
+         //记录的起始时刻早于start，但是终止时刻晚于end     
       }else{
           sql = `SELECT DISTINCT  id  FROM ${tableName} WHERE 
+        (
         (HOUR(time)*60 + MINUTE(time))  >= ${startMiniter}  AND 
-        (HOUR(time)*60 + MINUTE(time))  <= ${endHMiniter}  AND
+        (HOUR(time)*60 + MINUTE(time))  <= ${endHMiniter}  
+        OR 
+        ((HOUR(time)*60 + MINUTE(time))  < ${startMiniter} AND 
+        (HOUR(time)*60 + MINUTE(time)+SECOND(time)/60+len_minutes)  >= ${endHMiniter})
+        )
+        AND
         rid in (${rids}) `
       }
       let dataList = await query( sql )
@@ -57,8 +71,14 @@ class Traj{
   async getTrajsCountByTimeIntervalAndRoom(startMiniter,endHMiniter,day,rid) {
       let tableName  = 'traj_MergeTime_day'+day
       let sql = `SELECT DISTINCT id  FROM ${tableName} WHERE 
-        (HOUR(time)*60 + MINUTE(time))  >= ${startMiniter}  AND 
-        (HOUR(time)*60 + MINUTE(time))  <= ${endHMiniter}  AND
+       (
+        ((HOUR(time)*60 + MINUTE(time))  >= ${startMiniter}  AND 
+        (HOUR(time)*60 + MINUTE(time))  <= ${endHMiniter} )
+        OR 
+        ((HOUR(time)*60 + MINUTE(time))  < ${startMiniter} AND 
+        (HOUR(time)*60 + MINUTE(time)+SECOND(time)/60+len_minutes)  >= ${endHMiniter})
+       )
+         AND
         rid = ${rid} `
 
     let dataList = await query( sql )

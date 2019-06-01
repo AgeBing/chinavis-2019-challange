@@ -154,20 +154,52 @@ def clone_DB():
 	cur.close()
 def Get_row_len(in_table):#'in_table:traj_MergeTime_day'
 	conn = Connect_MYSQL()
-	sql_select = "select *  from "+in_table+str(day)#+" LIMIT 100"# id,time,floor,rid,time2
+	sql_select = "select *  from "+in_table+" where len_minutes is NULL order by id,time"#+" LIMIT 100"# id,time,floor,rid,len_minutes#+str(day)#
+	print(sql_select)
 	cur = conn.cursor()
 	cur.execute(sql_select)
 	res = cur.fetchall()
-	num = 0
 	results={}
 	before=""
+	count=0
 	for row in res:
-		if before=="":
+		
+		if before=="":#初始状态，第一行
 			before=row
 			continue
 		else:
-			if before[0]==row[0]:
+			if before[0]==row[0]:#上一行跟当前行的id一致，同一个人
+				before_time=datetime.datetime.strptime(str(before[1]), '%H:%M:%S')
+				cur_time=datetime.datetime.strptime(str(row[1]), '%H:%M:%S')
+				time2_len="%.2f"%((cur_time-before_time).seconds/60)#保留两位小数
+				# update_len_minutes="update "+in_table+" set len_minutes='"+time2_len+"' where id="+before[0]+" and time='"+str(before[1])+"';"
+				#.format(in_table,time2_len,before[0],before[1])
+				# print(update_len_minutes)
+				update_len_minutes="update {0} set len_minutes='{1}' where id={2} and time='{3}';".format(in_table,time2_len,before[0],str(before[1]))
+				cur.execute(update_len_minutes)
+				count=count+1
+				if count%100==0:
+					conn.commit()
+					print('111')
+					count=0
+				before=row
 				
+			else:#当前行的uid与之前的不同，之前的记录len_minutes置0
+				update_len_minutes="update {0} set len_minutes='{1}' where id={2} and time='{3}';".format(in_table,0,before[0],str(before[1]))
+				cur.execute(update_len_minutes)
+				# print(update_len_minutes)
+				count=count+1
+				if count%100==0:
+					conn.commit()
+					print('111')
+					count=0
+				before=row
+				continue
+	conn.commit()
+	cur.close()
+for i in [2,3]:
+	Get_row_len('traj_MergeTime_day'+str(i))
+	print(i)
 # clone_DB()
 # get_len()
 # for day in range(1,4):
