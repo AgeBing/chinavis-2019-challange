@@ -143,7 +143,7 @@ class TrajController {
 		for(let r = 0;r < rids.length; r++){
 				let rid = rids[r]
 				let roomName = await traj.getRoomName(rid)
-				for(let t = 0;t < intervals.length-1; t++){
+				for(let t = 0;t < intervals.length; t++){
 					let s = intervals[t],
 					e=s+1
 						// m = intervals[t],
