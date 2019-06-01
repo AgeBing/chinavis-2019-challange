@@ -8,6 +8,8 @@ import Heatmap from './Heatmap'
 
 import * as Config from './Config'
 
+
+
 import { connect } from 'react-redux'
 
 import { Slider,Drawer,Button,List,Card  } from 'antd';
@@ -42,7 +44,7 @@ class  MyMap  extends Component{
 			visible: false,
 			showIds:[],
     
-    		mapMode: 'traj' || 'heat',
+    		mapMode: 'heat'|| 'traj' || 'heat',
 		}
 	}
 	componentWillMount(){
@@ -53,11 +55,41 @@ class  MyMap  extends Component{
     	this.setState({ 
     		opacity : this.props.opacity
     	})
+
+
+    	contentListNoTitle['traj'] = (
+    		<div>
+				<div className='config-name'> 轨迹透明度 </div>
+				<Slider className='config-wiget' 
+					min={0.01}
+	        		max={1} 
+	        		step={0.01}
+	        	defaultValue={this.props.opacity} onChange={this.onOpacityChange} />
+        	</div>
+    	)
+
+    	contentListNoTitle['heat'] = (
+    		<div>
+				{/*<div className='config-name'> 图例 </div>*/}
+				<div className='config-wiget-heat'>
+					{Config.COLORS.map((c,i)=>{
+						return (
+							<div className='rect' style={{
+								backgroundColor: c
+							}}>
+								{(i == 0 || i == Config.COLORS.length-1)?
+									i * 500:'.'}
+							</div>)
+					})}
+				</div>
+        	</div>
+    	)	
+
 	}
 
-	  onOpacityChange = (value) => {
-	    this.props.changeOpacity(value)
-	  }
+	onOpacityChange = (value) => {
+		this.props.changeOpacity(value)
+	}
 
 	componentWillReceiveProps(nextProps){
     //参数变化  
@@ -90,6 +122,8 @@ class  MyMap  extends Component{
 {/*					<Sensors  floor={1}  height={Config.mapHeight} width={Config.mapWidth} />
 					<Sensors  floor={2}  height={Config.mapHeight} width={Config.mapWidthHalf} />*/}
 				</div>
+
+
 
 				{mapMode == 'traj' ? (
 						<div className='map-views'>
@@ -127,12 +161,12 @@ class  MyMap  extends Component{
 
 
 {/*			<div className='map-config'> 
-				<div className='config-name'> 轨迹透明度 </div>
-				<Slider className='config-wiget' 
-					min={0.01}
-            		max={1} 
-            		step={0.01}
-            	defaultValue={opacity} onChange={this.onOpacityChange} />
+					<div className='config-name'> 轨迹透明度 </div>
+					<Slider className='config-wiget' 
+						min={0.01}
+	            		max={1} 
+	            		step={0.01}
+	            	defaultValue={opacity} onChange={this.onOpacityChange} />
 				
 				<br/>
 				<Button type="primary" onClick={this.showDrawer}>
@@ -189,7 +223,7 @@ class  MyMap  extends Component{
 
 const mapStateToProps = (state) => {
   return {
-    opacity: state.opacity,
+    opacity: state.opacityTraj,
     selectIdsGlobal : state.selectIdsGlobal
   }
 }

@@ -10,7 +10,7 @@ class Traj extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        trajs: [],
+        trajs: [],   // 当前轨迹数据  用于重绘
         canvasHideFlag:false
     };
     this.canvas = React.createRef()
@@ -29,24 +29,18 @@ class Traj extends Component {
 
   componentWillReceiveProps(nextProps){
     //参数变化  
-      // 切换状态
+      // 体检改变
       if(this.props.selectTimeInterval.day != nextProps.selectTimeInterval.day ||
          this.props.selectTimeInterval.minites.toString() != nextProps.selectTimeInterval.minites.toString() ||
          this.props.rooms.toString() != nextProps.rooms.toString()){
-        this.requestNewTrajs(nextProps)
+        
+        // 重新获取数据
+        this.requestNewTrajs(nextProps) 
       }
       // 切换透明度
       if(this.props.opacity != nextProps.opacity){
         this.reDrawCurrentTrajs(nextProps)
       }
-      if(this.props.clusterNum != nextProps.clusterNum){
-        if(nextProps.clusterNum != 0){
-          this.highLightSomeTajs(nextProps)
-        }else{
-          this.unHighLightSomeTrajs()
-        }
-      }
-
   }
 
   requestNewTrajs(nextProps){
@@ -200,8 +194,7 @@ const mapStateToProps = (state) => {
     selectTimeInterval: state.selectTimeInterval,
     stateNodeId : state.stateNodeId,
     rooms:state.rooms,
-    opacity:state.opacity,
-    clusterNum:state.clusterNum
+    opacity:state.opacityTraj,
   }
 }
 

@@ -13,11 +13,12 @@ import { API_Heatmap_Grids } from '../../api/index'
 
 import { connect } from 'react-redux'
 
-
+import { COLORS } from './Config'
 
 const mapStateToProps = (state) => {
   return {
-    heatmap_time: state.timeInterval.minites,
+    cursorTime: state.cursorTime,
+    day: state.timeInterval.day,
   }
 }
 
@@ -54,12 +55,10 @@ class Heatmap extends React.Component {
       config
     })
 
+    let { cursorTime } = this.props
+    let startHour = Math.floor(cursorTime / 60) ,
+        endHour = startHour + 1
 
-
-    let { heatmap_time } = this.props
-    let startHour = Math.floor(heatmap_time[0] / 60) ,
-        endHour = Math.floor(heatmap_time[1] / 60)
-    console.log(startHour,endHour ) 
     let data  = { 
       startHour ,
       endHour ,
@@ -74,31 +73,25 @@ class Heatmap extends React.Component {
     let self = this
 
     API_Heatmap_Grids(data).then((res)=>{
-      // console.log(res)
       for(let i =0; i < res.length;i++){
         res[i]['y_reverse'] = 15 - res[i]['y']
       }
-
+      console.log(res)
       self.setState({
         data : res
       })
     })
   }
   componentWillReceiveProps(nextProps){
-    console.log(nextProps)
-    let { heatmap_time,floor } = nextProps
-    let startHour = Math.floor(heatmap_time[0] / 60) ,
-        endHour = Math.floor(heatmap_time[1] / 60)
-
+    let { cursorTime,floor } = nextProps
+    let startHour = Math.floor(cursorTime/ 60) ,
+        endHour = startHour+1
     let data  = { 
       startHour ,
       endHour ,
       day:1,
       floor:floor
     }
-
-    console.log(startHour,endHour ) 
-
     this.requestData(data)
   }
 
@@ -165,15 +158,18 @@ class Heatmap extends React.Component {
             }}
           />
           <Tooltip title="位置:人数"/>
-          <Legend name='count' sizeType="circle" offsetY={-15}/>
           <Geom
             type="polygon"
             position="x*y_reverse"
-            color={['count', '#BAE7FF-#1890FF-#0050B3']}
+            color={['count', (count)=>{
+               // let base = Math.floor(Math.log10(count))
+               let base = Math.floor(count/500)
+               return COLORS[base]
+            }]}
             style={{
-              stroke: '#fff',
+              stroke: 'gray',
               lineWidth: 1,
-              opacity: 0.3
+              opacity: 0.5
             }}
 
              tooltip={['x*y*count', (x, y,count) => {
