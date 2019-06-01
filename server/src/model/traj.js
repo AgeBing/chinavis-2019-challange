@@ -26,7 +26,7 @@ class Traj{
   async getUids(startMiniter,endHMiniter,day,rids) {
       //之前的可能会导致找不到符合条件的记录，因为时间被合并了，
       //例如记录为9点和12点，而约束为10点和11,但当前的算法误差也较小，可以不改
-      let tableName  = 'traj_MergeTime_day'+day,//'trajectories_inf'+day,
+      let tableName  = 'traj_mergetime_day'+day,//'trajectories_inf'+day,
           sql
       if(!rids){ // rids 为空表示 无地点限制
        sql = `SELECT DISTINCT  id  FROM ${tableName} WHERE 
@@ -69,7 +69,7 @@ class Traj{
 
   // 获取某一时间段内 某个房间的访问人数
   async getTrajsCountByTimeIntervalAndRoom(startMiniter,endHMiniter,day,rid) {
-      let tableName  = 'traj_MergeTime_day'+day
+      let tableName  = 'traj_mergetime_day'+day
       let sql = `SELECT DISTINCT id  FROM ${tableName} WHERE 
        (
         ((HOUR(time)*60 + MINUTE(time))  >= ${startMiniter}  AND 

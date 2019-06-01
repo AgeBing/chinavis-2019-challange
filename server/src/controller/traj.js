@@ -99,24 +99,24 @@ class TrajController {
 
 		// 人员统计  饼图
 		// 按照 聚类结果 统计人员比例
-		let groups = [] , groupsCount = []
-		let peopleGroups  = await people.getGroups( uids.join(',') )
+		// let groups = [] , groupsCount = []
+		// let peopleGroups  = await people.getGroups( uids.join(',') )
 		
-		peopleGroups.forEach((p)=>{
-			let i = p.cluster
-			if(!groupsCount[i])  groupsCount[i] = 1
-			else groupsCount[i]++ 
-		})
+		// peopleGroups.forEach((p)=>{
+		// 	let i = p.cluster
+		// 	if(!groupsCount[i])  groupsCount[i] = 1
+		// 	else groupsCount[i]++ 
+		// })
 
-		groupsCount.forEach((v,i)=>{
-			groups.push({
-				cluster : "聚类"+(i + 1),     // 手动加一  从 1 开始数  
-				count : v
-			})
-		})
+		// groupsCount.forEach((v,i)=>{
+		// 	groups.push({
+		// 		cluster : "聚类"+(i + 1),     // 手动加一  从 1 开始数  
+		// 		count : v
+		// 	})
+		// })
 
 		info['length'] = uids.length
-		info['user'] = groups
+
 		info['uids'] = uids
 
 		// 时间统计  每五分钟的活跃人数

@@ -78,7 +78,7 @@ class  MyMap  extends Component{
 								backgroundColor: c
 							}}>
 								{(i == 0 || i == Config.COLORS.length-1)?
-									i * 500:'.'}
+									i * 200:'.'}
 							</div>)
 					})}
 				</div>

@@ -55,14 +55,12 @@ class Heatmap extends React.Component {
       config
     })
 
-    let { cursorTime } = this.props
-    let startHour = Math.floor(cursorTime / 60) ,
-        endHour = startHour + 1
+    let { cursorTime,day } = this.props
+
 
     let data  = { 
-      startHour ,
-      endHour ,
-      day:1,
+      Heatmap_minutes:cursorTime ,
+      day,
       floor:floor
     }
     this.requestData(data)
@@ -83,13 +81,12 @@ class Heatmap extends React.Component {
     })
   }
   componentWillReceiveProps(nextProps){
-    let { cursorTime,floor } = nextProps
+    let { cursorTime,floor,day } = nextProps
     let startHour = Math.floor(cursorTime/ 60) ,
         endHour = startHour+1
     let data  = { 
-      startHour ,
-      endHour ,
-      day:1,
+      Heatmap_minutes:cursorTime ,
+      day,
       floor:floor
     }
     this.requestData(data)
@@ -163,7 +160,7 @@ class Heatmap extends React.Component {
             position="x*y_reverse"
             color={['count', (count)=>{
                // let base = Math.floor(Math.log10(count))
-               let base = Math.floor(count/500)
+               let base = Math.floor(count/200)
                return COLORS[base]
             }]}
             style={{
