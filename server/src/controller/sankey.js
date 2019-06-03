@@ -3,7 +3,9 @@ const sankey = require('../model/sankey');
 class SankeyController {
     async getTrack(ctx) {
         const { day, cluster, timeStart, timeEnd, limit} = ctx.request.body;
+        console.log(day)
         let res = await sankey.getTrack(day, cluster, timeStart, timeEnd, limit);
+
 
         let timeInit = timeStart,
         	timeInterval = 30,
@@ -192,6 +194,11 @@ class SankeyController {
 
 
         ctx.body = { nodes,links,maxValue,rooms:rnames,times:tnames };
+    }
+
+    async getSankey(){
+
+
     }
 }
 

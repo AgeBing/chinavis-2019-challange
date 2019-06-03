@@ -1,6 +1,7 @@
 import React from 'react'
 import { DragSource,DropTarget } from 'react-dnd'
 import ItemType from './ItemType'
+import { connect } from 'react-redux'
 
 import { Button,Icon,Tag,Popover } from 'antd';
 
@@ -61,7 +62,7 @@ class Node extends React.Component{
 
   }
   showConditions(){
-    let { condition } = this.props
+    let { condition,ifChoosen,selectIdsGlobal } = this.props
     let show = []
     let hasUids = condition.hasOwnProperty('uids')
     let hasRids = condition.hasOwnProperty('rooms')
@@ -71,22 +72,29 @@ class Node extends React.Component{
     }
 
 
-    show.push( 
-      <div className='cond-line'>
+    let userCountDOM = ''
 
+  if( ifChoosen && selectIdsGlobal.length != 0 ){
+        userCountDOM =(
+          <Tag key={'users'}
+            onClick={this.onHandleShowOrHidePop.bind(this,'users-count')}>
+            <Icon type="user" /> 
+            {selectIdsGlobal.length}
+          </Tag>
+        )
+    }
+
+    show.push( 
+      <div className='cond-line' key={'user'}>
         <Tag key={'users'}
           onClick={this.onHandleShowOrHidePop.bind(this,'users')}>
           <Icon type="team" /> 
           {hasUids ?condition['uids'].length : this.state.userLength}
         </Tag>
-{/*        <Tag key={'users'}
-          onClick={this.onHandleShowOrHidePop.bind(this,'users')}>
-          <Icon type="user" /> 
-          {hasUids ?condition['uids'].length : this.state.userLength}
-        </Tag>*/}
+        {userCountDOM}
       </div>
-
     )
+
 
     if( condition['time'] ){
       let day = condition['day']
@@ -153,8 +161,9 @@ class Node extends React.Component{
 
         this.setState({
           summary : res,
-          userLength:res['length'],
-          sendingFLag : false
+          userLength: res['length'],
+          sendingFLag : false,
+          uids:res['uids']
         })
         condition['uids'] = res['uids']
     })
@@ -177,7 +186,8 @@ class Node extends React.Component{
       children,
       id,
       handleNodeAdd,
-      condition
+      condition,
+      selectIdsGlobal
     } = this.props
 
     let nodeClassName = ''
@@ -279,7 +289,16 @@ class Node extends React.Component{
           newPopContent =  (
             <div style={popStyle}>
                 {/*<PieChart  counts={summary.user} style={popStyle}/>*/}
-                <UserList />
+                <UserList uids={this.state.uids}/>
+            </div>
+          );
+          break;
+
+        case "users-count":
+          newPopContent =  (
+            <div style={popStyle}>
+                {/*<PieChart  counts={summary.user} style={popStyle}/>*/}
+                <UserList uids={this.props.selectIdsGlobal}/>
             </div>
           );
           break;
@@ -345,6 +364,19 @@ function drop_collect( connect ,monitor ){
   }
 } 
 
-export default DropTarget(type , targetSpec , drop_collect )(DragSource( type , sourceSpec , drag_collect )(Node))
+
+const mapStateToProps = (state) => {
+  return {
+    selectIdsGlobal: state.selectIdsGlobal,
+    stateNodeId : state.stateNodeId,
+  }
+}
+
+
+export default 
+  connect(mapStateToProps)(
+  DropTarget(type , targetSpec , drop_collect )(
+    DragSource( type , sourceSpec , drag_collect)(Node)
+  ))
 // https://github.com/react-dnd/react-dnd/issues/157
 

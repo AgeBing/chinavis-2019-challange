@@ -33,6 +33,13 @@ class TimeLine extends Component {
 
   componentWillReceiveProps(nextProps){
       if(this.props.timeInterval.minites.toString() != nextProps.timeInterval.minites.toString() ){
+
+            this.props.changeGlobalTime({
+              day : nextProps.timeInterval.day,
+              minites: nextProps.timeInterval.minites,
+              times:[]
+             })
+
           let newtimScale =  this.updateScale(nextProps)
 
           this.setAxis( {timeScale:newtimScale} )

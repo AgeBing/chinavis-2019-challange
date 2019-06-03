@@ -76,9 +76,10 @@ class  MyMap  extends Component{
 						return (
 							<div className='rect' style={{
 								backgroundColor: c
-							}}>
-								{(i == 0 || i == Config.COLORS.length-1)?
-									i * 200:'.'}
+							}}
+							key={i}
+							>
+								{(i == 0 || i == Config.COLORS.length-1)?i * Config.countPerColor :i * Config.countPerColor}
 							</div>)
 					})}
 				</div>

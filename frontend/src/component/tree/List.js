@@ -53,7 +53,7 @@ class UserList extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    uids : state.selectIdsGlobal
+    // uids : state.selectIdsGlobal
   }
 }
 

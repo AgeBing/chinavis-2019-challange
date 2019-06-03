@@ -6,7 +6,7 @@ export let mapWidthHalf = 280
 export let rectWidth  = 20
 export let rectHeight = 20
 
-
+export let countPerColor = 50  //热力图 每个颜色区间表示多少个人
 
 export let COLORS = [
   '#e6f7ff',
@@ -19,6 +19,8 @@ export let COLORS = [
   '#0050b3',
   '#003a8c',
   '#002766',
+  'red',
+  'red'
 ]
 
 

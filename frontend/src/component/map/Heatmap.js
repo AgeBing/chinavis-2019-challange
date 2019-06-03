@@ -13,7 +13,7 @@ import { API_Heatmap_Grids } from '../../api/index'
 
 import { connect } from 'react-redux'
 
-import { COLORS } from './Config'
+import { COLORS,countPerColor } from './Config'
 
 const mapStateToProps = (state) => {
   return {
@@ -129,38 +129,14 @@ class Heatmap extends React.Component {
           scale={cols}
           padding={[ 0, 40, 0, 0]}
         >
-          <Axis
-            name="x"
-            grid={{
-              align: 'center',
-              lineStyle: {
-                lineWidth: 1,
-                lineDash: null,
-                
-                stroke: '#f0f0f0',
-              },
-              showFirstLine: true,
-            }}
-          />
-          <Axis
-            name="y"
-            grid={{
-              align: 'center',
-              lineStyle: {
-                lineWidth: 1,
-                lineDash: null,
-                stroke: '#f0f0f0',
-              },
-              showFirstLine: true,
-            }}
-          />
+
           <Tooltip title="位置:人数"/>
           <Geom
             type="polygon"
             position="x*y_reverse"
             color={['count', (count)=>{
                // let base = Math.floor(Math.log10(count))
-               let base = Math.floor(count/200)
+               let base = Math.floor(count/countPerColor)
                return COLORS[base]
             }]}
             style={{
