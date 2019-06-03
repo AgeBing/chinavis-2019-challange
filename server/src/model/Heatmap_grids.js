@@ -42,7 +42,7 @@ class Heatmap_grids{
         })
       })
       
-      console.log('dataList finish',max_val,dataList.length,sids.length,result)
+      // console.log('dataList finish',max_val,dataList.length,sids.length,result)
     return await result;
   }
 }
