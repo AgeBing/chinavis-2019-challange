@@ -34,10 +34,27 @@ class Sankey extends React.Component {
   }
 
   componentWillMount(){
-    let day = 1,
+    this.requestNewDatas()
+  }
+  
+
+  componentWillReceiveProps(nextProps){
+    //参数变化  
+      // 体检改变
+      if(this.props.selectTimeInterval.day != nextProps.selectTimeInterval.day ||
+         this.props.selectTimeInterval.minites.toString() != nextProps.selectTimeInterval.minites.toString()){
+        
+        // 重新获取数据
+        this.requestNewDatas(nextProps) 
+      }
+  }
+  requestNewDatas(nextProps){
+    let { selectTimeInterval } = nextProps || this.props
+
+    let day = 1 || selectTimeInterval.day,
       cluster = 4, 
-      timeStart = 480, 
-      timeEnd = 960, 
+      timeStart = selectTimeInterval.minites[0], 
+      timeEnd = selectTimeInterval.minites[1], 
       // limit  = 1000 
       limit  = 30000000
 
@@ -46,13 +63,12 @@ class Sankey extends React.Component {
       day, cluster, timeStart, timeEnd, limit
     }).then((res)=>{
       let sankeyData = sankeyLayout(res)
-
       this.setState({
         data: sankeyData
       })
     })
+
   }
-  
 
 
 
@@ -290,6 +306,7 @@ class Sankey extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    selectTimeInterval : state.selectTimeInterval
   }
 }
 

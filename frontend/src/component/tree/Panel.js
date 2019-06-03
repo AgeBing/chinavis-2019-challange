@@ -86,7 +86,8 @@ class Panel extends React.Component {
     })
 
 
-    this.addNode(defaultConditions)
+    let newId = this.addNode(defaultConditions)
+    this.chooseNode(newId)
   }
 
 
@@ -248,7 +249,8 @@ class Panel extends React.Component {
     }
 
   	this.setState({ nodes,links })
-    this.hideCondiPanel()    
+    this.hideCondiPanel()   
+    return newId 
   }
 
   // 删除节点
@@ -267,12 +269,13 @@ class Panel extends React.Component {
   		}
   	}
   	links.splice(i ,1)
+    if(sourceIds[0]){
 
   	nodes[sourceIds[0]]['deleteAble'] = true
     nodes[sourceIds[1]]['deleteAble'] = true
     nodes[sourceIds[0]]['changeAble'] = true
     nodes[sourceIds[1]]['changeAble'] = true
-
+}
   	// 查看 sourceId 下是否还有 target
   	for(i = 0;i < links.length;i++){
       for(let j = 0;j < 2;j++){

@@ -11,6 +11,7 @@ class Heatmap_grids{
 
       let dataList = await query( sql )
       let new_datalist={}//{'x,y':count}
+
       let bef_id=''//上一个找完正确记录的id
       let Interval=5
       for (let i=1;i<dataList.length;i++)
@@ -30,17 +31,21 @@ class Heatmap_grids{
       }
       let sids= Object.keys(new_datalist) 
       let result=[]
-      let max_val=0
+      let maxVal = 0
       sids.forEach((sid_str)=>{//sid_str:'x,y'
         let sid=sid_str.split(',')
+// result.push([parseInt(sid[0]),parseInt(sid[1]),new_datalist[sid_str]])
         let count = +new_datalist[sid_str]
-        max_val=count>max_val?count:max_val
+        maxVal = count > maxVal ? count : maxVal
         result.push({
-          x:+sid[0],
-          y:+sid[1],
+          x: +sid[0],
+          y: +sid[1],
           count
-        })
+        })  
+
       })
+
+      console.log(maxVal)
       
       // console.log('dataList finish',max_val,dataList.length,sids.length,result)
     return await result;
