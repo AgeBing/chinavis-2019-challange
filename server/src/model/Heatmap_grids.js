@@ -11,14 +11,15 @@ class Heatmap_grids{
 
       let dataList = await query( sql )
       let new_datalist={}//{'x,y':count}
-      let bef_id=''//上一个找到正确记录的id
+      let bef_id=''//上一个找完正确记录的id
+      let Interval=5
       for (let i=1;i<dataList.length;i++)
       {
         //当前记录的id不是已找到正确记录的最新的id
-        if (bef_id!=dataList[i]['id'] && (dataList[i-1]['id']==dataList[i]['id']) && (parseInt(dataList[i]['t_minutes'])>parseInt(Heatmap_minutes)))
+        if (bef_id!=dataList[i]['id'] && (dataList[i-1]['id']==dataList[i]['id']) && (parseInt(dataList[i]['t_minutes'])>=parseInt(Heatmap_minutes-Interval)))
           {
-            
-            bef_id=dataList[i-1]['id']//更新当前已找到正确记录的id
+           if (parseInt(dataList[i]['t_minutes'])>=parseInt(Heatmap_minutes+Interval))
+                bef_id = dataList[i-1]['id']//更新当前已找到正确记录的id
             let cur_key=dataList[i-1]['x']+','+dataList[i-1]['y']
             if(!new_datalist.hasOwnProperty(cur_key)){
               new_datalist[cur_key] = 1
@@ -29,12 +30,19 @@ class Heatmap_grids{
       }
       let sids= Object.keys(new_datalist) 
       let result=[]
+      let max_val=0
       sids.forEach((sid_str)=>{//sid_str:'x,y'
         let sid=sid_str.split(',')
-result.push([parseInt(sid[0]),parseInt(sid[1]),new_datalist[sid_str]])
+        let count = +new_datalist[sid_str]
+        max_val=count>max_val?count:max_val
+        result.push({
+          x:+sid[0],
+          y:+sid[1],
+          count
+        })
       })
       
-      // console.log('dataList finish',dataList.length,sids.length,result)
+      console.log('dataList finish',max_val,dataList.length,sids.length,result)
     return await result;
   }
 }

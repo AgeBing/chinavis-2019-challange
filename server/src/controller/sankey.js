@@ -38,9 +38,15 @@ class SankeyController {
 					place
 				}
 			}
+            //by xwx 需要在这里检查前面有没有空值，如果有，value设置为place，stay:timeInterval
+            /*
+            for(let i = intervalIndex;i >= 0&&(!arr[i]);i--)
+                arr[i]={stay:timeInterval,place
+            */
         })
 
         // 补全稀疏矩阵中的空值，向两边去寻找 ？！
+        //by xwx 空值的补充需要去index的后面去找，找他后面的、离它最近的非空值
         function findNearst(id,index){
         	let arr = map[id]
         	for(let i = index;i >= 0;i--)
@@ -71,7 +77,7 @@ class SankeyController {
         		}
         		if(  room[place][index] == null ){
         			room[place][index] = {
-        				count : 0,
+        				count : 0,//by xwx 不应该是1吗？？？？？
         				peoples : []
         			}
         		}
