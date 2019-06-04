@@ -22,4 +22,6 @@ module.exports = router => {
     .post("/trajs_info", TrajController.trajInfo)
     .post('/userid_byclurster',PeopleController.getUids)
     .post('/sankey',SankeyController.getTrack)
+    .post('/sankey_test',SankeyController.getSankeyData)
+
 };

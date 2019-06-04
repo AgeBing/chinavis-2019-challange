@@ -16,13 +16,14 @@ let nodeConfig = {
 
 export function sankeyLayout(data) {
 	if(data == null) return null
-	let { nodes,links,maxValue,rooms,times }  = data
-
+	let { nodes,links,rooms,times }  = data
+	
+	let maxValue = 5000
 
 	let perCount  = nodeConfig.height / maxValue
-	perCount = +perCount.toFixed(4)
+	perCount = +perCount.toFixed(8)
 	nodeConfig.heightPerCount = perCount
-
+	console.log(perCount)
 
 	// console.log(maxValue,perCount)
 
@@ -57,7 +58,7 @@ export function sankeyLayout(data) {
 // 第一步 计算各节点位置
 // depth: 第几排
 // height: 某一排的第几个
-function nodePosition({depth , height, name,x_index,y_index,index}){
+function nodePosition({depth , height, index,time}){
 
 	let x0 = depth * (nodeConfig.xGap + nodeConfig.width),
 		x1 = x0 + nodeConfig.width,
@@ -77,10 +78,8 @@ function nodePosition({depth , height, name,x_index,y_index,index}){
 		x0,x1,
 		y0,y1,
 		x,y,
-		name,
-		x_index,
-		y_index,
-		index
+		index,
+		time
 	}
 }
 
@@ -117,13 +116,15 @@ function linkPosition(_nodes , link){
 	// let x = [ x0_,x1_,x2_,x3_],
 	// 	y = [ y0,y1,y2,y3 ] 
 
-	let insideLength = 0
+	let insideLength = 0,
+		insideHeight = 0
+
 	let x1 = sourceNode.x1  - insideLength,
-		y0 = sourceNode.y0 -  sourceNode.useHeight ,
+		y0 = sourceNode.y0 -  sourceNode.useHeight - insideHeight,
 		x0 = x1,
 		y1 = y0 + lineHeight,
 		x3 = targetNode.x0 + insideLength ,
-		y2 = targetNode.y0 - targetNode.useHeight,
+		y2 = targetNode.y0 - targetNode.useHeight - insideHeight,
 		x2 = x3,
 		y3 = y2 + lineHeight
 
@@ -152,4 +153,15 @@ function changeNodeHeight(_node){
 	node.y1 = y1
 	node.y  = [y0,y0,y1,y1]
 	return node
+}
+
+
+export function m2s(minute){
+	let h = Math.floor(minute/60),
+		m = minute - h * 60
+	
+	h =  h <10 ? '0'+h : ''+h
+	m =  m <10 ? '0'+m : ''+m
+
+	return h+':'+m
 }

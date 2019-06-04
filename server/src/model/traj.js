@@ -86,6 +86,26 @@ class Traj{
     return await dataList.length;
   }
 
+  // 获取某一时间段内 某些房间的访问情况
+  async getTrajsByTimeIntervalAndRooms(startMiniter,endHMiniter,day,rids) {
+      let tableName  = 'traj_mergetime_day'+day
+      let sql = `SELECT  id , rid    FROM ${tableName} WHERE 
+       (
+        ((HOUR(time)*60 + MINUTE(time))  >= ${startMiniter}  AND 
+        (HOUR(time)*60 + MINUTE(time))  <= ${endHMiniter} )
+        OR 
+        ((HOUR(time)*60 + MINUTE(time))  < ${startMiniter} AND 
+        (HOUR(time)*60 + MINUTE(time)+SECOND(time)/60+len_minutes)  >= ${endHMiniter})
+       )
+         AND
+        rid in (${rids}) order by id `
+
+    let dataList = await query( sql )
+
+    return await dataList;
+  }
+
+
 
   async getRoomName(rid) {
     let tableName  = 'room'

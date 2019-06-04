@@ -8,7 +8,8 @@ class Sankey{
         //by xwx
         // let tableName='traj_mergetime_day'+day
         // let cluster_type='cluster_By'+cluster
-        sql = `SELECT id, (HOUR(time)*3600 + MINUTE(time)*60+SECOND(time)) as time, place,label  FROM traj_day${day}_cluster${cluster}
+        sql = `SELECT id, (HOUR(time)*3600 + MINUTE(time)*60+SECOND(time)) as time, place,label 
+         FROM traj_day${day}_cluster${cluster}
          WHERE 
         (
         (HOUR(time)*60 + MINUTE(time))  >= ${timeStart}  AND 
@@ -20,7 +21,7 @@ class Sankey{
         (HOUR(time)*60 + MINUTE(time)+SECOND(time)/60+len_minutes)  >= ${timeEnd}
         )
         LIMIT ${limit};`
-        // console.log(sql)  
+        console.log(sql)  
         // sql = `SELECT id, time, place, label FROM track_day${day}_cluster${cluster} 
         // WHERE time >= ${timeStart * 60 } AND time <= ${timeEnd * 60} 
         // LIMIT ${limit};`
@@ -37,6 +38,9 @@ class Sankey{
     	let dataList = await query( sql )
     	return await dataList
     }
+
+
+
 
 }
 

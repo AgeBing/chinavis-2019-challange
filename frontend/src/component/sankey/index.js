@@ -19,7 +19,7 @@ import {
 } from "bizcharts";
 import DataSet from "@antv/data-set";
 
-import { sankeyLayout } from  './transform'
+import { sankeyLayout,m2s } from  './transform'
 
 class Sankey extends React.Component {
 
@@ -60,7 +60,11 @@ class Sankey extends React.Component {
 
 
     API_Sankey({
-      day, cluster, timeStart, timeEnd, limit
+      day, cluster, 
+      startMinutes: timeStart,
+      endMinutes: timeEnd,
+       limit,
+      rids : [[2] ,[3,5,6,7] ,[1,8],[4],[16,18],[9,15,19] , [10,20] ] 
     }).then((res)=>{
       let sankeyData = sankeyLayout(res)
       this.setState({
@@ -79,6 +83,7 @@ class Sankey extends React.Component {
       <div></div>
     )
 
+    console.log(data)
 
     const scale = {
       x: {
@@ -187,7 +192,7 @@ class Sankey extends React.Component {
 
         
         <View data={data.nodes} scale={nodeScale} 
-            start={{x:0,y:0.05}} end={{x:1, y:1}} 
+            start={{x:0,y:0.1}} end={{x:1, y:1}} 
             forceFit={false}>
           <Geom
             type="polygon"
@@ -255,18 +260,16 @@ class Sankey extends React.Component {
               }}
             >
            <Label
-              content="name"
+              content="time*height"
               textStyle={{
                 fill: "#545454",
               }}
 
-              formatter={(name) => {
-                  let h = name.split(',')[0],
-                      time = name.split(',')[1]
-
-                  if(h == "8")
-                    return time;
-                  return ""
+              formatter={(time,height) => {
+                  if(height.point.height == 6){
+                    return m2s(time)
+                  }
+                  return ''
               }}
               position='middle'
               offset={20}
