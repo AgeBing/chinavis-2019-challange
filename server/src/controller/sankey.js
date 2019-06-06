@@ -36,8 +36,8 @@ class SankeyController {
             time = Math.floor(time / 60)   // 单位为分
 
 
-            if(place >= 8) place = 8      //这是什么意思？
             place = rids2group[place]     //对当前的place映射到指定组
+            if(place >= 8) place = 8      //多于8的修正为8
             let arr = map[id]
             if(!map.hasOwnProperty(id)){
                 map[id] = []
