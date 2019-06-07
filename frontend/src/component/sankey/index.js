@@ -51,7 +51,7 @@ class Sankey extends React.Component {
   requestNewDatas(nextProps){
     let { selectTimeInterval } = nextProps || this.props
 
-    let day = 1 || selectTimeInterval.day,
+    let day =selectTimeInterval.day,// 1 || 
       cluster = 4, 
       timeStart = selectTimeInterval.minites[0], 
       timeEnd = selectTimeInterval.minites[1], 
@@ -64,7 +64,8 @@ class Sankey extends React.Component {
       startMinutes: timeStart,
       endMinutes: timeEnd,
        limit,
-      rids :[[3],[5],[6],[2], [10],[1],[8],[9,18]]//,[2,4,7,16,15,19,20]]day3
+      rids :[[3,5,6,7],[1],[2],[4],[8,16,18,10],[9,15,19],[20]]  
+      //[[3],[5],[6],[2], [10],[1],[8],[9,18]]//,[2,4,7,16,15,19,20]]day3
       //[[3,5,6,7],[1],[2],[4],[8,16,18,10],[9,15,19],[20]]  
       //[[3],[5],[6],[7],[18], [10],[1,2,4,8,16,9,15,19,20]] 
     }).then((res)=>{
