@@ -79,7 +79,8 @@ function nodePosition({depth , height, index,time}){
 		y0,y1,
 		x,y,
 		index,
-		time
+		time,
+		useHeight:{}
 	}
 }
 
@@ -95,8 +96,10 @@ function linkPosition(_nodes , link){
 	let sourceNode = _nodes[source],
 		targetNode = _nodes[target]
 
-	sourceNode.useHeight =  (sourceNode.useHeight) == undefined ? lineHeight : ( sourceNode.useHeight + lineHeight)
-	targetNode.useHeight =  (targetNode.useHeight) == undefined ? lineHeight : ( targetNode.useHeight + lineHeight)
+	sourceNode.useHeight.right = 
+		 (sourceNode.useHeight.right == undefined ? lineHeight : ( sourceNode.useHeight.right + lineHeight) )
+	targetNode.useHeight.left =  
+			(targetNode.useHeight.left == undefined ? lineHeight : ( targetNode.useHeight.left + lineHeight) )
 
 	 /* points
      * 1-------3
@@ -116,20 +119,22 @@ function linkPosition(_nodes , link){
 	// let x = [ x0_,x1_,x2_,x3_],
 	// 	y = [ y0,y1,y2,y3 ] 
 
+
 	let insideLength = 0,
 		insideHeight = 0
-
 	let x1 = sourceNode.x1  - insideLength,
-		y0 = sourceNode.y0 -  sourceNode.useHeight - insideHeight,
+		y0 = sourceNode.y0 -  sourceNode.useHeight.right - insideHeight,
 		x0 = x1,
 		y1 = y0 + lineHeight,
 		x3 = targetNode.x0 + insideLength ,
-		y2 = targetNode.y0 - targetNode.useHeight - insideHeight,
+		y2 = targetNode.y0 - targetNode.useHeight.left - insideHeight,
 		x2 = x3,
 		y3 = y2 + lineHeight
 
 	let x = [ x0,x1,x2,x3],
 		y = [ y0,y1,y2,y3 ] 
+
+
 
 
 	return { x,y,
@@ -147,12 +152,16 @@ function changeNodeHeight(_node){
 	
 	// console.log(_node,node)
 
-	let h = node.useHeight,
+	let h_l = node.useHeight.letf || 0,
+		h_r = node.useHeight.right || 0,
+		h =  (h_l >= h_r ? h_l : h_r) ,
 		y0 = node.y0,    // 上
 		y1 = y0 - h
-	node.y1 = y1
-	node.y  = [y0,y0,y1,y1]
-	return node
+
+		node.y1 = y1
+		node.y  = [y0,y0,y1,y1]
+		
+		return node
 }
 
 
