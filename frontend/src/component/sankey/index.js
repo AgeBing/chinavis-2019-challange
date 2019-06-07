@@ -51,7 +51,7 @@ class Sankey extends React.Component {
   requestNewDatas(nextProps){
     let { selectTimeInterval } = nextProps || this.props
 
-    let day = 1 || selectTimeInterval.day,
+    let day = selectTimeInterval.day,
       cluster = 4, 
       timeStart = selectTimeInterval.minites[0], 
       timeEnd = selectTimeInterval.minites[1], 
@@ -212,7 +212,7 @@ class Sankey extends React.Component {
         </View>
 
 
-        <View data={data.links}>
+        <View data={data.links} scale={scale}>
             <Geom
               type="edge"
               position="x*y"
@@ -250,7 +250,7 @@ class Sankey extends React.Component {
             />
         </View>
 
-         <View data={data.nodes} scale={nodeScale}>
+         <View data={data.nodes} scale={scale}>
             <Geom
               type="polygon"
               position="x*y"
@@ -278,7 +278,7 @@ class Sankey extends React.Component {
             </Geom>
           </View>
           
-        <View data={data.subNodes} scale={nodeScale}>
+        <View data={data.subNodes} scale={scale}>
             <Geom
               type="polygon"
               position="x*y"
