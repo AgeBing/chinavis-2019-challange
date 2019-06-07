@@ -248,6 +248,7 @@ class Panel extends React.Component {
       nodes[sourceB]['changeAble'] = false
     }
 
+    console.log("newNode",newNode )
   	this.setState({ nodes,links })
     this.hideCondiPanel()   
     return newId 
@@ -320,10 +321,13 @@ class Panel extends React.Component {
         uidsUnion = uidsA.filter(function(u){ return uidsB.indexOf(u) > -1 })  // 考虑NAN
     // 取交集
 
+    console.log(uidsA,uidsB)
+
     // console.log(uidsA,uidsB,uidsUnion)
     // 添加新节点
     let condition = {
-      uids : uidsUnion
+      uids : uidsUnion,
+      rooms : []
     },sourceNodes = [aId,bId]
 
     this.addNode(condition , sourceNodes)

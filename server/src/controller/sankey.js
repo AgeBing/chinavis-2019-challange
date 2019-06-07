@@ -317,7 +317,7 @@ class SankeyController {
             t_e = t_s + 1,
             res
           
-          res = await traj.getTrajsByTimeIntervalAndRooms(t_s,t_e,day,allrids.join(','))
+          res = await traj.getTrajsByTimeIntervalAndRooms(t_s,t_e,day,allrids.join(',') , ids.join(','))
           res = filterSameIDs(res)
           res.forEach((o)=>{
             let { id,rid } = o

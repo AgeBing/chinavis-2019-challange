@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { Modal,
 		InputNumber,
+    Input,
 		Select,
 		Icon,
 		Divider,
@@ -52,6 +53,7 @@ export default class CondiPanel extends Component {
       rooms:[],
       roomCheckAll:false,
       indeterminate:false,
+      idInputString:''
     };
   }
 
@@ -86,10 +88,18 @@ export default class CondiPanel extends Component {
     let { rooms,selectTime,selectPeopleMode,selectDay } = this.state
     let roomsName = rooms.map((id)=>roomsMap[id])
 
-
-    if(rooms.length == 0){
-       message.error('请选择至少一个房间!')
+    if(
+      (mode == 'add') &&
+     ( (this.state.selectPeopleMode == 2 && this.state.idInputString == '') || 
+      (this.state.selectPeopleMode == 1 &&rooms.length == 0) ) ) {
+       message.error('请选择至少一个房间 或 添加一个用户 !')
       return
+    }
+
+    let ids = []
+    if(this.state.idInputString != ''){
+      ids = getIdsFromString(this.state.idInputString)
+      console.log(ids)
     }
 
     if(mode == 'add'){
@@ -99,6 +109,7 @@ export default class CondiPanel extends Component {
         rooms:roomsName,
         roomsId:rooms,
         day:selectDay,
+        uids:ids
       })
     }else{
 
@@ -171,6 +182,12 @@ export default class CondiPanel extends Component {
 
   }
 
+  onIdInputChange = e => {
+    this.setState({
+      idInputString:e.target.value
+    })
+  };
+
   render(){
   	let { defaultConditions,roomsMap,mode } = this.props
 
@@ -183,15 +200,26 @@ export default class CondiPanel extends Component {
             onCancel={this.hanleCancel}
           >
 
+        { mode == 'add' &&
+        <div>
          <Divider  orientation="left"> 人员选择 </Divider>
           <RadioGroup className='condition-line'
              onChange={this.handlePeopleModeChange} value={this.state.selectPeopleMode} >
+              
               {peopleModeOptions.map((d)=>
                   (<Radio value={d.value}>{d.label}</Radio>)
               )}
+
           </RadioGroup>
 
-
+          {
+            this.state.selectPeopleMode  == 2 && 
+            <Input placeholder="请输入人员id，以空格分隔" 
+              onChange={this.onIdInputChange}
+            />
+          }
+        </div>
+        }
          
          <Divider  orientation="left"> 时间选择 </Divider>
           <RadioGroup className='condition-line'
@@ -222,36 +250,53 @@ export default class CondiPanel extends Component {
 
 
 
+          {
+            this.state.selectPeopleMode  == 1  && 
+            <div>
+                <Divider  orientation="left"> 地点选择 </Divider>
+                
+                 <div className='condition-line' >
+                    <Checkbox value={'all'} style={{margin: '0 auto'}}
+                     onChange={this.handleRoomChangeAll}
+                     indeterminate={this.state.indeterminate}
+                     checked={this.state.roomCheckAll}>
+                      全部
+                    </Checkbox>
+                 </div>
 
-        <Divider  orientation="left"> 地点选择 </Divider>
-        
-         <div className='condition-line' >
-            <Checkbox value={'all'} style={{margin: '0 auto'}}
-             onChange={this.handleRoomChangeAll}
-             indeterminate={this.state.indeterminate}
-             checked={this.state.roomCheckAll}>
-              全部
-            </Checkbox>
-         </div>
+                 <Checkbox.Group className='condition-checkbox'
+                 defaultValue={defaultConditions['roomsId']}
+                 		onChange={this.handleRoomChange}
+                    value={this.state.rooms}
+                    >
+                       <Row>
+                          {Object.keys(roomsMap).map((key)=>{
+                             let id = +key,
+                                name = roomsMap[id]
+                             return( 
+                              <Col span={8} key={id}>
+                                  <Checkbox value={id}>{name}</Checkbox>
+                              </Col>
+                          )})}
+                      </Row>
+                  </Checkbox.Group>  
+          </div>
+        }
 
-         <Checkbox.Group className='condition-checkbox'
-         defaultValue={defaultConditions['roomsId']}
-         		onChange={this.handleRoomChange}
-            value={this.state.rooms}
-            >
-               <Row>
-                  {Object.keys(roomsMap).map((key)=>{
-                     let id = +key,
-                        name = roomsMap[id]
-                     return( 
-                      <Col span={8} key={id}>
-                          <Checkbox value={id}>{name}</Checkbox>
-                      </Col>
-                  )})}
-              </Row>
-          </Checkbox.Group>
 
          </Modal>
   	)
 	}
+ }
+ 
+
+
+ function getIdsFromString(s){
+    let ids = s.split(/\D+/)       //以任何非数字的符号分隔
+              .filter((id)=>
+                  (id.length == 5)
+               )
+              .map((id)=>''+id)
+
+    return [].concat(ids)
  }

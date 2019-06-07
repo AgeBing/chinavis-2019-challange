@@ -46,6 +46,7 @@ class Node extends React.Component{
 
   componentWillMount(){
 
+
   }
   componentWillReceiveProps(nextProps){
       let { condition } =  this.props,
@@ -74,7 +75,7 @@ class Node extends React.Component{
 
     let userCountDOM = ''
 
-  if( ifChoosen && selectIdsGlobal.length != 0 ){
+    if( ifChoosen && selectIdsGlobal.length != 0 ){
         userCountDOM =(
           <Tag key={'users'}
             onClick={this.onHandleShowOrHidePop.bind(this,'users-count')}>
@@ -231,12 +232,12 @@ class Node extends React.Component{
           <div className='config-box'>
             <Button icon="tool" 
               onClick={this.onHandleConditionChange.bind(this)}
-              disabled={chaFlag} />
+              disabled={chaFlag || this.props.condition['rooms'].length == 0} />
           </div>
           <div className='config-box'>
             <Button icon={!this.state.sendingFLag?"swap":'loading'}
                onClick={this.onHandleChangeState.bind(this)}
-               disabled={ifChoosen} />
+               disabled={ifChoosen || !this.props.condition.hasOwnProperty('time')} />
           </div>
         </div>
       </Popover>
@@ -260,11 +261,12 @@ class Node extends React.Component{
   }
 
   onHandleShowOrHidePop(type){
+
     let { summary,currentVisItem } = this.state
 
     let newPopContent ,newVisItem
 
-    if(Object.keys(this.state.summary).length == 0)  return
+    if(Object.keys(this.state.summary).length == 0  && this.props.condition['uids'].length == 0)  return
 
     if( type == currentVisItem ){
       newVisItem = 'none'
@@ -289,7 +291,7 @@ class Node extends React.Component{
           newPopContent =  (
             <div style={popStyle}>
                 {/*<PieChart  counts={summary.user} style={popStyle}/>*/}
-                <UserList uids={this.state.uids}/>
+                <UserList uids={this.state.uids || this.props.condition['uids']}/>
             </div>
           );
           break;

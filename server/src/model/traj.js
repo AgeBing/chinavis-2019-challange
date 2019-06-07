@@ -87,18 +87,36 @@ class Traj{
   }
 
   // 获取某一时间段内 某些房间的访问情况
-  async getTrajsByTimeIntervalAndRooms(startMiniter,endHMiniter,day,rids) {
+  async getTrajsByTimeIntervalAndRooms(startMiniter,endHMiniter,day,rids,uids) {
       let tableName  = 'traj_mergetime_day'+day
-      let sql = `SELECT  id , rid    FROM ${tableName} WHERE 
-       (
-        ((HOUR(time)*60 + MINUTE(time))  >= ${startMiniter}  AND 
-        (HOUR(time)*60 + MINUTE(time))  <= ${endHMiniter} )
-        OR 
-        ((HOUR(time)*60 + MINUTE(time))  < ${startMiniter} AND 
-        (HOUR(time)*60 + MINUTE(time)+SECOND(time)/60+len_minutes)  >= ${endHMiniter})
-       )
-         AND
-        rid in (${rids}) order by id `
+      let sql
+      console.log(uids)
+      if( uids ){
+         sql = `SELECT  id , rid    FROM ${tableName} WHERE 
+           (
+            ((HOUR(time)*60 + MINUTE(time))  >= ${startMiniter}  AND 
+            (HOUR(time)*60 + MINUTE(time))  <= ${endHMiniter} )
+            OR 
+            ((HOUR(time)*60 + MINUTE(time))  < ${startMiniter} AND 
+            (HOUR(time)*60 + MINUTE(time)+SECOND(time)/60+len_minutes)  >= ${endHMiniter})
+           )
+            AND id IN (${uids})
+             AND rid in (${rids}) order by id 
+             `
+            console.log('sql1')
+      }else{
+            sql = `SELECT  id , rid    FROM ${tableName} WHERE 
+               (
+                ((HOUR(time)*60 + MINUTE(time))  >= ${startMiniter}  AND 
+                (HOUR(time)*60 + MINUTE(time))  <= ${endHMiniter} )
+                OR 
+                ((HOUR(time)*60 + MINUTE(time))  < ${startMiniter} AND 
+                (HOUR(time)*60 + MINUTE(time)+SECOND(time)/60+len_minutes)  >= ${endHMiniter})
+               )
+                 AND
+                rid in (${rids}) order by id `
+                console.log('sql2')
+      }
 
     let dataList = await query( sql )
 

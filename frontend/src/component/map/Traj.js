@@ -44,7 +44,7 @@ class Traj extends Component {
   }
 
   requestNewTrajs(nextProps){
-    let { selectTimeInterval,stateNodeId,floor,rooms,opacity } = nextProps || this.props
+    let { selectTimeInterval,stateNodeId,floor,rooms,opacity,uids } = nextProps || this.props
     
     let startMiniter = selectTimeInterval.minites[0],
         endMiniter = selectTimeInterval.minites[1],
@@ -53,7 +53,7 @@ class Traj extends Component {
 
     this.clearCanvas(0)
 
-    API_Traj({ startMiniter,endMiniter,floor,day,rids:rooms}).then((res)=>{
+    API_Traj({ startMiniter,endMiniter,floor,day,rids:rooms,ids:uids}).then((res)=>{
         res.forEach((traj)=>{
           self.drawTraj(0, traj,opacity)
         })
@@ -195,6 +195,7 @@ const mapStateToProps = (state) => {
     stateNodeId : state.stateNodeId,
     rooms:state.rooms,
     opacity:state.opacityTraj,
+    uids: state.ids
   }
 }
 
