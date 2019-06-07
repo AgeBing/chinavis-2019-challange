@@ -480,7 +480,7 @@ const mapDispatchToProps = dispatch => {
 
       let type = 'CHANGE_STATE',
           stateNodeId = id,
-            ids = uids
+            ids = uids || []
 
       dispatch({ type, timeInterval,stateNodeId,rooms,ids });
     },
