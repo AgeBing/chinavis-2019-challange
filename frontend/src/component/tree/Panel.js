@@ -342,7 +342,7 @@ class Panel extends React.Component {
       this.setState({
          nodes
       })
-      if(nodes[id]['choosen'] = true){
+      if(nodes[id]['choosen'] == true){
          this.props.changeState(nodes[id]['condition'] , id)
       }
     }

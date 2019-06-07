@@ -103,14 +103,24 @@ export default class CondiPanel extends Component {
     }
 
     if(mode == 'add'){
-      hanldeAddCondition({
-        peopleMode : selectPeopleMode ,
-        time:selectTime ,
-        rooms:roomsName,
-        roomsId:rooms,
-        day:selectDay,
-        uids:ids
-      })
+      if(ids.length > 0){
+        hanldeAddCondition({
+          peopleMode : selectPeopleMode ,
+          time:selectTime ,
+          rooms:roomsName,
+          roomsId:rooms,
+          day:selectDay,
+          uids:ids
+        })
+      }else{
+                hanldeAddCondition({
+          peopleMode : selectPeopleMode ,
+          time:selectTime ,
+          rooms:roomsName,
+          roomsId:rooms,
+          day:selectDay,
+        })
+      }
     }else{
 
       let ifConditionChanged = false
