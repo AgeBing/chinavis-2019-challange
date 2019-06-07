@@ -64,10 +64,9 @@ class Sankey extends React.Component {
       startMinutes: timeStart,
       endMinutes: timeEnd,
        limit,
-      rids :[[3],[5],[6],[2], [4],[20],[9,18]]//,[2,4,7,16,15,19,20]]day3
+      rids :[[3],[5],[6],[2], [4],[20],[9,18]],//,[2,4,7,16,15,19,20]]day3
       //[[3,5,6,7],[1],[2],[4],[8,16,18,10],[9,15,19],[20]]  
       //[[3],[5],[6],[7],[18], [10],[1,2,4,8,16,9,15,19,20]] 
-      ,
       ids : uids
     }).then((res)=>{
       let sankeyData = sankeyLayout(res)
