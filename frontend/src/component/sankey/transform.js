@@ -18,7 +18,7 @@ export function sankeyLayout(data) {
 	if(data == null) return null
 	let { nodes,links,rooms,times }  = data
 	
-	let maxValue = 5000
+	let maxValue = 3000
 
 	let perCount  = nodeConfig.height / maxValue
 	perCount = +perCount.toFixed(8)

@@ -86,6 +86,9 @@ class Sankey extends React.Component {
 
     console.log(data)
 
+
+    // 坑 https://github.com/antvis/g2/issues/654
+    //  不然会导致不同view间错位的问题
     const scale = {
       x: {
         sync: true
