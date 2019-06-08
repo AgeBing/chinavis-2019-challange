@@ -22,10 +22,12 @@ class StackChart extends React.Component {
     const cols = {
       time: {
         type: "cat",
+       tickCount: 5
       },
       'count':{
         type : 'linear',
         nice: true,
+
       }
     };
     return (
@@ -34,7 +36,7 @@ class StackChart extends React.Component {
           height={style.height}
           width={style.width}
          data={rooms} scale={cols}
-          padding={[20, 95, 45, 40]}
+          padding={[20, 195, 45, 40]}
          >
           <Axis name="time" />
           <Axis name="count" />

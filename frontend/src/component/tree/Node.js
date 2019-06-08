@@ -21,8 +21,8 @@ const style = {
 }
 
 const popStyle ={
-  height : 220,
-  width  : 360
+  height : 280,
+  width  : 460
 }
 
 let  pieContent = (
