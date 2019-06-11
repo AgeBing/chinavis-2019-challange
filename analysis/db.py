@@ -2,10 +2,10 @@ import pymysql.cursors
 
 
 # Connect to the database
-connection = pymysql.connect(host='115.159.202.238',
-                             user='chinavis',
+connection = pymysql.connect(host='',
+                             user='',
                              port=3306,
-                             password='chinavis2019',
+                             password='',
                              db='chinavis2019',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
