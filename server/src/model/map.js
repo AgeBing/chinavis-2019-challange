@@ -5,10 +5,8 @@ class Map{
       let tableName  = 'sensor'
       let sql = `SELECT *  FROM ${tableName} WHERE 
           floor =  ${floor}`
-      
-      let dataList = await query( sql )
 
-      // console.log(dataList)
+      let dataList = await query( sql )
     return await dataList;
   }
 

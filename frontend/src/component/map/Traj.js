@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import * as Config from './Config'
 
-import { API_Traj,API_Uid_ByCluster }  from '../../api/index'
+import { API_Traj }  from '../../api/index'
 
 
 
@@ -74,34 +74,6 @@ class Traj extends Component {
 
   }
 
-  highLightSomeTajs(nextProps){
-
-    let { trajs } = this.state
-    let { opacity } = nextProps || this.props
-
-    let self = this
-
-    API_Uid_ByCluster({ clusterNum:nextProps.clusterNum })
-      .then((uids)=>{
-        let someTrajs = trajs.filter((traj)=>{
-            let id = traj[0].id
-            return (uids.indexOf(id) != -1)
-        })
-
-        someTrajs.forEach((traj)=>{
-          this.drawTraj(1, traj , opacity)
-        })
-
-        this.clearCanvas(1)
-        this.hideCanvas(0)
-      })
-
-
-  }
-  unHighLightSomeTrajs(){
-    this.showCanvas()
-    this.clearCanvas(1)
-  }
 
 
   // 绘制一条轨迹 

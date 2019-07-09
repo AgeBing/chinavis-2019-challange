@@ -1,6 +1,4 @@
 const traj = require('../model/traj');
-const people = require('../model/people');
-
 
 function m_t(min) {
 	let h = Math.floor(min / 60),
@@ -13,29 +11,6 @@ function m_t(min) {
 }
 
 class TrajController {
-  async trajs(ctx) {
-  	const { startHour,endHour,day,floor } = ctx.request.body;
-  	console.log( startHour,endHour,day )
-  	let res = await traj.getTrajs(startHour,endHour ,day,floor)
-	ctx.body = res ;
-  }
-  async trajsTest(ctx) {
-  	const { startMiniter,endMiniter,day,floor } = ctx.request.body;
-
-  	let res = await traj.getTrajsTest(startMiniter*60,endMiniter*60 ,floor ,day)
-	
-	let trajs = []
-	res.forEach((p)=>{
-		let traj_count = trajs.length
-
-		if( !traj_count || trajs[traj_count - 1][0].id != p.id ){
-			trajs.push([])
-		}
-		trajs[trajs.length - 1].push(p)
-	})
-	ctx.body = trajs ;
-  }
-
 	async trajUids(ctx) {
 		const { startMiniter,endMiniter,day,rids,floor,ids } = ctx.request.body;
 
@@ -83,10 +58,7 @@ class TrajController {
 	}
 	async trajInfo(ctx){
 		const { startMiniter,endMiniter,day,rids } = ctx.request.body;
-		
 		let uids = []
-
-
 		// 符合地理结果的人员
 		let uidsObj = await traj.getUids(startMiniter,endMiniter,day,rids.join(','))
 		uids = uidsObj.map((obj)=>obj.id)
@@ -103,10 +75,7 @@ class TrajController {
 			return 
 		}
 		info['length'] = uids.length
-
 		info['uids'] = uids
-
-
 		// 地点统计  统计每个时间段各个放假内的人数
 		let rooms = []
 		//  时间统计 将时间条件分成固定个数的时间段
@@ -123,9 +92,7 @@ class TrajController {
 			for(let i = 0;i <= timeIntervalCount;i++){
 				intervals.push( startMiniter + i * interval_length )
 			}
-
 		}
-
 		// 查询每个时间段，每个房间的人数
 		for(let r = 0;r < rids.length; r++){
 				let rid = rids[r]
@@ -143,14 +110,8 @@ class TrajController {
 				}
 		}
 		info['rooms'] = rooms
-
-
 		ctx.body = info;
-
-
-	}
-
-	
+	}	
 }
 
 

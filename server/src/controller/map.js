@@ -12,7 +12,6 @@ class MapController {
   }
   async rooms_floor(ctx) {
     const { floor } = ctx.request.body;
-    console.log(floor)
   	let res = await map.getRooms(floor)
 	ctx.body = res ;
   }
