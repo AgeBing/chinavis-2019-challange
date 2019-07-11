@@ -5,7 +5,11 @@ import { Row, Col } from 'antd';
 
 import MyMap from './component/map/Map.js' 
 import Tree from './component/tree/Tree.js'
-import Sankey from './component/sankey/index.js'
+// import Sankey from './component/sankey/index.js'
+import Sankey from './component/sankey/sankey.js'
+
+import GroupPanel from './component/sankey/groupPanel.js'
+
 import TimeLine from './component/time/time.js'
 
 class App extends Component {
@@ -17,19 +21,20 @@ class App extends Component {
 			 
 			      <Col span={16} className='layout-item '>
 					<div className='layout-item-sub1'>
-						<MyMap />
+						{/*<MyMap />*/}
 						
 					</div>
 					<div className='layout-item-submid layout-view'>
-						<TimeLine />
+						{/*<TimeLine />*/}
 					</div>					
 					<div className='layout-item-sub2 layout-view'>
-						<Sankey />
+						{/*<GroupPanel />*/}
+						<Sankey/>
 					</div>
 			      </Col>
 
 			      <Col span={8} className='layout-item layout-view'>
-			      		<Tree />
+			      		{/*<Tree />*/}
 			      </Col>
 			    </Row>
 			</div>

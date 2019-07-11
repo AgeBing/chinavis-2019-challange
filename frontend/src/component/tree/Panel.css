@@ -15,11 +15,14 @@
 	stroke-width:1;
 }
 
+
 .panel .add-node{
     position: absolute;
     top: 0;
     left: 0;
 }
+
+
 .panel .add-node{
      display: table;
     margin-right: 8px;
@@ -47,8 +50,3 @@
 }
 
 
-
-
-.ant-popover-inner-content{
-    overflow: scroll;
-}

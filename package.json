@@ -9,5 +9,8 @@
     "clientStart": "cd frontend && npm start",
     "serverStart": "cd server && npm run server",
     "start": "npm run clientStart & npm run serverStart"
+  },
+  "dependencies": {
+    "d3-sankey": "^0.12.1"
   }
 }
