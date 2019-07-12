@@ -33,7 +33,7 @@ class Box extends React.Component {
       connectDropTarget,
       isDragging,
       index,
-      hasNodes
+      hasNodes,
     } = this.props
 
 

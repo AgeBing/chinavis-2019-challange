@@ -20,6 +20,13 @@ class Map{
       // console.log(dataList)
     return await dataList;
   }
+
+  async getRoomsID(){
+      let tableName  = 'room'
+      let sql = `SELECT id,name FROM ${tableName}`     
+      let dataList = await query( sql )
+      return await dataList;
+  }
 }
 
 module.exports = new Map();

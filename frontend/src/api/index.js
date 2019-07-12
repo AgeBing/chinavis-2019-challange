@@ -18,4 +18,4 @@ export let API_SYNC_Rooms = (data,url = '/api/rooms' ,method = 'POST') =>  reque
 
 export let API_Sankey = (data, url = '/api/sankey_test' , method= 'POST') => request({ url, data, method})
 
-
+export let API_RoomsID = (data, url = '/api/rooms_id' , method= 'GET') => request({ url, data, method})

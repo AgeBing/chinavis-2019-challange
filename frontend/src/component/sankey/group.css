@@ -46,7 +46,7 @@
 	text-align: center;
 	font-weight: 900;
 	cursor: move;
-    background-color: #36cfc9;
+    background-color: #8c8c8c;
     color: #ffffff;
 }
 
@@ -109,7 +109,7 @@
 	font-size: 27px;
     display: inline;
     margin: 5px 0 0 7px;
-    color: #36cfc9;
+    color: #8c8c8c;
     font-weight: 700;
 }
 .node-header .config-box{
@@ -132,5 +132,7 @@
 }
 
 .btn-panel button{
-	margin: 0 20px
+	margin: 0 20px;
+    background-color: #8c8c8c;
+    color:  #ffffff;
 }

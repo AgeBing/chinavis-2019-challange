@@ -44,7 +44,7 @@ class  MyMap  extends Component{
 			visible: false,
 			showIds:[],
     
-    		mapMode: 'heat'|| 'traj' || 'heat',
+    		mapMode:  'traj' || 'heat',
 		}
 	}
 	componentWillMount(){

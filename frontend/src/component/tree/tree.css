@@ -105,3 +105,6 @@ code {
   padding: 0 4px;
   margin: 8px 0;
 }
+.ant-popover-inner-content{
+      overflow-y: scroll;
+}

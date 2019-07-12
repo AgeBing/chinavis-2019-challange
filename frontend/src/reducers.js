@@ -17,7 +17,7 @@ const initialState = {
 
     selectIdsGlobal: [],  //用户选中的轨迹 id 数组
 
-    mode:'heat'|| 'traj',
+    mode: 'traj' ||'heat',
     cursorTime:480,  //热力图显示的单个时刻 
 };
 console.log(initialState)

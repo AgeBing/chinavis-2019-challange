@@ -13,26 +13,50 @@ import { NativeTypes } from 'react-dnd-html5-backend'
 import { nodeRectHeight ,nodeRectWidth } from './config'
 
 
+import { API_RoomsID }  from '../../api/index'
+
+
 export class Group extends React.Component {
   constructor() {
     super(...arguments)
 	  this.state = {
       groupCount : 2,
       group : {
-        default: [1,2,3,4,5] ,
+        default: [] ,
       }
     }
   }
 
   componentWillMount(){
+
+    let { givenGroup } = this.props
     let { group,groupCount } = this.state
-    for(let i = 0;i < groupCount;i++){
-      group[i] = []
+
+
+    if(givenGroup.length == 0 ){
+      for(let i = 0;i < groupCount;i++){
+        group[i] = []
+      }
+    }else{
+      let defaultArray = []
+      for(let i = 1;i <=24;i++){
+        defaultArray.push(i)
+      }
+
+      for(let i = 0;i < givenGroup.length;i++){
+        group[i] = givenGroup[i]
+        group[i].forEach((_rid)=>{
+          defaultArray.splice(defaultArray.indexOf(_rid),1)
+        })
+      }
+      group['default'] = defaultArray
+      groupCount = givenGroup.length
     }
-    this.setState({ group })
+
+    this.setState({ group,groupCount })
   }
   handleDrop = (item,box)=>{
-    console.log('handleDrop',item,box)
+    // console.log('handleDrop',item,box)
     let { group,groupCount } = this.state
     // 先删除
     for(let _box in group){
@@ -79,28 +103,27 @@ export class Group extends React.Component {
     let { groupCount,group } = this.state
   	let boxs = [],nodes =[] , k=10
   	
-    console.log(group)
-    for(let i=0;i < groupCount;i++){
-  		boxs.push(
-  			<SortableBox
-          onDrop={this.handleDrop}
-          key={i}
-          index={i}
-          hasNodes={group[i]}
-          onMoveBox={this.moveBox}
-          onDelBox={this.delBox}
-        />
-	    )
-  	}
-    for(let i=0;i < group.default.length;i++){
-      nodes.push(
-        <Node 
-          key={i}
-          rid = {group.default[i]}
-          isDropped={()=>true}
-        />
-      )
-    }
+      for(let i=0;i < groupCount;i++){
+    		boxs.push(
+    			<SortableBox
+            onDrop={this.handleDrop}
+            key={i}
+            index={i}
+            hasNodes={group[i]}
+            onMoveBox={this.moveBox}
+            onDelBox={this.delBox}
+          />
+  	    )
+    	}
+      for(let i=0;i < group.default.length;i++){
+        nodes.push(
+          <Node 
+            key={i}
+            rid = {group.default[i]}
+          />
+        )
+      }
+    
     return (
     <div className='group-container'>
       <div className='group-panel'>
@@ -151,12 +174,15 @@ export class Group extends React.Component {
   }
   // 提交
   onSubmit = ()=>{
-    let { group } = this.state
+    let { group ,groupCount} = this.state
     if( group['default'].length > 0 ){
       message.warning('将所有的room进行归类');
     }else{
-
+      let resArray = []
+      for(let i = 0;i < groupCount;i++){
+        resArray.push( group[i] )
+      }
+      this.props.onChangeGroup(resArray)
     }
   }
-
 }

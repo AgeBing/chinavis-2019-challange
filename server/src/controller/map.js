@@ -15,6 +15,10 @@ class MapController {
   	let res = await map.getRooms(floor)
 	ctx.body = res ;
   }
+  async rooms_id(ctx){
+    let res = await map.getRoomsID()
+    ctx.body = res
+  }
 
 }
 

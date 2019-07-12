@@ -1,6 +1,9 @@
 import React from 'react'
 import { DropTarget } from 'react-dnd'
+import './tree.css'
 import './Panel.css'
+
+
 import ItemType from './ItemType'
 import Node from './Node'
 import Links from './Links'
